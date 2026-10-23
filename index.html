@@ -198,6 +198,8 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
     <label>Genkøb (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5"></label>
     <label>Anbefaling (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5"></label>
     <label class="full">Smagsnoter<textarea name="Note" placeholder="Beskriv aroma, smag, balance og udvikling..."></textarea></label>
+    <label class="full">Foto af flasken (valgfrit)<input id="palateBottleUpload" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment"></label>
+    <div class="full" id="palateBottlePreview" aria-live="polite" style="display:none"><img id="palateBottlePreviewImage" alt="Valgt flaskefoto" style="max-width:120px;max-height:170px;object-fit:contain;border-radius:10px"><p style="font-size:12px">Billedet vises kun lokalt på din enhed. Det bliver ikke uploadet eller gemt på PALATE.</p><button type="button" id="palateDownloadBottle" class="secondary">Hent billedfil</button></div>
     <div class="full register-actions"><button type="button" id="previewRegistration">Gennemse</button><button type="button" id="exportRegistration">Eksportér CSV</button><button type="reset" class="secondary">Nulstil demo</button></div>
   </form>
   <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Demonstration: ingen registrering er gemt.</div>
@@ -531,6 +533,30 @@ document.addEventListener("click",event=>{
  if(button)openPalateWine(button.dataset.palateWine,button.dataset.palateYear||"");
 });
 
+
+const palateBottleInput=document.getElementById("palateBottleUpload");
+let palateBottleObjectURL=null;
+palateBottleInput.addEventListener("change",()=>{
+ if(palateBottleObjectURL){URL.revokeObjectURL(palateBottleObjectURL);palateBottleObjectURL=null;}
+ const file=palateBottleInput.files?.[0];
+ const preview=document.getElementById("palateBottlePreview");
+ if(!file){preview.style.display="none";return;}
+ if(!file.type.startsWith("image/")||file.size>12*1024*1024){
+  palateBottleInput.value="";preview.style.display="none";
+  document.getElementById("registrationStatus").textContent="Vælg et billede på højst 12 MB.";
+  return;
+ }
+ palateBottleObjectURL=URL.createObjectURL(file);
+ document.getElementById("palateBottlePreviewImage").src=palateBottleObjectURL;
+ preview.style.display="block";
+});
+document.getElementById("palateDownloadBottle").addEventListener("click",()=>{
+ const file=palateBottleInput.files?.[0];if(!file||!palateBottleObjectURL)return;
+ const a=document.createElement("a");a.href=palateBottleObjectURL;a.download=file.name;a.click();
+});
+document.getElementById("palateRegistration").addEventListener("reset",()=>{
+ setTimeout(()=>{document.getElementById("palateBottlePreview").style.display="none";if(palateBottleObjectURL)URL.revokeObjectURL(palateBottleObjectURL);palateBottleObjectURL=null;},0);
+});
 </script>
 </body>
 </html>

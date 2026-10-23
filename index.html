@@ -330,7 +330,7 @@ function renderChart() {
       tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
     });
     p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
-    p.addEventListener("click", ()=>showDetail(data[+p.dataset.index]); openPalateWine(data[+p.dataset.index].name,data[+p.dataset.index].vintage);
+    p.addEventListener("click", ()=>{ const selected=data[+p.dataset.index]; showDetail(selected); openPalateWine(selected.name,selected.vintage); });
   });
 }
 
@@ -494,7 +494,7 @@ selectPalateView(location.hash.slice(1));
 
 
 function palateWineKey(name,year){
- return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\\p{L}\\p{N}]+/gu," ").trim();
+ return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
 }
 function findPalateWine(name,year){
  const key=palateWineKey(name,year);

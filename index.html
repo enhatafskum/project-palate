@@ -96,6 +96,7 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 .wine-dialog-bottle svg{width:45px;height:95px}
 .wine-dialog h2{margin:0 0 8px;font-size:21px}
 .wine-dialog .kv{grid-template-columns:100px 1fr}
+.tasting-summary{display:flex;justify-content:space-between;align-items:center;gap:12px}.tasting-summary .wine-name-button{font-weight:650}.tasting-inner{padding-top:10px}
 </style>
 </head>
 <body>
@@ -330,7 +331,7 @@ function renderChart() {
       tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
     });
     p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
-    p.addEventListener("click", ()=>{ const selected=data[+p.dataset.index]; showDetail(selected); openPalateWine(selected.name,selected.vintage); });
+    p.addEventListener("click", ()=>{ const selected=data[+p.dataset.index]; openPalateWine(selected.name,selected.vintage); });
   });
 }
 
@@ -395,10 +396,10 @@ function renderTastingHistory(rows){
     const fields=["Helhed","Balance","Stilmatch","Genkøb","Anbefaling"]
       .filter(key=>r[key]!=="")
       .map(key=>"<b>"+esc(key)+":</b> "+esc(r[key])).join(" · ");
-    return '<details class="tasting"><summary><span>'+esc(title)+'</span><strong>'+
-      esc(score)+'/10</strong></summary><div class="tasting-inner"><p>'+descriptors+
+    return '<div class="tasting"><div class="tasting-summary"><button type="button" class="wine-name-button" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'">'+esc(title)+'</button><strong>'+
+      esc(score)+'/10</strong></div><div class="tasting-inner"><p>'+descriptors+
       '</p><p>'+fields+'</p><p>'+esc(r["Status"]||"")+
-      '</p><p>'+esc(r["Note"]||"")+'</p><button type="button" class="wine-name-button" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'">Åbn vinprofil →</button></div></details>';
+      '</p><p>'+esc(r["Note"]||"")+'</p></div></div>';
   }).join("");
 }
 

@@ -181,28 +181,31 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
   </section>
 </div>
 <div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
-  <h2>Registrer smagning <span style="font-size:12px;font-weight:500;color:var(--muted)">· DEMO</span></h2>
-  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Intet gemmes på hjemmesiden eller GitHub.</p>
+  <h2>Registrer smagning <span style="font-size:12px;font-weight:500;color:var(--muted)">· LOKALT</span></h2>
+  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Registreringer gemmes midlertidigt i denne browsers lokale lager, ikke i GitHub eller den fælles PALATE-database.</p>
   <form id="palateRegistration" class="register-form">
     <label class="full">Link til vin (valgfrit)<input name="Vinlink" type="url" placeholder="https://... – indsæt produktsiden her"></label>
-    <label class="full">Vin<input name="Vin" value="Rudi Rüttger Spätburgunder Réserve" autocomplete="off"></label>
-    <label>Årgang<input name="Årgang" inputmode="numeric" value="2022"></label>
+    <label class="full">Vin<input name="Vin" autocomplete="off"></label>
+    <label>Årgang<input name="Årgang" inputmode="numeric"></label>
     <label>Vintype<select name="Type"><option>Rød</option><option>Hvid</option><option>Mousserende</option><option>Rosé</option></select></label>
 
-    <label>Drikkeglæde (0–10)<input name="Drikkeglæde" type="number" min="0" max="10" step="0.5" value="9" required></label>
+    <label>Drikkeglæde (0–10)<input name="Drikkeglæde" type="number" min="0" max="10" step="0.5" required></label>
     <label>Stilakse (0–10, valgfri)<input name="Stilakse" type="number" min="0" max="10" step="0.5" placeholder="Placering på smagskortet"></label>
-    <label>Temperatur (°C)<input name="Temperatur" inputmode="decimal" value="15"></label>
+    <label>Temperatur (°C)<input name="Temperatur" inputmode="decimal"></label>
 
     <label>Helhed (0–10)<input name="Helhed" type="number" min="0" max="10" step="0.5"></label>
     <label>Balance (0–10)<input name="Balance" type="number" min="0" max="10" step="0.5"></label>
     <label>Genkøb (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5"></label>
     <label>Anbefaling (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5"></label>
     <label class="full">Smagsnoter<textarea name="Note" placeholder="Beskriv aroma, smag, balance og udvikling..."></textarea></label>
-    <label class="full">Foto af flasken (valgfrit)<input id="palateBottleUpload" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" capture="environment"></label>
-    <div class="full" id="palateBottlePreview" aria-live="polite" style="display:none"><img id="palateBottlePreviewImage" alt="Valgt flaskefoto" style="max-width:120px;max-height:170px;object-fit:contain;border-radius:10px"><p style="font-size:12px">Billedet vises kun lokalt på din enhed. Det bliver ikke uploadet eller gemt på PALATE.</p><button type="button" id="palateDownloadBottle" class="secondary">Hent billedfil</button></div>
-    <div class="full register-actions"><button type="button" id="previewRegistration">Gennemse</button><button type="button" id="exportRegistration">Eksportér CSV</button><button type="reset" class="secondary">Nulstil demo</button></div>
+    <div class="full register-actions"><button type="button" id="previewRegistration">Gennemse</button><button type="button" id="saveRegistration">Gem registrering</button><button type="reset" class="secondary">Ryd formular</button></div>
   </form>
-  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Demonstration: ingen registrering er gemt.</div>
+  <div class="full" style="margin-top:18px">
+    <h3>Gemte registreringer på denne enhed</h3>
+    <p class="lead" style="font-size:13px">Disse er endnu ikke overført til PALATEs officielle smagningsliste. Brug “Kopiér” til at sende en registrering til ChatGPT til gennemgang og indarbejdelse.</p>
+    <div id="localRegistrationList" aria-live="polite"></div>
+  </div>
+  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Ingen registrering gemt endnu. Gemte registreringer findes kun på denne enhed og kan gå tabt, hvis browserdata slettes.</div>
 </section>
 
 </div>
@@ -460,23 +463,55 @@ document.getElementById("previewRegistration").addEventListener("click",()=>{
   const r=getRegistration();if(!r)return;
   registrationStatus.textContent="Forhåndsvisning (ikke gemt):\n"+(r["Vin"]||"Vin identificeres ud fra link")+" "+r["Årgang"]+
     "\nDrikkeglæde: "+r["Drikkeglæde"]+"/10 · Temperatur: "+(r["Temperatur"]||"—")+" °C"+
-    "\nNote: "+(r["Note"]||"Ingen note endnu")+"\n\nSpor, glas, stilmatch og status udfyldes senere af ChatGPT. Du kan eksportere dette som en enkelt CSV-række.";
+    "\nNote: "+(r["Note"]||"Ingen note endnu")+"\n\nSpor, glas, stilmatch og status udfyldes senere af ChatGPT. Du kan gemme dette lokalt på enheden og kopiere det til ChatGPT.";
 });
-document.getElementById("exportRegistration").addEventListener("click",()=>{
+const PALATE_LOCAL_KEY="palate-local-registrations-v1";
+function readLocalRegistrations(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(PALATE_LOCAL_KEY)||"[]");
+    return Array.isArray(parsed)?parsed:[];
+  }catch(error){return [];}
+}
+function renderLocalRegistrations(){
+  const el=document.getElementById("localRegistrationList");
+  const records=readLocalRegistrations();
+  if(!records.length){el.innerHTML='<p class="lead" style="font-size:13px">Ingen lokale registreringer endnu.</p>';return;}
+  el.innerHTML=records.map(item=>'<div class="tasting" style="margin-bottom:8px;padding:12px"><strong>'+esc(item.data.Vin||item.data.Vinlink||"Unavngiven vin")+' '+esc(item.data["Årgang"]||"")+'</strong><p style="font-size:12px;margin:6px 0">Drikkeglæde: '+esc(item.data["Drikkeglæde"]||"—")+'/10 · Gemte lokalt: '+esc(item.savedAt||"")+'</p><button type="button" class="secondary" data-local-copy="'+esc(item.id)+'">Kopiér til ChatGPT</button> <button type="button" class="secondary" data-local-delete="'+esc(item.id)+'">Slet</button></div>').join("");
+}
+document.getElementById("saveRegistration").addEventListener("click",()=>{
   const r=getRegistration();if(!r)return;
-  const headers=["Smagning_ID","Vin","Vinlink","Årgang","Type","Spor","Stilakse","Drikkeglæde","Helhed","Balance","Stilmatch","Genkøb","Anbefaling","Gns_score","Fylde","Sødme","Situation","Status","Temperatur","Glas","Note"];
-  const csvEscape=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
-  const csv="\uFEFF"+headers.map(csvEscape).join(",")+"\r\n"+
-    headers.map(key=>csvEscape(r[key]||"")).join(",")+"\r\n";
-  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
-  const a=document.createElement("a");a.href=url;a.download="PALATE-smagning-demo.csv";
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-  registrationStatus.textContent="CSV eksporteret lokalt. Ikke gemt i PALATE eller GitHub.";
+  try{
+    const records=readLocalRegistrations();
+    const id="local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+    records.unshift({id,savedAt:new Date().toLocaleString("da-DK"),data:r});
+    localStorage.setItem(PALATE_LOCAL_KEY,JSON.stringify(records));
+    registrationStatus.textContent="Registreringen er gemt lokalt på denne enhed. Den er IKKE føjet til PALATEs officielle data. Kopiér den til ChatGPT for at få den behandlet og indarbejdet.";
+    renderLocalRegistrations();
+    document.getElementById("palateRegistration").reset();
+  }catch(error){
+    registrationStatus.textContent="Kunne ikke gemme registreringen. Browserens lokale lager kan være deaktiveret eller fyldt. Prøv igen, og undlad at lukke siden, før du har kopieret oplysningerne.";
+  }
+});
+document.getElementById("localRegistrationList").addEventListener("click",async event=>{
+  const copy=event.target.closest("[data-local-copy]");
+  const del=event.target.closest("[data-local-delete]");
+  if(!copy&&!del)return;
+  const records=readLocalRegistrations();
+  const item=records.find(x=>x.id===(copy?.dataset.localCopy||del?.dataset.localDelete));
+  if(!item)return;
+  if(del){
+    if(!confirm("Slet denne lokale registrering? Den kan ikke gendannes."))return;
+    try{localStorage.setItem(PALATE_LOCAL_KEY,JSON.stringify(records.filter(x=>x.id!==item.id)));renderLocalRegistrations();}catch(error){registrationStatus.textContent="Kunne ikke slette registreringen.";}
+    return;
+  }
+  const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(item.data).map(([k,v])=>k+": "+v).join("\n");
+  try{await navigator.clipboard.writeText(content);registrationStatus.textContent="Registreringen er kopieret. Indsæt den i ChatGPT, så vi kan behandle den og opdatere PALATE.";}
+  catch(error){registrationStatus.textContent="Automatisk kopiering blev blokeret. Prøv at åbne hjemmesiden i Safari.";}
 });
 document.getElementById("palateRegistration").addEventListener("reset",()=>{
-  registrationStatus.textContent="Demo nulstillet. Intet gemt.";
+  registrationStatus.textContent="Formularen er ryddet. Tidligere lokale registreringer er bevaret.";
 });
-
+renderLocalRegistrations();
 
 function selectPalateView(name){
   const valid=["overblik","smagninger","lager","registrer"];
@@ -534,29 +569,6 @@ document.addEventListener("click",event=>{
 });
 
 
-const palateBottleInput=document.getElementById("palateBottleUpload");
-let palateBottleObjectURL=null;
-palateBottleInput.addEventListener("change",()=>{
- if(palateBottleObjectURL){URL.revokeObjectURL(palateBottleObjectURL);palateBottleObjectURL=null;}
- const file=palateBottleInput.files?.[0];
- const preview=document.getElementById("palateBottlePreview");
- if(!file){preview.style.display="none";return;}
- if(!file.type.startsWith("image/")||file.size>12*1024*1024){
-  palateBottleInput.value="";preview.style.display="none";
-  document.getElementById("registrationStatus").textContent="Vælg et billede på højst 12 MB.";
-  return;
- }
- palateBottleObjectURL=URL.createObjectURL(file);
- document.getElementById("palateBottlePreviewImage").src=palateBottleObjectURL;
- preview.style.display="block";
-});
-document.getElementById("palateDownloadBottle").addEventListener("click",()=>{
- const file=palateBottleInput.files?.[0];if(!file||!palateBottleObjectURL)return;
- const a=document.createElement("a");a.href=palateBottleObjectURL;a.download=file.name;a.click();
-});
-document.getElementById("palateRegistration").addEventListener("reset",()=>{
- setTimeout(()=>{document.getElementById("palateBottlePreview").style.display="none";if(palateBottleObjectURL)URL.revokeObjectURL(palateBottleObjectURL);palateBottleObjectURL=null;},0);
-});
 </script>
 </body>
 </html>

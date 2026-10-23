@@ -181,8 +181,8 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
   </section>
 </div>
 <div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
-  <h2>Registrer smagning <span style="font-size:12px;font-weight:500;color:var(--muted)">· LOKALT</span></h2>
-  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Registreringer gemmes midlertidigt i denne browsers lokale lager, ikke i GitHub eller den fælles PALATE-database.</p>
+  <h2>Registrer smagning</h2>
+  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Tryk på “Kopiér til ChatGPT”, når du er færdig. Indsæt derefter oplysningerne i vores samtale, så vi kan behandle og indarbejde smagningen.</p>
   <form id="palateRegistration" class="register-form">
     <label class="full">Link til vin (valgfrit)<input name="Vinlink" type="url" placeholder="https://... – indsæt produktsiden her"></label>
     <label class="full">Vin<input name="Vin" autocomplete="off"></label>
@@ -198,14 +198,9 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
     <label>Genkøb (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5"></label>
     <label>Anbefaling (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5"></label>
     <label class="full">Smagsnoter<textarea name="Note" placeholder="Beskriv aroma, smag, balance og udvikling..."></textarea></label>
-    <div class="full register-actions"><button type="button" id="previewRegistration">Gennemse</button><button type="button" id="saveRegistration">Gem registrering</button><button type="reset" class="secondary">Ryd formular</button></div>
+    <div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
   </form>
-  <div class="full" style="margin-top:18px">
-    <h3>Gemte registreringer på denne enhed</h3>
-    <p class="lead" style="font-size:13px">Disse er endnu ikke overført til PALATEs officielle smagningsliste. Brug “Kopiér” til at sende en registrering til ChatGPT til gennemgang og indarbejdelse.</p>
-    <div id="localRegistrationList" aria-live="polite"></div>
-  </div>
-  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Ingen registrering gemt endnu. Gemte registreringer findes kun på denne enhed og kan gå tabt, hvis browserdata slettes.</div>
+  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Intet er gemt eller sendt endnu.</div>
 </section>
 
 </div>
@@ -459,59 +454,25 @@ function getRegistration(){
   return values;
 }
 const registrationStatus=document.getElementById("registrationStatus");
-document.getElementById("previewRegistration").addEventListener("click",()=>{
+document.getElementById("copyRegistration").addEventListener("click",async()=>{
   const r=getRegistration();if(!r)return;
-  registrationStatus.textContent="Forhåndsvisning (ikke gemt):\n"+(r["Vin"]||"Vin identificeres ud fra link")+" "+r["Årgang"]+
-    "\nDrikkeglæde: "+r["Drikkeglæde"]+"/10 · Temperatur: "+(r["Temperatur"]||"—")+" °C"+
-    "\nNote: "+(r["Note"]||"Ingen note endnu")+"\n\nSpor, glas, stilmatch og status udfyldes senere af ChatGPT. Du kan gemme dette lokalt på enheden og kopiere det til ChatGPT.";
-});
-const PALATE_LOCAL_KEY="palate-local-registrations-v1";
-function readLocalRegistrations(){
+  const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(r).map(([k,v])=>k+": "+v).join("\n")+
+    "\n\nUdfyld PALATE-felter som spor, glas, stilmatch og status efter vores metode. Indarbejd først smagningen i de officielle data efter gennemgang.";
   try{
-    const parsed=JSON.parse(localStorage.getItem(PALATE_LOCAL_KEY)||"[]");
-    return Array.isArray(parsed)?parsed:[];
-  }catch(error){return [];}
-}
-function renderLocalRegistrations(){
-  const el=document.getElementById("localRegistrationList");
-  const records=readLocalRegistrations();
-  if(!records.length){el.innerHTML='<p class="lead" style="font-size:13px">Ingen lokale registreringer endnu.</p>';return;}
-  el.innerHTML=records.map(item=>'<div class="tasting" style="margin-bottom:8px;padding:12px"><strong>'+esc(item.data.Vin||item.data.Vinlink||"Unavngiven vin")+' '+esc(item.data["Årgang"]||"")+'</strong><p style="font-size:12px;margin:6px 0">Drikkeglæde: '+esc(item.data["Drikkeglæde"]||"—")+'/10 · Gemte lokalt: '+esc(item.savedAt||"")+'</p><button type="button" class="secondary" data-local-copy="'+esc(item.id)+'">Kopiér til ChatGPT</button> <button type="button" class="secondary" data-local-delete="'+esc(item.id)+'">Slet</button></div>').join("");
-}
-document.getElementById("saveRegistration").addEventListener("click",()=>{
-  const r=getRegistration();if(!r)return;
-  try{
-    const records=readLocalRegistrations();
-    const id="local-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
-    records.unshift({id,savedAt:new Date().toLocaleString("da-DK"),data:r});
-    localStorage.setItem(PALATE_LOCAL_KEY,JSON.stringify(records));
-    registrationStatus.textContent="Registreringen er gemt lokalt på denne enhed. Den er IKKE føjet til PALATEs officielle data. Kopiér den til ChatGPT for at få den behandlet og indarbejdet.";
-    renderLocalRegistrations();
-    document.getElementById("palateRegistration").reset();
+    await navigator.clipboard.writeText(content);
+    registrationStatus.textContent="Smagningen er kopieret. Åbn ChatGPT og indsæt den i vores samtale. Formularen bevares, indtil du selv ændrer den.";
   }catch(error){
-    registrationStatus.textContent="Kunne ikke gemme registreringen. Browserens lokale lager kan være deaktiveret eller fyldt. Prøv igen, og undlad at lukke siden, før du har kopieret oplysningerne.";
+    const fallback=document.createElement("textarea");
+    fallback.value=content;fallback.setAttribute("readonly","");fallback.style.position="fixed";fallback.style.opacity="0";
+    document.body.appendChild(fallback);fallback.focus();fallback.select();
+    let success=false;
+    try{success=document.execCommand("copy");}catch(e){}
+    fallback.remove();
+    registrationStatus.textContent=success
+      ?"Smagningen er kopieret. Indsæt den i vores ChatGPT-samtale."
+      :"Automatisk kopiering blev blokeret. Prøv at åbne siden i Safari og tryk igen. Dine indtastninger er bevaret.";
   }
 });
-document.getElementById("localRegistrationList").addEventListener("click",async event=>{
-  const copy=event.target.closest("[data-local-copy]");
-  const del=event.target.closest("[data-local-delete]");
-  if(!copy&&!del)return;
-  const records=readLocalRegistrations();
-  const item=records.find(x=>x.id===(copy?.dataset.localCopy||del?.dataset.localDelete));
-  if(!item)return;
-  if(del){
-    if(!confirm("Slet denne lokale registrering? Den kan ikke gendannes."))return;
-    try{localStorage.setItem(PALATE_LOCAL_KEY,JSON.stringify(records.filter(x=>x.id!==item.id)));renderLocalRegistrations();}catch(error){registrationStatus.textContent="Kunne ikke slette registreringen.";}
-    return;
-  }
-  const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(item.data).map(([k,v])=>k+": "+v).join("\n");
-  try{await navigator.clipboard.writeText(content);registrationStatus.textContent="Registreringen er kopieret. Indsæt den i ChatGPT, så vi kan behandle den og opdatere PALATE.";}
-  catch(error){registrationStatus.textContent="Automatisk kopiering blev blokeret. Prøv at åbne hjemmesiden i Safari.";}
-});
-document.getElementById("palateRegistration").addEventListener("reset",()=>{
-  registrationStatus.textContent="Formularen er ryddet. Tidligere lokale registreringer er bevaret.";
-});
-renderLocalRegistrations();
 
 function selectPalateView(name){
   const valid=["overblik","smagninger","lager","registrer"];

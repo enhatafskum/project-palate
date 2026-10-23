@@ -1,0 +1,28 @@
+Smagning_ID,Vin,Årgang,Type,Spor,Stilakse,Drikkeglæde,Helhed,Balance,Stilmatch,Genkøb,Anbefaling,Gns_score,Fylde,Sødme,Situation,Status,Temperatur,Glas,Note
+1,Charles Roux Blanc de Blancs Demi-Sec,,Mousserende,Catrine / sødmefuld,4,8,10,8,8,8,8,8.33,,,,Stærkt match,,White,Crowd pleaser og positiv reference i Catrines spor
+2,Araldica Brachetto d'Acqui Dolce,,Mousserende,Sødme / crowd pleaser,3,5,5,4,3,2,2,3.50,,,,Mismatch,,White,Tydeligt mismatch
+3,Tagaro Fortello Syrah Appassimento,,Rød,Balanceret kraft,9.5,6,6,3,4,2,3,4.00,For meget,,,Mismatch / negativ reference,,Bordeaux,For voldsom / koncentreret
+4,Maori Moana Sauvignon Blanc,2025,Hvid,Friskhed & mineralitet,2.5,7,6,6,6,6,6,6.17,,,Grill på terrasse,God reference,9–11 °C,White,Frisk og mineralsk; mangler lidt tekstur
+5,Cave de Vinzelles Pouilly-Fuissé 1er Cru,2024,Hvid,Tekstur & mineralitet,4.5,9.5,9.5,9.5,9.5,10,10,9.67,Passende,Passende,,Sweet spot,10–12 °C,White,Balance mellem friskhed mineralitet og fylde; pris ved registrering 250 kr. v/6
+6,Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté,2022,Hvid,Tekstur & mineralitet,3.5,10,10,10,10,10,10,10.00,Passende,Passende,,Sweet spot,10–12 °C,White,10/10-reference; virkelig god balance og fylde
+7,Vidal-Fleury Ventoux Rouge,2024,Rød,Dybde & balance,6.5,7,6,6,6,6,6,6.17,Passende,,,God reference,,Bordeaux,Letdrikkelig men mangler elegance
+8,Jean Gagnerot Bourgogne Chardonnay,2024,Hvid,Friskhed & mineralitet,3,6,6,7.5,7.5,6,6,6.50,For lidt,,,Grænse / kalibrering,10–12 °C,White,Duften lover mere fylde end smagen leverer
+9,Mayer am Pfarrplatz Asia Cuvée,2024,Hvid,Frugt & rundhed,5,8.5,8,8,8,8,8,8.08,Passende,Lidt for sød,,Stærkt match,9–11 °C,White,God balance; en anelse sød og tæt på øvre sødmegrænse
+10,Gehlen-Cornelius Syrah,,Rød,Balanceret kraft,8,8.5,8.5,8,8,7,8.5,8.08,Passende,Passende,,Stærkt match,16–17 °C,Bordeaux,Eftersmag mineralitet kompleksitet og læskbarhed
+11,Huber Terrassen Grüner Veltliner,2025,Hvid,Friskhed & mineralitet,2.5,7.5,7.5,7.5,7.5,7,7,7.33,Lidt for lidt,Mellem for tør og passende,,God reference,9–11 °C,White,Mineraler men let skarp i anslaget
+12,Ziereisen TAL Spätburgunder,2023,Rød,Finesse & saftighed,2.5,6,6,7,6.5,6,6,6.25,Lidt for lidt,For tør,,Grænse / kalibrering,15–16 °C,Burgundy,Kompleksitet næse og mineralitet; oprindeligt for tør og slank
+13,Tenuta del Principe Mensale Toscana IGP Sangiovese,2018,Rød,Dybde & balance,7,8,8,8,8,7.5,8,7.92,Passende,Passende,,Stærkt match,16–17 °C,Bordeaux,Kraftige tanniner balanceret af krop og rundhed
+14,Prosper Maufoux Mâcon-Villages,2024,Hvid,Tekstur & mineralitet,4,9,9,9,9,9,9,9.00,Næsten passende fra lav side,Næsten passende fra lav side,,Sweet spot / hverdagsvin,10–12 °C,White,Balance og høj drikkeglæde
+15,Bread & Butter Chardonnay,2023,Hvid,Fylde & fad,7,8.5,8.5,7,7.5,7,8,7.75,Passende,Passende,,God reference,10–12 °C,White,Underholdende men lidt vulgær / demonstrativ
+16,Maison Vaubourg Mâcon-Igé La Cra,2023,Hvid,Tekstur & mineralitet,4.5,8.5,8.5,9,8.5,8.5,8.5,8.58,Passende,Næsten passende fra lav side,,Stærkt match,10–12 °C,White,Elegant cremet og mineralsk
+17,Rudi Rüttger Spätburgunder Vom Kalkboden,2024,Rød,Finesse & saftighed,3.5,8,8,8,8,7,7.5,7.75,Passende,Passende,,Stærkt match,15–16 °C,Burgundy,Harmoni mellem fylde sødme mineral og kraft
+18,Fleurie Granits Roses – Domaine de Bel-Air,2023,Rød,Finesse & saftighed,3.5,8.5,8.5,8.5,8.5,8.5,8.5,8.50,Passende,Passende,Middag / stegt kylling,Sweet spot,15–16 °C,Burgundy,Let anslag vokser i munden; kompleks og læskende
+19,Riesling Trocken “Keine Hexerei” Pfalz Öko,2024,Hvid,Friskhed & mineralitet,2.5,8,8,8,8,7.5,7.5,7.83,Mellem for lidt og passende,Mellem for lidt og passende,,Stærkt match,9–11 °C,White,Fine mineraler; måske lidt anonym
+20,Tony Bish Heartwood Chardonnay,2024,Hvid,Fylde & fad,7.5,9,8.5,8.5,8,8,8.5,8.42,Passende,Passende,,Stærkt match,10–12 °C,White / Burgundy,Meget underholdende; tydeligt fad og lidt for demonstrativ til helt sweet spot
+21,Chevalier Delaude,2022,Rød,Balanceret kraft,8.5,8.5,8.5,8.5,8.5,8.5,8.5,8.50,Passende,Passende,Hygge / madlavning,Stærkt match,16–17 °C,Bordeaux,Køligere servering gav cassis mineraler og elegance
+22,Beyra Reserva,2019,Rød,Balanceret kraft,8,8.8,8.8,8.8,8.8,8.5,8.5,8.70,Passende,Passende,Hygge,Sweet spot,16–17 °C,Bordeaux,Nuancer mørke bær tobak mineraler og læskbarhed
+23,Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve,2022,Rød,Finesse & saftighed,3,7.5,7.5,8.5,7.5,7,7,7.50,For lidt,For lidt,Hyggeglas,Oprindelig smagning,ca. 18 °C,Burgundy,Mineraler og kompleks elegance men først oplevet for let/tør; senere gentagelsestest ændrede konklusionen
+24,Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve,2022,Rød,Finesse & saftighed,3,9,9,9,9,9,9,9.00,Passende,Passende,Temperature replication,Sweet spot / temperaturtest,ca. 15 °C,Burgundy,Ved ca. 15 °C faldt aromaer og smage på plads
+25,Château Lamothe-Vincent Réserve Rouge,2020,Rød,Dybde & balance,7.5,8.5,8.5,8.5,8.5,8.5,8.5,8.50,Passende,Passende,Hyggeglas,Sweet spot,ca. 17 °C,Bordeaux,Ved ca. 17 °C kom bær tobak og mineraler tydeligt frem
+26,Cantine Paradiso 1954 Primitivo,2023,Rød,Balanceret kraft,9,9,9,9,9,9,,9.00,Passende,Passende,Hyggeglas,Sweet spot,16–17 °C,Bordeaux,Kraftig men læskende harmonisk og blød ved korrekt temperatur
+27,Domaines Leflaive Les Chênes Mâcon-Verzé,2024,Hvid,Tekstur & mineralitet,,8.5,8,8.5,8.5,8,8,,,Passende,Tæt på passende / mod tør,,Stærkt match,,White,Fylde passende; sødme tæt på passende; delikat fad/mineralitet; syre-sødmebalancen begrænsede drikkeglæden

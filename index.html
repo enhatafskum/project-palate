@@ -86,6 +86,16 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 .pilot-wine a{font-size:12px;color:var(--wine)}
 .pilot-wine p{font-size:11px;color:var(--muted);margin:6px 0}
 @media(max-width:900px){.pilot-wines{grid-template-columns:1fr}}
+
+.wine-name-button{background:none;border:0;padding:0;text-align:left;color:var(--wine);font:inherit;font-weight:650;text-decoration:underline;text-decoration-color:#c9b7bf;text-underline-offset:3px;cursor:pointer}
+.wine-dialog{border:1px solid var(--line);border-radius:18px;max-width:min(570px,calc(100vw - 24px));width:100%;max-height:85vh;overflow:auto;padding:24px;background:var(--panel);color:var(--ink);box-shadow:0 20px 65px #0004}
+.wine-dialog::backdrop{background:#151b25a6}
+.wine-dialog-close{float:right;border:0;background:#eee8df;border-radius:9px;padding:8px 12px;cursor:pointer}
+.wine-dialog-top{display:flex;gap:18px;align-items:center;margin:16px 0}
+.wine-dialog-bottle{height:140px;width:94px;flex:0 0 94px;border-radius:12px;background:#f2eee9;display:grid;place-items:center}
+.wine-dialog-bottle svg{width:45px;height:95px}
+.wine-dialog h2{margin:0 0 8px;font-size:21px}
+.wine-dialog .kv{grid-template-columns:100px 1fr}
 </style>
 </head>
 <body>
@@ -194,6 +204,10 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 
 </div>
 </main>
+<dialog id="wineProfileDialog" class="wine-dialog" aria-label="Vinens profil">
+<button type="button" class="wine-dialog-close" id="closeWineProfile">Luk ×</button>
+<div id="wineProfileContent"></div>
+</dialog>
 
 <footer>Project PALATE · Afledt dashboard. Master.md + Lager.csv + Smagninger.csv er autoritative datakilder. Smagskortet viser kun vine med registreret stilakse.</footer>
 <div class="tooltip" id="tooltip"></div>
@@ -316,7 +330,7 @@ function renderChart() {
       tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
     });
     p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
-    p.addEventListener("click", ()=>showDetail(data[+p.dataset.index]));
+    p.addEventListener("click", ()=>showDetail(data[+p.dataset.index]); openPalateWine(data[+p.dataset.index].name,data[+p.dataset.index].vintage);
   });
 }
 
@@ -324,7 +338,7 @@ function renderStock(filter="Alle"){
   const body=document.getElementById("stockBody");
   const rows=inventory.filter(i=>filter==="Alle"||i.type===filter)
     .sort((a,b)=>b.qty-a.qty)
-    .map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.vintage||"—")}</td><td>${esc(i.track)}</td><td>${esc(i.status)}</td><td class="qty">${i.qty}</td></tr>`)
+    .map(i=>`<tr><td><button type="button" class="wine-name-button" data-palate-wine="${esc(i.name)}" data-palate-year="${esc(i.vintage||"")}">${esc(i.name)}</button></td><td>${esc(i.vintage||"—")}</td><td>${esc(i.track)}</td><td>${esc(i.status)}</td><td class="qty">${i.qty}</td></tr>`)
     .join("");
   body.innerHTML=rows;
 }
@@ -384,7 +398,7 @@ function renderTastingHistory(rows){
     return '<details class="tasting"><summary><span>'+esc(title)+'</span><strong>'+
       esc(score)+'/10</strong></summary><div class="tasting-inner"><p>'+descriptors+
       '</p><p>'+fields+'</p><p>'+esc(r["Status"]||"")+
-      '</p><p>'+esc(r["Note"]||"")+'</p></div></details>';
+      '</p><p>'+esc(r["Note"]||"")+'</p><button type="button" class="wine-name-button" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'">Åbn vinprofil →</button></div></details>';
   }).join("");
 }
 
@@ -477,6 +491,44 @@ document.querySelectorAll(".palate-nav [data-view]").forEach(button=>{
 });
 window.addEventListener("hashchange",()=>selectPalateView(location.hash.slice(1)));
 selectPalateView(location.hash.slice(1));
+
+
+function palateWineKey(name,year){
+ return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\\p{L}\\p{N}]+/gu," ").trim();
+}
+function findPalateWine(name,year){
+ const key=palateWineKey(name,year);
+ return wines.find(w=>palateWineKey(w.name,w.vintage)===key)
+   ||wines.find(w=>palateWineKey(w.name,w.vintage).includes(key)||key.includes(palateWineKey(w.name,w.vintage)))
+   ||null;
+}
+function openPalateWine(name,year){
+ const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===palateWineKey(name,year));
+ const wine=findPalateWine(name,year);
+ const displayName=stock?.name||wine?.name||name;
+ const displayYear=stock?.vintage||wine?.vintage||year||"";
+ const info=[
+ ["Vintype",stock?.type||wine?.type],
+ ["Spor",stock?.track||wine?.track],
+ ["Drikkeglæde",Number.isFinite(wine?.joy)?wine.joy+"/10":""],
+ ["Temperatur",wine?.temp],
+ ["Glas",wine?.glass],
+ ["Status",stock?.status||wine?.status],
+ ["På lager",stock?stock.qty+" fl.":""]
+ ].filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
+ const bottle='<svg viewBox="0 0 50 105" role="img" aria-label="Neutral flaskeillustration"><path d="M20 3h10v18l4 7v10c0 5 10 12 10 21v36c0 5-4 8-9 8H15c-5 0-9-3-9-8V59c0-9 10-16 10-21V28l4-7z" fill="#7a1f3d"/><rect x="11" y="62" width="28" height="25" rx="2" fill="#f7f4ef"/><path d="M20 5h10" stroke="#d2b88a" stroke-width="5"/></svg>';
+ document.getElementById("wineProfileContent").innerHTML=
+ '<div class="wine-dialog-top"><div class="wine-dialog-bottle">'+bottle+'</div><div><h2>'+esc(displayName)+'</h2><div>'+esc(displayYear)+'</div><p style="font-size:12px;color:var(--muted)">Flaskebillede afventer verificeret kilde</p></div></div>'+
+ '<div class="kv">'+info.map(([k,v])=>'<div>'+esc(k)+'</div><div>'+esc(String(v))+'</div>').join("")+'</div>'+
+ (wine?.note?'<div class="note">'+esc(wine.note)+'</div>':"");
+ const dialog=document.getElementById("wineProfileDialog");
+ if(!dialog.open)dialog.showModal();
+}
+document.getElementById("closeWineProfile").addEventListener("click",()=>document.getElementById("wineProfileDialog").close());
+document.addEventListener("click",event=>{
+ const button=event.target.closest("[data-palate-wine]");
+ if(button)openPalateWine(button.dataset.palateWine,button.dataset.palateYear||"");
+});
 
 </script>
 </body>

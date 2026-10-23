@@ -59,7 +59,19 @@ th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute
 .hypothesis{margin-top:18px;background:var(--green);border:1px solid #cfe5d4;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.5}
 footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);font-size:11px}
 @media(max-width:950px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}#chartWrap{height:480px}}
-.tasting{border-bottom:1px solid #e5e1db;padding:11px 0}.tasting summary{cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center}.tasting summary strong{white-space:nowrap;color:#7b3049}.tasting-inner{padding:4px 6px;font-size:13px;line-height:1.55}.tasting-inner p{margin:8px 0}@media(max-width:650px){#chartWrap{height:auto;min-height:280px;aspect-ratio:900/560}#chart{width:100%;height:auto}.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.tab,.filter{min-height:42px}}</style>
+.tasting{border-bottom:1px solid #e5e1db;padding:11px 0}.tasting summary{cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center}.tasting summary strong{white-space:nowrap;color:#7b3049}.tasting-inner{padding:4px 6px;font-size:13px;line-height:1.55}.tasting-inner p{margin:8px 0}@media(max-width:650px){#chartWrap{height:auto;min-height:280px;aspect-ratio:900/560}#chart{width:100%;height:auto}.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.tab,.filter{min-height:42px}}
+/* PALATE registrering – lokal demonstration uden serveradgang */
+.register-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.register-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650}
+.register-form input,.register-form select,.register-form textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:11px;font:inherit;font-weight:400;min-height:43px}
+.register-form textarea{min-height:95px;resize:vertical}
+.register-form .full{grid-column:1/-1}
+.register-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.register-actions button{border:0;border-radius:10px;background:var(--wine);color:white;padding:12px 16px;font:inherit;font-weight:650;cursor:pointer}
+.register-actions button.secondary{background:#e9e4df;color:var(--ink)}
+.register-status{margin-top:12px;white-space:pre-wrap;font-size:13px;line-height:1.5}
+@media(max-width:650px){.register-form{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <header>
@@ -71,6 +83,30 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 </header>
 
 <main>
+<section class="panel" style="margin-bottom:18px" id="registerPanel">
+  <h2>Registrer smagning <span style="font-size:12px;font-weight:500;color:var(--muted)">· DEMO</span></h2>
+  <p class="lead">Udfyld en smagning, kontrollér den og eksportér som CSV. Intet gemmes på hjemmesiden eller GitHub.</p>
+  <form id="palateRegistration" class="register-form">
+    <label class="full">Vin<input name="Vin" required value="Rudi Rüttger Spätburgunder Réserve" autocomplete="off"></label>
+    <label>Årgang<input name="Årgang" inputmode="numeric" value="2022"></label>
+    <label>Vintype<select name="Type"><option>Rød</option><option>Hvid</option><option>Mousserende</option><option>Rosé</option></select></label>
+    <label>Spor<select name="Spor"><option>Finesse &amp; saftighed</option><option>Dybde &amp; balance</option><option>Balanceret kraft</option><option>Friskhed &amp; mineralitet</option><option>Tekstur &amp; mineralitet</option><option>Fylde &amp; fad</option><option>Frugt &amp; rundhed</option><option>Andet</option></select></label>
+    <label>Drikkeglæde (0–10)<input name="Drikkeglæde" type="number" min="0" max="10" step="0.5" value="9" required></label>
+    <label>Stilakse (0–10, valgfri)<input name="Stilakse" type="number" min="0" max="10" step="0.5" placeholder="Placering på smagskortet"></label>
+    <label>Temperatur (°C)<input name="Temperatur" inputmode="decimal" value="15"></label>
+    <label>Glas<select name="Glas"><option>Burgundy</option><option>Bordeaux</option><option>White</option></select></label>
+    <label>Helhed (0–10)<input name="Helhed" type="number" min="0" max="10" step="0.5"></label>
+    <label>Balance (0–10)<input name="Balance" type="number" min="0" max="10" step="0.5"></label>
+    <label>Stilmatch (0–10)<input name="Stilmatch" type="number" min="0" max="10" step="0.5"></label>
+    <label>Genkøb (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5"></label>
+    <label>Anbefaling (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5"></label>
+    <label>Status<input name="Status" placeholder="Fx Stærkt match"></label>
+    <label class="full">Smagsnoter<textarea name="Note" placeholder="Beskriv aroma, smag, balance og udvikling..."></textarea></label>
+    <div class="full register-actions"><button type="button" id="previewRegistration">Gennemse</button><button type="button" id="exportRegistration">Eksportér CSV</button><button type="reset" class="secondary">Nulstil demo</button></div>
+  </form>
+  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Demonstration: ingen registrering er gemt.</div>
+</section>
+
   <section class="cards">
     <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
     <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
@@ -362,6 +398,34 @@ async function loadPalateData(){
   }
 }
 loadPalateData();
+
+
+function getRegistration(){
+  const form=document.getElementById("palateRegistration");
+  if(!form.reportValidity())return null;
+  return Object.fromEntries(new FormData(form).entries());
+}
+const registrationStatus=document.getElementById("registrationStatus");
+document.getElementById("previewRegistration").addEventListener("click",()=>{
+  const r=getRegistration();if(!r)return;
+  registrationStatus.textContent="Forhåndsvisning (ikke gemt):\n"+r["Vin"]+" "+r["Årgang"]+
+    "\nDrikkeglæde: "+r["Drikkeglæde"]+"/10 · Temperatur: "+(r["Temperatur"]||"—")+" °C"+
+    "\nNote: "+(r["Note"]||"Ingen note endnu")+"\n\nDu kan eksportere dette som en enkelt CSV-række.";
+});
+document.getElementById("exportRegistration").addEventListener("click",()=>{
+  const r=getRegistration();if(!r)return;
+  const headers=["Smagning_ID","Vin","Årgang","Type","Spor","Stilakse","Drikkeglæde","Helhed","Balance","Stilmatch","Genkøb","Anbefaling","Gns_score","Fylde","Sødme","Situation","Status","Temperatur","Glas","Note"];
+  const csvEscape=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
+  const csv="\uFEFF"+headers.map(csvEscape).join(",")+"\r\n"+
+    headers.map(key=>csvEscape(r[key]||"")).join(",")+"\r\n";
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  const a=document.createElement("a");a.href=url;a.download="PALATE-smagning-demo.csv";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  registrationStatus.textContent="CSV eksporteret lokalt. Ikke gemt i PALATE eller GitHub.";
+});
+document.getElementById("palateRegistration").addEventListener("reset",()=>{
+  registrationStatus.textContent="Demo nulstillet. Intet gemt.";
+});
 
 </script>
 </body>

@@ -97,6 +97,14 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 .wine-dialog h2{margin:0 0 8px;font-size:21px}
 .wine-dialog .kv{grid-template-columns:100px 1fr}
 .tasting-summary{display:flex;justify-content:space-between;align-items:center;gap:12px}.tasting-summary .wine-name-button{font-weight:650}.tasting-inner{padding-top:10px}
+
+.palate-scale{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#faf8f5}
+.scale-heading{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:14px}
+.scale-current{font-size:13px;color:var(--wine);font-weight:650;text-align:right}
+.palate-scale input[type="range"]{width:100%;margin:15px 0 4px;padding:0;min-height:26px;accent-color:var(--wine);cursor:pointer}
+.scale-labels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;align-items:start;text-align:center;font-size:11px;color:var(--muted)}
+.scale-labels span:first-child{text-align:left}.scale-labels span:last-child{text-align:right}
+.scale-help{margin:4px 0 0;font-size:12px;color:var(--muted);font-weight:400}
 </style>
 </head>
 <body>
@@ -184,22 +192,23 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
   <h2>Registrer smagning</h2>
   <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Tryk på “Kopiér til ChatGPT”, når du er færdig. Indsæt derefter oplysningerne i vores samtale, så vi kan behandle og indarbejde smagningen.</p>
   <form id="palateRegistration" class="register-form">
-    <label class="full">Link til vin (valgfrit)<input name="Vinlink" type="url" placeholder="https://... – indsæt produktsiden her"></label>
-    <label class="full">Vin<input name="Vin" autocomplete="off"></label>
-    <label>Årgang<input name="Årgang" inputmode="numeric"></label>
-    <label>Vintype<select name="Type"><option>Rød</option><option>Hvid</option><option>Mousserende</option><option>Rosé</option></select></label>
-
-    <label>Drikkeglæde (0–10)<input name="Drikkeglæde" type="number" min="0" max="10" step="0.5" required></label>
-    <label>Stilakse (0–10, valgfri)<input name="Stilakse" type="number" min="0" max="10" step="0.5" placeholder="Placering på smagskortet"></label>
-    <label>Temperatur (°C)<input name="Temperatur" inputmode="decimal"></label>
-
-    <label>Helhed (0–10)<input name="Helhed" type="number" min="0" max="10" step="0.5"></label>
-    <label>Balance (0–10)<input name="Balance" type="number" min="0" max="10" step="0.5"></label>
-    <label>Genkøb (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5"></label>
-    <label>Anbefaling (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5"></label>
-    <label class="full">Smagsnoter<textarea name="Note" placeholder="Beskriv aroma, smag, balance og udvikling..."></textarea></label>
-    <div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
-  </form>
+<label class="full">Link<input name="Vinlink" type="url" placeholder="https://... (valgfrit)"></label>
+<label class="full">Navn<input name="Vin" autocomplete="off" placeholder="Vinens navn"></label>
+<label>Årgang<input name="Årgang" inputmode="numeric" placeholder="ÅÅÅÅ"></label>
+<div class="full"><h3>Din vurdering</h3><p class="scale-help">Angiv dine egne scorer. Felterne med 0–10 er uafhængige vurderinger.</p></div>
+<label>Drikkeglæde (0–10)<input name="Drikkeglæde" type="number" min="0" max="10" step="0.5" required placeholder="0–10"></label>
+<label>Helhedsoplevelse (0–10)<input name="Helhed" type="number" min="0" max="10" step="0.5" placeholder="0–10"></label>
+<label>Balance og elegance (0–10)<input name="Balance" type="number" min="0" max="10" step="0.5" placeholder="0–10"></label>
+<label>Personligt stilmatch (0–10)<input name="Stilmatch" type="number" min="0" max="10" step="0.5" placeholder="0–10"></label>
+<label>Genkøbslyst (0–10)<input name="Genkøb" type="number" min="0" max="10" step="0.5" placeholder="0–10"></label>
+<label>Vil du anbefale den til en god ven (0–10)<input name="Anbefaling" type="number" min="0" max="10" step="0.5" placeholder="0–10"></label>
+<div class="full"><h3>Hvordan oplevedes vinen?</h3></div>
+<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Fylde fra 0 til 10" data-scale-slider="Fylde"><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>For lidt</span><span>Passende</span><span>Lidt for meget</span><span>Klart for meget</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
+<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Sødme fra 0 til 10" data-scale-slider="Sødme"><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>For tør</span><span>Passende</span><span>En anelse for sød</span><span>For sød</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
+<label class="full">Drikkesituation<textarea name="Situation" rows="2" placeholder="Hvor og i hvilken sammenhæng drak du vinen?"></textarea></label>
+<label class="full">Hvad var det bedste ved vinen?<textarea name="Note" rows="3" placeholder="Hvad gjorde størst positivt indtryk?"></textarea></label>
+<div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
+</form>
   <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Intet er gemt eller sendt endnu.</div>
 </section>
 
@@ -453,11 +462,27 @@ function getRegistration(){
   if(!values.Vin.trim()&&!values.Vinlink.trim()){registrationStatus.textContent="Indtast enten vinens navn eller et link til vinen.";return null;}
   return values;
 }
+document.querySelectorAll("[data-scale-slider]").forEach(slider=>{
+ const group=slider.closest(".palate-scale");
+ const output=group.querySelector(".scale-current");
+ const hidden=group.querySelector('input[type="hidden"]');
+ const descriptions=slider.dataset.scaleSlider==="Fylde"
+  ?["For lidt","Passende","Lidt for meget","Klart for meget"]
+  :["For tør","Passende","En anelse for sød","For sød"];
+ slider.addEventListener("input",()=>{
+  const number=Number(slider.value);
+  const index=number<=2?0:number<=5?1:number<=8?2:3;
+  const description=descriptions[index];
+  output.textContent=number+"/10 · "+description;
+  hidden.value=number+"/10 ("+description+")";
+  hidden.disabled=false;
+ });
+});
 const registrationStatus=document.getElementById("registrationStatus");
 document.getElementById("copyRegistration").addEventListener("click",async()=>{
   const r=getRegistration();if(!r)return;
   const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(r).map(([k,v])=>k+": "+v).join("\n")+
-    "\n\nUdfyld PALATE-felter som spor, glas, stilmatch og status efter vores metode. Indarbejd først smagningen i de officielle data efter gennemgang.";
+    "\n\nUdfyld PALATE-felter som spor, glas og status efter vores metode. Bevar mine egne stilmatch-scorer. Indarbejd først smagningen i de officielle data efter gennemgang.";
   try{
     await navigator.clipboard.writeText(content);
     registrationStatus.textContent="Smagningen er kopieret. Åbn ChatGPT og indsæt den i vores samtale. Formularen bevares, indtil du selv ændrer den.";

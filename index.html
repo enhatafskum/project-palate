@@ -85,9 +85,10 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 <main>
 <section class="panel" style="margin-bottom:18px" id="registerPanel">
   <h2>Registrer smagning <span style="font-size:12px;font-weight:500;color:var(--muted)">· DEMO</span></h2>
-  <p class="lead">Udfyld dine egne vurderinger. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Intet gemmes på hjemmesiden eller GitHub.</p>
+  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Intet gemmes på hjemmesiden eller GitHub.</p>
   <form id="palateRegistration" class="register-form">
-    <label class="full">Vin<input name="Vin" required value="Rudi Rüttger Spätburgunder Réserve" autocomplete="off"></label>
+    <label class="full">Link til vin (valgfrit)<input name="Vinlink" type="url" placeholder="https://... – indsæt produktsiden her"></label>
+    <label class="full">Vin<input name="Vin" value="Rudi Rüttger Spätburgunder Réserve" autocomplete="off"></label>
     <label>Årgang<input name="Årgang" inputmode="numeric" value="2022"></label>
     <label>Vintype<select name="Type"><option>Rød</option><option>Hvid</option><option>Mousserende</option><option>Rosé</option></select></label>
 
@@ -401,18 +402,20 @@ loadPalateData();
 function getRegistration(){
   const form=document.getElementById("palateRegistration");
   if(!form.reportValidity())return null;
-  return Object.fromEntries(new FormData(form).entries());
+  const values=Object.fromEntries(new FormData(form).entries());
+  if(!values.Vin.trim()&&!values.Vinlink.trim()){registrationStatus.textContent="Indtast enten vinens navn eller et link til vinen.";return null;}
+  return values;
 }
 const registrationStatus=document.getElementById("registrationStatus");
 document.getElementById("previewRegistration").addEventListener("click",()=>{
   const r=getRegistration();if(!r)return;
-  registrationStatus.textContent="Forhåndsvisning (ikke gemt):\n"+r["Vin"]+" "+r["Årgang"]+
+  registrationStatus.textContent="Forhåndsvisning (ikke gemt):\n"+(r["Vin"]||"Vin identificeres ud fra link")+" "+r["Årgang"]+
     "\nDrikkeglæde: "+r["Drikkeglæde"]+"/10 · Temperatur: "+(r["Temperatur"]||"—")+" °C"+
     "\nNote: "+(r["Note"]||"Ingen note endnu")+"\n\nSpor, glas, stilmatch og status udfyldes senere af ChatGPT. Du kan eksportere dette som en enkelt CSV-række.";
 });
 document.getElementById("exportRegistration").addEventListener("click",()=>{
   const r=getRegistration();if(!r)return;
-  const headers=["Smagning_ID","Vin","Årgang","Type","Spor","Stilakse","Drikkeglæde","Helhed","Balance","Stilmatch","Genkøb","Anbefaling","Gns_score","Fylde","Sødme","Situation","Status","Temperatur","Glas","Note"];
+  const headers=["Smagning_ID","Vin","Vinlink","Årgang","Type","Spor","Stilakse","Drikkeglæde","Helhed","Balance","Stilmatch","Genkøb","Anbefaling","Gns_score","Fylde","Sødme","Situation","Status","Temperatur","Glas","Note"];
   const csvEscape=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
   const csv="\uFEFF"+headers.map(csvEscape).join(",")+"\r\n"+
     headers.map(key=>csvEscape(r[key]||"")).join(",")+"\r\n";

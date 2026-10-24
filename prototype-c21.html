@@ -351,6 +351,62 @@ header{padding-left:clamp(20px,2.4vw,38px)}
   #view-overblik .tabs .tab{padding:10px 11px}
   #view-overblik button.filter{padding:9px 11px}
 }
+</style><style>
+/* C2.1 – samme visuelle identitet på de øvrige tre sider */
+#view-smagninger,#view-lager,#view-registrer{padding-top:12px}
+#view-smagninger .panel,#view-lager .panel,#view-registrer .panel{
+ background:#fffefa;border:1px solid #e3dcd2;border-radius:5px;
+ box-shadow:none;padding:clamp(20px,3vw,38px)
+}
+#view-smagninger .panel h2,#view-lager .panel h2,#view-registrer .panel h2{
+ font:400 clamp(28px,3vw,40px)/1.12 Georgia,'Times New Roman',serif;
+ letter-spacing:-.035em;color:#292723;margin-bottom:10px
+}
+#view-smagninger .panel p.lead,#view-lager .panel p.lead,#view-registrer .panel p.lead{
+ color:#615d56;font-size:13px;line-height:1.7;max-width:780px
+}
+#view-smagninger .tasting-controls{margin:24px 0 17px;gap:14px}
+#view-smagninger .tasting-controls label{font-size:12px;color:#625b54;font-weight:600;gap:7px}
+#view-smagninger .tasting-controls input,#view-smagninger .tasting-controls select{
+ background:#fffefa;color:#2d2b29;border:1px solid #dcd4c9;border-radius:9px;
+ min-height:46px;font-size:13px;padding:10px 13px
+}
+#view-smagninger .tasting-row{padding:17px 6px}
+#view-smagninger .tasting-row-name{font-size:14px;color:#2c2926;font-weight:600}
+#view-smagninger .tasting-row-name small{font-size:12px;color:#77716c;margin-top:6px}
+#view-smagninger .tasting-row strong{font:400 22px Georgia,'Times New Roman',serif;color:#662b3d}
+#view-smagninger .compact-tasting{border-color:#e9e4dc}
+#view-lager .tabs{border:0;gap:8px;flex-wrap:wrap;margin:20px 0 14px}
+#view-lager .tab{background:transparent;color:#625b54;border:1px solid transparent;border-radius:999px;padding:10px 16px;min-height:43px;font-weight:550}
+#view-lager .tab.active{background:#e9dbdf;color:#622b3e;font-weight:700}
+#view-lager table{font-size:13px}
+#view-lager th{color:#746d64;letter-spacing:.09em;font-weight:650}
+#view-lager td,#view-lager th{border-bottom:1px solid #e9e4dc;padding:13px 10px}
+#view-lager .tableWrap{border-radius:0}
+#view-lager .hypothesis{background:#f5f2eb!important;border:1px solid #e7e0d6!important;color:#554f49;border-radius:7px;line-height:1.65}
+#view-registrer .register-form{gap:17px}
+#view-registrer .register-form label{gap:7px;color:#5e5650;font-size:12px;font-weight:650}
+#view-registrer .register-form input,#view-registrer .register-form textarea,#view-registrer .register-form select{
+ border:1px solid #ddd5cb;border-radius:9px;background:#fffefa;color:#292723;
+ min-height:46px;padding:12px 13px
+}
+#view-registrer .register-form h3{font:400 24px Georgia,'Times New Roman',serif;letter-spacing:-.025em}
+#view-registrer .scale-help{color:#6d675e;line-height:1.65}
+#view-smagninger button:focus-visible,#view-lager button:focus-visible,#view-registrer button:focus-visible{
+ outline:2px solid #71334a;outline-offset:3px
+}
+@media(max-width:740px){
+ #view-smagninger,#view-lager,#view-registrer{padding-top:3px}
+ #view-smagninger .panel,#view-lager .panel,#view-registrer .panel{padding:21px 16px}
+ #view-smagninger .panel h2,#view-lager .panel h2,#view-registrer .panel h2{font-size:31px}
+ #view-smagninger .tasting-controls{gap:9px;margin-top:20px}
+ #view-smagninger .tasting-row{padding:15px 2px}
+ #view-lager td,#view-lager th{padding:11px 8px}
+}
+@media(max-width:390px){
+ #view-smagninger .panel,#view-lager .panel,#view-registrer .panel{padding:19px 12px}
+ #view-lager .tab{padding:10px 12px}
+}
 </style></head>
 <body>
 <div class="palate-preview-ribbon"><span>DESIGNSTUDIE · C2.1 — Typografi, kontrast og informationshierarki</span><a href="./index.html">Gå til den nuværende PALATE-side ↗</a></div>
@@ -408,7 +464,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </div>
 <div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
 <section class="panel" style="margin-top:18px">
-<h2>Smagninger</h2><p class="lead">Find en vin, og tryk på den for at se alle oplysninger og registreringshistorik.</p>
+<h2>Smagninger</h2><p class="lead">Dine registrerede vine. Den seneste vurdering og registreringsdato vises i oversigten. Tryk på en vin for at se hele historikken.</p>
 <div class="tasting-controls">
 <label>Søg<input id="tastingSearch" type="search" placeholder="Vin eller årgang" autocomplete="off"></label>
 <label>Vintype<select id="tastingType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
@@ -420,8 +476,8 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </section></div>
 <div class="palate-view" id="view-lager" role="tabpanel" aria-labelledby="nav-lager" hidden>  <section class="grid" style="margin-top:18px">
     <div class="panel">
-      <h2>Lager</h2>
-      <p class="lead">Brug bagkataloget aktivt før nye køb. Filtrér efter vintype.</p>
+      <h2>Vinlager</h2>
+      <p class="lead">Overblik over de flasker, du har til rådighed. Filtrér efter vintype, eller vælg en vin for at se dens profil.</p>
       <div class="tabs" id="stockTabs">
         <button class="tab active" data-stock="Alle">Alle</button>
         <button class="tab" data-stock="Rød">Rød</button>

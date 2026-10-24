@@ -280,6 +280,33 @@ header h1{font-size:clamp(46px,5.2vw,72px);line-height:1.04;letter-spacing:-.048
 </style><style>/* C2.1 – projekttitel tættere på venstrekanten; menu og hovedindhold urørt */
 header{padding-left:clamp(20px,2.4vw,38px)}
 @media(max-width:740px){header{padding-left:20px}}
+</style><style>
+/* C2.1 – smagskortets diskrete kontrolpanel og læsehjælp */
+#view-overblik .palate-chart-controls{padding:18px 0 17px;border-top:1px solid #e9e3db;border-bottom:1px solid #e9e3db;margin:22px 0 17px}
+#view-overblik .palate-chart-group-label{font-size:11px;letter-spacing:.055em;font-weight:650;color:#6d615c;margin-bottom:10px}
+#view-overblik .tabs{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0 0 18px}
+#view-overblik .tabs .tab{border:1px solid transparent;background:transparent;color:#605952;border-radius:999px;padding:10px 18px;min-height:42px;font-weight:550;line-height:1.2}
+#view-overblik .tabs .tab.active{color:#5b2538;background:#eadde1;border-color:transparent;font-weight:700}
+#view-overblik .tabs .tab:hover:not(.active){background:#f3efea}
+#view-overblik .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+#view-overblik button.filter{padding:9px 14px;min-height:41px;background:transparent;border:1px solid #ded5cf;border-radius:999px;color:#5b524d;font-size:12px;font-weight:550;transition:background .15s,color .15s}
+#view-overblik button.filter.active{background:#693046;border-color:#693046;color:#fff}
+#view-overblik button.filter:hover:not(.active){background:#f5f0ee}
+#view-overblik .palate-chart-legend-area{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 22px;margin:17px 0 8px}
+#view-overblik .legend{margin:0;font-size:12px;gap:16px;line-height:1.7}
+#view-overblik .palate-chart-ring-key{display:flex;align-items:center;gap:8px;color:#655f59;font-size:12px}
+#view-overblik .palate-ring-icon{display:inline-block;width:13px;height:13px;border-radius:50%;border:1.5px solid #906778;position:relative}
+#view-overblik .palate-ring-icon::after{content:"";position:absolute;inset:3px;background:#906778;border-radius:50%}
+#view-overblik #chartCount{margin:8px 0 14px;color:#69645e;font-size:12px}
+#view-overblik .palate-chart-reading-guide{padding:12px 0 0;color:#70675e;font-size:12px;line-height:1.5}
+#view-overblik #chartWrap{margin-top:12px}
+@media(max-width:650px){
+ #view-overblik .palate-chart-controls{margin-top:16px;padding:15px 0}
+ #view-overblik .tabs{gap:6px;margin-bottom:17px}
+ #view-overblik .tabs .tab{padding:10px 13px}
+ #view-overblik .palate-chart-legend-area{align-items:flex-start}
+ #view-overblik .palate-chart-reading-guide{font-size:11px}
+}
 </style></head>
 <body>
 <div class="palate-preview-ribbon"><span>DESIGNSTUDIE · C2.1 — Typografi, kontrast og informationshierarki</span><a href="./index.html">Gå til den nuværende PALATE-side ↗</a></div>
@@ -311,15 +338,23 @@ header{padding-left:clamp(20px,2.4vw,38px)}
       <h2>Smagskort</h2>
       <p class="lead">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
 
+      <div class="palate-chart-controls">
+      <div class="palate-chart-group-label">Vælg vintype</div>
       <div class="tabs">
         <button class="tab active" data-type="Rød">Rødvin</button>
         <button class="tab" data-type="Hvid">Hvidvin</button>
         <button class="tab" data-type="Mousserende">Mousserende</button>
       </div>
 
+      <div class="palate-chart-group-label">Udforsk smagsspor</div>
       <div class="toolbar" id="trackFilters"></div>
-      <div class="legend" id="legend"></div>
-      <p class="lead" id="chartCount" aria-live="polite"></p>
+      </div>
+      <div class="palate-chart-legend-area">
+        <div class="legend" id="legend"></div>
+        <div class="palate-chart-ring-key"><span class="palate-ring-icon" aria-hidden="true"></span> Ring = Sweet spot</div>
+      </div>
+      <p class="lead palate-chart-counter" id="chartCount" aria-live="polite"></p>
+      <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
       <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
     </div>
 

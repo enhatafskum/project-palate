@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PROJECT PALATE · Designprototype C2.1</title>
+<meta name="palate-build" content="palate-design-study-c21">
+<meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
+<style>
+:root {
+  --bg:#f7f4ef; --panel:#fffdf9; --ink:#1f2937; --muted:#6b7280;
+  --wine:#7a1f3d; --gold:#c9a227; --line:#e8e2d9; --green:#e4f1e7;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#1f2937;color:white;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+header h1{margin:0;font-size:24px;letter-spacing:.3px}
+header .sub{opacity:.78;font-size:13px}
+main{max-width:1440px;margin:auto;padding:22px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 20px rgba(31,41,55,.04)}
+.card .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
+.card .big{font-size:30px;font-weight:800;color:var(--wine);margin-top:4px}
+.card .small{font-size:12px;color:var(--muted);margin-top:3px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 20px rgba(31,41,55,.04)}
+.panel h2{margin:0 0 6px;font-size:19px}
+.panel p.lead{margin:0 0 14px;color:var(--muted);font-size:13px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px}
+button.filter{border:1px solid var(--line);background:white;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:650;color:#374151}
+button.filter.active{background:var(--wine);color:white;border-color:var(--wine)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 14px;font-size:12px;color:#4b5563}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%}
+#chartWrap{position:relative;height:560px}
+svg{width:100%;height:100%;overflow:visible}
+.axisLabel{font-size:12px;fill:#4b5563}
+.tick{font-size:11px;fill:#6b7280}
+.gridline{stroke:#e7e2db;stroke-dasharray:3 5}
+.axis{stroke:#9ca3af}
+.point{cursor:pointer;stroke:white;stroke-width:1.8;transition:r .15s,opacity .15s}
+.point:hover{r:8}
+.tooltip{position:fixed;pointer-events:none;background:#1f2937;color:white;padding:10px 12px;border-radius:10px;font-size:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);opacity:0;transform:translate(10px,10px);z-index:1000;max-width:300px}
+.tooltip strong{display:block;font-size:13px;margin-bottom:4px}
+.detail{min-height:300px}
+.detail .placeholder{color:var(--muted);font-size:13px;padding:30px 0}
+.detail h3{margin:0 0 4px;font-size:18px}
+.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:700;background:#f1ede7;margin:4px 5px 4px 0}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:7px 10px;margin-top:14px;font-size:13px}
+.kv div:nth-child(odd){color:var(--muted)}
+.note{margin-top:14px;padding:12px;background:#f8f5f0;border-radius:12px;font-size:13px;line-height:1.45}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tab{border:0;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer;background:#eee8df;color:#3f3f46}
+.tab.active{background:#1f2937;color:white}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.qty{font-weight:800;color:var(--wine)}
+.tableWrap{max-height:470px;overflow:auto;border-radius:12px}
+.hypothesis{margin-top:18px;background:var(--green);border:1px solid #cfe5d4;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.5}
+footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);font-size:11px}
+@media(max-width:950px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}#chartWrap{height:480px}}
+.tasting{border-bottom:1px solid #e5e1db;padding:11px 0}.tasting summary{cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center}.tasting summary strong{white-space:nowrap;color:#7b3049}.tasting-inner{padding:4px 6px;font-size:13px;line-height:1.55}.tasting-inner p{margin:8px 0}@media(max-width:650px){#chartWrap{height:auto;min-height:280px;aspect-ratio:900/560}#chart{width:100%;height:auto}.tableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.tab,.filter{min-height:42px}}
+/* PALATE registrering – lokal demonstration uden serveradgang */
+.register-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.register-form label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:650}
+.register-form input,.register-form select,.register-form textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:white;color:var(--ink);padding:11px;font:inherit;font-weight:400;min-height:43px}
+.register-form textarea{min-height:95px;resize:vertical}
+.register-form .full{grid-column:1/-1}
+.register-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.register-actions button{border:0;border-radius:10px;background:var(--wine);color:white;padding:12px 16px;font:inherit;font-weight:650;cursor:pointer}
+.register-actions button.secondary{background:#e9e4df;color:var(--ink)}
+.register-status{margin-top:12px;white-space:pre-wrap;font-size:13px;line-height:1.5}
+@media(max-width:650px){.register-form{grid-template-columns:1fr}}
+
+/* Primær navigation */
+.palate-nav{max-width:1440px;margin:0 auto;padding:14px 22px 0;display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin}
+.palate-nav button{white-space:nowrap;flex:0 0 auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit;font-size:14px;font-weight:700;padding:12px 17px;cursor:pointer}
+.palate-nav button[aria-selected="true"]{background:var(--wine);color:white;border-color:var(--wine)}
+.palate-view[hidden]{display:none!important}
+@media(max-width:650px){.palate-nav{padding:12px 12px 0;gap:6px}.palate-nav button{padding:12px 14px;font-size:13px}main{padding:14px 12px}}
+
+.pilot-wines{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pilot-wine{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:white;min-width:0}
+.pilot-bottle{width:65px;height:94px;flex-shrink:0;border-radius:10px;background:#f2eee9;display:grid;place-items:center;color:#7a1f3d;font-size:30px}
+.pilot-wine strong{font-size:13px;display:block;line-height:1.35}
+.pilot-wine a{font-size:12px;color:var(--wine)}
+.pilot-wine p{font-size:11px;color:var(--muted);margin:6px 0}
+@media(max-width:900px){.pilot-wines{grid-template-columns:1fr}}
+
+.wine-name-button{background:none;border:0;padding:0;text-align:left;color:var(--wine);font:inherit;font-weight:650;text-decoration:underline;text-decoration-color:#c9b7bf;text-underline-offset:3px;cursor:pointer}
+.wine-dialog{border:1px solid var(--line);border-radius:18px;max-width:min(570px,calc(100vw - 24px));width:100%;max-height:85vh;overflow:auto;padding:24px;background:var(--panel);color:var(--ink);box-shadow:0 20px 65px #0004}
+.wine-dialog::backdrop{background:#151b25a6}
+.wine-dialog-close{float:right;border:0;background:#eee8df;border-radius:9px;padding:8px 12px;cursor:pointer}
+.wine-dialog-top{display:flex;gap:18px;align-items:center;margin:16px 0}
+.wine-dialog-bottle{height:140px;width:94px;flex:0 0 94px;border-radius:12px;background:#f2eee9;display:grid;place-items:center}
+.wine-dialog-bottle svg{width:45px;height:95px}
+.wine-dialog h2{margin:0 0 8px;font-size:21px}
+.wine-dialog .kv{grid-template-columns:100px 1fr}
+.tasting-summary{display:flex;justify-content:space-between;align-items:center;gap:12px}.tasting-summary .wine-name-button{font-weight:650}.tasting-inner{padding-top:10px}
+
+.palate-scale{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#faf8f5}
+.scale-heading{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:14px}
+.scale-current{font-size:13px;color:var(--wine);font-weight:650;text-align:right}
+.palate-scale input[type="range"]{width:100%;margin:15px 0 4px;padding:0;min-height:26px;accent-color:var(--wine);cursor:pointer}
+.scale-labels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-items:start;text-align:center;font-size:11px;color:var(--muted)}
+.scale-labels span:first-child{text-align:left}.scale-labels span:last-child{text-align:right}
+.scale-help{margin:4px 0 0;font-size:12px;color:var(--muted);font-weight:400}
+.palate-rating{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#faf8f5;min-width:0}
+.palate-rating input[type="range"]{width:100%;margin:14px 0 4px;padding:0;min-height:26px;accent-color:var(--wine);cursor:pointer}
+.rating-current{color:var(--wine);font-size:14px;font-weight:700;white-space:nowrap}
+.rating-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+@media(max-width:650px){.palate-rating{grid-column:1/-1}}
+
+/* Responsiv PALATE-visning: desktoplayout bevares, mobilelementer får egen bredde */
+main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-form > *, .pilot-wines,.pilot-wine{min-width:0}
+.panel,.card{max-width:100%}
+.panel p,.panel h2,.tasting summary span,.note{overflow-wrap:anywhere}
+#chartWrap{max-width:100%;min-width:0}
+#chart{display:block;max-width:100%}
+.tableWrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:650px){
+  header{padding:22px 16px;display:block}
+  header h1{font-size:26px;line-height:1.15;overflow-wrap:normal}
+  header .sub{font-size:12px;line-height:1.45}
+  header > .sub{margin-top:12px;max-width:34ch}
+  .palate-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow:visible;padding:12px 12px 0}
+  .palate-nav button{min-width:0;width:100%;white-space:normal;padding:12px 7px;text-align:center;overflow-wrap:break-word}
+  main{width:100%;max-width:100%;padding:14px 12px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card{padding:13px 12px}
+  .card .big{font-size:28px}
+  .panel{padding:14px}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  #chartWrap{height:auto;min-height:0;aspect-ratio:900/560}
+  #chart{width:100%;height:100%}
+  .tabs{flex-wrap:wrap}
+  .kv,.wine-dialog .kv{grid-template-columns:minmax(0,95px) minmax(0,1fr)}
+  .scale-labels{font-size:10px;gap:2px}
+  .tasting summary span{min-width:0}
+  .pilot-bottle{width:50px;flex-basis:50px}
+}
+
+.mobile-refresh{display:none}
+@media(max-width:650px){
+.mobile-refresh{display:flex;max-width:1440px;margin:0 auto;padding:8px 12px 0;justify-content:flex-end}
+.mobile-refresh button{font:inherit;font-weight:650;font-size:12px;border:1px solid var(--line);border-radius:9px;color:var(--ink);background:var(--panel);padding:9px 12px;cursor:pointer}
+}
+.palate-history{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.palate-history h3{font-size:15px;margin:0 0 10px}
+.palate-history-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.palate-history-item span{color:var(--muted);font-size:12px}
+.palate-history-item strong{white-space:nowrap;color:var(--wine)}
+
+.tasting-controls{display:grid;grid-template-columns:minmax(180px,1.6fr) repeat(3,minmax(130px,1fr));gap:10px;margin:14px 0}
+.tasting-controls label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:650;color:var(--muted);min-width:0}
+.tasting-controls input,.tasting-controls select{border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink);font:inherit;font-size:14px;min-height:43px;width:100%;min-width:0}
+.compact-tasting{padding:0}.tasting-row{width:100%;border:0;background:transparent;display:flex;align-items:center;text-align:left;gap:10px;padding:14px 4px;font:inherit;cursor:pointer;color:var(--ink)}
+.tasting-row-name{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:650;font-size:14px}
+.tasting-row-name small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:4px}
+.tasting-row strong{white-space:nowrap;color:var(--wine);font-size:14px}
+@media(max-width:650px){.tasting-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.tasting-controls label:first-child{grid-column:1/-1}}
+</style>
+<style>
+/* PROJECT PALATE — Fase 1: Modern Wine Journal × Nordic Wine Studio */
+:root{--bg:#f5f2eb;--panel:#fffefa;--ink:#262522;--muted:#77766f;--wine:#662b3d;--gold:#a8956b;--line:#e6e1d7;--green:#edf0e7}
+body{background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+header{background:var(--bg);color:var(--ink);padding:32px max(28px,calc((100vw - 1320px)/2));border-bottom:1px solid var(--line);gap:24px}
+header h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(29px,3vw,43px);font-weight:400;letter-spacing:-.035em}
+header .sub{font-size:12px;letter-spacing:.06em;color:var(--muted);line-height:1.7}
+header>div:last-child{max-width:360px;text-align:right;font-style:italic;font-family:Georgia,serif;font-size:15px;letter-spacing:0}
+main{max-width:1360px;padding:30px 24px 58px}
+.palate-nav{background:var(--bg)!important;border-bottom:1px solid var(--line);box-shadow:none!important}
+.palate-nav button{border-radius:0!important;font-size:13px!important;letter-spacing:.01em}
+.palate-nav button[aria-selected="true"]{color:var(--wine)!important;background:transparent!important;border-bottom:2px solid var(--wine)!important}
+.palate-intro{padding:10px 0 29px;border-bottom:1px solid var(--line);margin-bottom:27px}
+.palate-eyebrow{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:var(--wine);font-weight:700;margin-bottom:11px}
+.palate-intro h2{font:400 clamp(30px,4.3vw,52px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.045em;margin:0 0 12px;color:#262522}
+.palate-intro p{font-size:14px;max-width:620px;color:var(--muted);line-height:1.65;margin:0}
+.cards{gap:12px;margin-bottom:28px}
+.card{border:1px solid var(--line);border-radius:4px;box-shadow:none;padding:22px 22px 18px;min-height:140px;background:#fffefa}
+.card .kicker{font-size:10px;letter-spacing:.15em;color:#797169}
+.card .big{font:400 clamp(34px,3.2vw,48px)/1.25 Georgia,'Times New Roman',serif;margin-top:12px;color:var(--wine);letter-spacing:-.04em}
+.card .small{font-size:11px;line-height:1.5}
+.panel{box-shadow:none;border:1px solid var(--line);border-radius:4px;padding:clamp(18px,3vw,32px);background:#fffefa}
+.panel h2{font:400 clamp(25px,2.5vw,33px)/1.15 Georgia,'Times New Roman',serif;letter-spacing:-.025em;margin-bottom:10px}
+.panel p.lead{font-size:13px;line-height:1.65}
+.tabs{border-bottom:1px solid var(--line);gap:20px}
+.tab{background:transparent;border-radius:0;padding:12px 2px;color:var(--muted);font-weight:500}
+.tab.active{background:transparent;color:var(--wine);border-bottom:2px solid var(--wine)}
+button.filter{background:transparent;border:1px solid #d9d4ca;color:#5b5650;font-size:12px;font-weight:500;padding:7px 13px}
+button.filter.active{background:var(--wine);border-color:var(--wine);color:white}
+.legend{color:var(--muted);gap:14px}
+.gridline{stroke:#eae6de}
+.axis{stroke:#b5aea3}
+.axisLabel{fill:#686159}
+.tick{fill:#8a857e}
+.note{background:#f6f1e9}
+.tasting-row strong,.qty{color:var(--wine)}
+.tasting-row-name{font-weight:600}
+.wine-dialog{background:var(--panel)}
+.wine-dialog h2{font-family:Georgia,'Times New Roman',serif}
+.palate-preview-ribbon{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#e9e0d3;border-bottom:1px solid #d8cbb9;color:#543746;font-size:12px;padding:10px max(24px,calc((100vw - 1360px)/2));letter-spacing:.01em}
+.palate-preview-ribbon a{color:var(--wine);font-weight:700;text-underline-offset:3px}
+footer{color:#8a857e}
+@media(max-width:740px){
+ header{padding:24px 20px;align-items:flex-start;gap:8px}
+ header>div:last-child{display:none}
+ main{padding:20px 14px 40px}
+ .palate-intro{padding:6px 4px 22px;margin-bottom:20px}
+ .card{min-height:115px;padding:16px 14px}
+ .card .big{font-size:38px}
+ .panel{padding:18px 14px}
+ .palate-preview-ribbon{padding:10px 14px;align-items:flex-start;flex-direction:column;gap:4px}
+}
+</style>
+<style>
+/* C2.1 – tydeligt informationshierarki uden dekorative kort */
+#view-overblik .palate-intro{border:0;margin:0;padding:18px 0 34px;max-width:900px}
+#view-overblik .palate-eyebrow{letter-spacing:.16em;color:#783e50;font-size:11px;margin-bottom:14px}
+#view-overblik .palate-intro h2{font:400 clamp(46px,6vw,77px)/1.05 Georgia,'Times New Roman',serif;letter-spacing:-.055em;color:#242320;margin:0 0 14px}
+#view-overblik .palate-intro p{font-size:16px;color:#625e58;line-height:1.6}
+#view-overblik .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #cfc7bd;border-bottom:1px solid #cfc7bd;gap:0;margin:0 0 40px}
+#view-overblik .card{background:transparent;box-shadow:none;border:0;border-radius:0;padding:22px 20px 26px 0;min-height:124px;position:relative}
+#view-overblik .card:not(:first-child){padding-left:22px;border-left:1px solid #dfd8ce}
+#view-overblik .card .kicker{font-size:11px;color:#625b55;letter-spacing:.07em;font-weight:600;text-transform:none}
+#view-overblik .card .big{font:400 clamp(39px,4vw,60px)/1.05 Georgia,'Times New Roman',serif;margin:10px 0 6px;letter-spacing:-.06em;color:#632b3c}
+#view-overblik .card .small{font-size:12px;color:#6a655f;max-width:190px}
+#view-overblik .panel{background:#fffefa;border:1px solid #e3dcd2;padding:clamp(20px,3vw,40px);border-radius:5px;box-shadow:none}
+#view-overblik .panel h2{font:400 clamp(29px,3vw,40px)/1.1 Georgia,'Times New Roman',serif;color:#292723;letter-spacing:-.045em;margin-bottom:10px}
+#view-overblik .panel p.lead{font-size:13px;max-width:720px;line-height:1.75;color:#615d56}
+#view-overblik .tab{font-size:13px}
+#view-overblik .toolbar{margin-top:17px}
+#view-overblik #chartCount{font-size:12px;color:#70685f}
+@media(max-width:860px){#view-overblik .cards{grid-template-columns:repeat(2,minmax(0,1fr))}#view-overblik .card:nth-child(3){border-left:0;padding-left:0;border-top:1px solid #dfd8ce}#view-overblik .card:nth-child(4){border-top:1px solid #dfd8ce}}
+@media(max-width:500px){#view-overblik .palate-intro{padding:8px 3px 27px}#view-overblik .palate-intro h2{font-size:50px}#view-overblik .card{padding:18px 10px 18px 0;min-height:108px}#view-overblik .card:not(:first-child){padding-left:13px}#view-overblik .card:nth-child(3){padding-left:0}#view-overblik .card .big{font-size:43px}#view-overblik .card .kicker{font-size:11px}#view-overblik .card .small{font-size:11px}#view-overblik .cards{margin-bottom:24px}#view-overblik .panel{padding:20px 14px}}
+</style></head>
+<body>
+<div class="palate-preview-ribbon"><span>DESIGNSTUDIE · C2.1 — Typografi, kontrast og informationshierarki</span><a href="./index.html">Gå til den nuværende PALATE-side ↗</a></div>
+<header>
+  <div>
+    <h1>PROJECT PALATE</h1>
+    <div class="sub">Et personligt vinlaboratorium</div>
+  </div>
+  <div class="sub">“Stil er sekundær. Balance i vinens egen arkitektur er det afgørende.”</div>
+</header>
+
+<nav class="palate-nav" aria-label="Project PALATE hovedmenu" role="tablist">
+<button type="button" role="tab" id="nav-overblik" aria-controls="view-overblik" aria-selected="true" data-view="overblik">Overblik</button>
+<button type="button" role="tab" id="nav-smagninger" aria-controls="view-smagninger" aria-selected="false" data-view="smagninger">Smagninger</button>
+<button type="button" role="tab" id="nav-lager" aria-controls="view-lager" aria-selected="false" data-view="lager">Vinlager</button>
+<button type="button" role="tab" id="nav-registrer" aria-controls="view-registrer" aria-selected="false" data-view="registrer">＋ Registrer</button>
+</nav>
+
+<main>
+<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik"><div class="palate-intro"><span class="palate-eyebrow">Din personlige vinjournal</span><h2>Overblik</h2><p>Et samlet blik på din vinrejse.</p></div><section class="cards">
+    <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
+    <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
+    <div class="card"><div class="kicker">Sweet spots</div><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div>
+    <div class="card"><div class="kicker">På lager & smagt</div><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <h2>Smagskort</h2>
+      <p class="lead">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
+
+      <div class="tabs">
+        <button class="tab active" data-type="Rød">Rødvin</button>
+        <button class="tab" data-type="Hvid">Hvidvin</button>
+        <button class="tab" data-type="Mousserende">Mousserende</button>
+      </div>
+
+      <div class="toolbar" id="trackFilters"></div>
+      <div class="legend" id="legend"></div>
+      <p class="lead" id="chartCount" aria-live="polite"></p>
+      <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
+    </div>
+
+
+  </section>
+
+</div>
+<div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
+<section class="panel" style="margin-top:18px">
+<h2>Smagninger</h2><p class="lead">Find en vin, og tryk på den for at se alle oplysninger og registreringshistorik.</p>
+<div class="tasting-controls">
+<label>Søg<input id="tastingSearch" type="search" placeholder="Vin eller årgang" autocomplete="off"></label>
+<label>Vintype<select id="tastingType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
+<label>Drikkeglæde<select id="tastingMinScore"><option value="0">Alle scorer</option><option value="8">8 og derover</option><option value="9">9 og derover</option></select></label>
+<label>Sortering<select id="tastingSort"><option value="newest">Nyeste først</option><option value="score">Højeste score</option><option value="alpha">Alfabetisk</option></select></label>
+</div>
+<p id="tastingCount" class="lead" aria-live="polite"></p>
+<div id="tastingHistory"></div>
+</section></div>
+<div class="palate-view" id="view-lager" role="tabpanel" aria-labelledby="nav-lager" hidden>  <section class="grid" style="margin-top:18px">
+    <div class="panel">
+      <h2>Lager</h2>
+      <p class="lead">Brug bagkataloget aktivt før nye køb. Filtrér efter vintype.</p>
+      <div class="tabs" id="stockTabs">
+        <button class="tab active" data-stock="Alle">Alle</button>
+        <button class="tab" data-stock="Rød">Rød</button>
+        <button class="tab" data-stock="Hvid">Hvid</button>
+        <button class="tab" data-stock="Mousserende">Mousserende</button>
+      </div>
+      <div class="tableWrap"><table><thead><tr><th>Vin</th><th>Årgang</th><th>Spor</th><th>Status</th><th>Antal</th></tr></thead><tbody id="stockBody"></tbody></table></div>
+    </div>
+
+    <div class="panel">
+      <h2>Aktuel hypotese</h2>
+      <div class="hypothesis">
+        Christian foretrækker vine, hvor komponenterne falder præcist på plads – uanset om arkitekturen er let eller kraftig.
+        Drikkeglæde vurderes som harmoni inden for vinens eget spor.
+      </div>
+      <div class="hypothesis" style="background:#eef4fb;border-color:#d8e5f4">
+        <strong>Åben hypotese:</strong> På tværs af rødvinssporene kan der være en generel præference for <em>Finesse & saftighed</em>,
+        selv om enkelte vine i <em>Dybde & balance</em> og <em>Balanceret kraft</em> scorer lige så højt.
+        Den hypotese ændrer ikke eksisterende scorer før senere kontrolsmagninger.
+      </div>
+      <div class="note"><strong>Ploug-protokollen:</strong> temperatur, glas, luft, score og kontekst skal så vidt muligt registreres, så vin og servering ikke blandes sammen.</div>
+    </div>
+  </section>
+</div>
+<div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
+  <h2>Registrer smagning</h2>
+  <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Tryk på “Kopiér til ChatGPT”, når du er færdig. Indsæt derefter oplysningerne i vores samtale, så vi kan behandle og indarbejde smagningen.</p>
+  <form id="palateRegistration" class="register-form">
+<label class="full">Link<input name="Vinlink" type="url" placeholder="https://... (valgfrit)"></label>
+<label class="full">Navn<input name="Vin" autocomplete="off" placeholder="Vinens navn"></label>
+<label>Årgang<input name="Årgang" inputmode="numeric" placeholder="ÅÅÅÅ"></label>
+
+<div class="full"><h3>Din vurdering</h3><p class="scale-help">Flyt skyderne for at angive din score fra 1 til 10 i halve point. En uberørt skyder tæller ikke med.</p></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Drikkeglæde</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Drikkeglæde" min="1" max="10" step="0.5" value="5.5" aria-label="Drikkeglæde, 1 til 10 i halve point"><input type="hidden" name="Drikkeglæde" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Helhedsoplevelse</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Helhed" min="1" max="10" step="0.5" value="5.5" aria-label="Helhedsoplevelse, 1 til 10 i halve point"><input type="hidden" name="Helhed" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Balance og elegance</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Balance" min="1" max="10" step="0.5" value="5.5" aria-label="Balance og elegance, 1 til 10 i halve point"><input type="hidden" name="Balance" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Personligt stilmatch</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Stilmatch" min="1" max="10" step="0.5" value="5.5" aria-label="Personligt stilmatch, 1 til 10 i halve point"><input type="hidden" name="Stilmatch" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Genkøbslyst</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Genkøb" min="1" max="10" step="0.5" value="5.5" aria-label="Genkøbslyst, 1 til 10 i halve point"><input type="hidden" name="Genkøb" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="palate-rating"><div class="scale-heading"><strong>Vil du anbefale den til en god ven</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Anbefaling" min="1" max="10" step="0.5" value="5.5" aria-label="Vil du anbefale den til en god ven, 1 til 10 i halve point"><input type="hidden" name="Anbefaling" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
+<div class="full"><h3>Hvordan oplevedes vinen?</h3></div>
+<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Fylde fra 1 til 10" data-scale-slider="Fylde"27373><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>Alt for lidt</span><span>Lidt for lidt</span><span>Passende</span><span>Lidt for meget</span><span>Alt for meget</span></div><p class="scale-help">1–10 i halve point. Flyt skyderen for at registrere din vurdering.</p></div>
+<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Sødme fra 1 til 10" data-scale-slider="Sødme"27938><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>Alt for tør</span><span>Lidt for tør</span><span>Passende</span><span>Lidt for sød</span><span>Alt for sød</span></div><p class="scale-help">1–10 i halve point. Flyt skyderen for at registrere din vurdering.</p></div>
+<label class="full">Drikkesituation<textarea name="Situation" rows="2" placeholder="Hvor og i hvilken sammenhæng drak du vinen?"></textarea></label>
+<label class="full">Hvad var det bedste ved vinen?<textarea name="Note" rows="3" placeholder="Hvad gjorde størst positivt indtryk?"></textarea></label>
+<div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
+</form>
+  <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Intet er gemt eller sendt endnu.</div>
+</section>
+
+</div>
+</main>
+<dialog id="wineProfileDialog" class="wine-dialog" aria-label="Vinens profil">
+<button type="button" class="wine-dialog-close" id="closeWineProfile">Luk ×</button>
+<div id="wineProfileContent"></div>
+</dialog>
+
+<footer>Project PALATE · Afledt dashboard. Master.md + Lager.csv + Smagninger.csv er autoritative datakilder. Smagskortet viser kun vine med registreret stilakse.</footer>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// Gem den oprindelige HTML før PALATE ændrer indholdet dynamisk.
+// Sammenlign med en frisk hentet udgave, så også kommende designændringer opdages.
+const palateBuild=document.querySelector('meta[name="palate-build"]')?.content;
+let palateCheckingVersion=null;
+let palateRegistrationDirty=false;
+document.getElementById("palateRegistration").addEventListener("input",event=>{
+  if(event.isTrusted)palateRegistrationDirty=true;
+});
+document.getElementById("palateRegistration").addEventListener("change",event=>{
+  if(event.isTrusted)palateRegistrationDirty=true;
+});
+async function checkPalateVersion(){
+  if(palateCheckingVersion)return palateCheckingVersion;
+  palateCheckingVersion=(async()=>{
+    try{
+      const url=new URL(location.href);
+      url.searchParams.set("_palate_check",String(Date.now()));
+      const response=await fetch(url.toString(),{cache:"no-store"});
+      if(!response.ok)return;
+      const latestDoc=new DOMParser().parseFromString(await response.text(),"text/html");
+      const latestBuild=latestDoc.querySelector('meta[name="palate-build"]')?.content;
+      if(!palateBuild||!latestBuild||latestBuild===palateBuild)return;
+      if(palateRegistrationDirty){
+        let notice=document.getElementById("palateVersionNotice");
+        if(!notice){
+          notice=document.createElement("p");
+          notice.id="palateVersionNotice";
+          notice.setAttribute("role","status");
+          notice.style.cssText="margin:8px auto;padding:10px 14px;max-width:1440px;font-size:13px;color:#7a1f3d";
+          const nav=document.querySelector(".palate-nav");
+          nav.insertAdjacentElement("afterend",notice);
+        }
+        notice.textContent="Der findes en ny version af PALATE. Den indlæses ikke automatisk, fordi du har en igangværende registrering.";
+        return;
+      }
+      const reloadUrl=new URL(location.href);
+      reloadUrl.searchParams.set("_palate_version",String(Date.now()));
+      location.replace(reloadUrl.toString());
+    }catch(error){console.warn("Versionskontrol kunne ikke gennemføres:",error);}
+  })().finally(()=>{palateCheckingVersion=null;});
+  return palateCheckingVersion;
+}
+
+let wines = [{"name": "Tagaro Fortello Syrah Appassimento", "vintage": "", "type": "Rød", "track": "Balanceret kraft", "style": 9.5, "joy": 6.0, "status": "Mismatch / negativ reference", "glass": "Bordeaux", "temp": "", "stock": 0, "note": "For voldsom og koncentreret; nyttig negativ reference."}, {"name": "Vidal-Fleury Ventoux Rouge", "vintage": "2024", "type": "Rød", "track": "Dybde & balance", "style": 6.5, "joy": 7.0, "status": "God reference", "glass": "Bordeaux", "temp": "", "stock": 0, "note": "Letdrikkelig, men mangler noget elegance."}, {"name": "Gehlen-Cornelius Syrah", "vintage": "", "type": "Rød", "track": "Balanceret kraft", "style": 8.0, "joy": 8.5, "status": "Stærkt match", "glass": "Bordeaux", "temp": "16–17 °C", "stock": 0, "note": "Kompleks, mineralsk og læskende kraft."}, {"name": "Ziereisen TAL Spätburgunder", "vintage": "2023", "type": "Rød", "track": "Finesse & saftighed", "style": 2.5, "joy": 6.0, "status": "Grænse / kalibrering", "glass": "Bourgogne", "temp": "15–16 °C", "stock": 1, "note": "Kompleks og mineralsk, men oprindeligt for tør og slank."}, {"name": "Tenuta del Principe Mensale Toscana IGP Sangiovese", "vintage": "2018", "type": "Rød", "track": "Dybde & balance", "style": 7.0, "joy": 8.0, "status": "Stærkt match", "glass": "Bordeaux", "temp": "16–17 °C", "stock": 2, "note": "Kraftige tanniner balanceret af krop og rundhed."}, {"name": "Rudi Rüttger Spätburgunder Vom Kalkboden", "vintage": "2024", "type": "Rød", "track": "Finesse & saftighed", "style": 3.5, "joy": 8.0, "status": "Stærkt match", "glass": "Bourgogne", "temp": "15–16 °C", "stock": 4, "note": "Harmonisk reference i det lette spor."}, {"name": "Fleurie Granits Roses – Domaine de Bel-Air", "vintage": "2023", "type": "Rød", "track": "Finesse & saftighed", "style": 3.5, "joy": 8.5, "status": "Sweet spot", "glass": "Bourgogne", "temp": "15–16 °C", "stock": 0, "note": "Let anslag, vokser i munden, høj finesse og drikkeglæde."}, {"name": "Chevalier Delaude", "vintage": "2022", "type": "Rød", "track": "Balanceret kraft", "style": 8.5, "joy": 8.5, "status": "Stærkt match", "glass": "Bordeaux", "temp": "16–17 °C", "stock": 3, "note": "Kølig servering åbner cassis, mineralitet og elegance."}, {"name": "Beyra Reserva", "vintage": "2019", "type": "Rød", "track": "Balanceret kraft", "style": 8.0, "joy": 8.8, "status": "Sweet spot", "glass": "Bordeaux", "temp": "16–17 °C", "stock": 0, "note": "Mørke bær, tobak, mineralitet og høj læskbarhed."}, {"name": "Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve", "vintage": "2022", "type": "Rød", "track": "Finesse & saftighed", "style": 3.0, "joy": 9.0, "status": "Sweet spot", "glass": "Bourgogne", "temp": "ca. 15 °C", "stock": 0, "note": "Temperaturtest: ved ca. 15 °C faldt aroma, fylde og balance på plads."}, {"name": "Château Lamothe-Vincent Réserve Rouge", "vintage": "2020", "type": "Rød", "track": "Dybde & balance", "style": 7.5, "joy": 8.5, "status": "Sweet spot", "glass": "Bordeaux", "temp": "ca. 17 °C", "stock": 1, "note": "Ved ca. 17 °C træder bær, tobak og mineralitet tydeligt frem."}, {"name": "Cantine Paradiso 1954 Primitivo", "vintage": "2023", "type": "Rød", "track": "Balanceret kraft", "style": 9.0, "joy": 9.0, "status": "Sweet spot", "glass": "Bordeaux", "temp": "16–17 °C", "stock": 3, "note": "Kraftig, men harmonisk og blød ved korrekt temperatur."}, {"name": "Maori Moana Sauvignon Blanc", "vintage": "2025", "type": "Hvid", "track": "Friskhed & mineralitet", "style": 2.5, "joy": 7.0, "status": "God reference", "glass": "Hvidvin", "temp": "9–11 °C", "stock": 3, "note": "Frisk og mineralsk; mangler lidt tekstur."}, {"name": "Cave de Vinzelles Pouilly-Fuissé 1er Cru", "vintage": "2024", "type": "Hvid", "track": "Tekstur & mineralitet", "style": 4.5, "joy": 9.5, "status": "Sweet spot", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 0, "note": "Signaturreference for friskhed, mineralitet og fylde."}, {"name": "Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté", "vintage": "2022", "type": "Hvid", "track": "Tekstur & mineralitet", "style": 3.5, "joy": 10.0, "status": "Sweet spot", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 0, "note": "10/10-reference: balance og fylde falder helt på plads."}, {"name": "Jean Gagnerot Bourgogne Chardonnay", "vintage": "2024", "type": "Hvid", "track": "Friskhed & mineralitet", "style": 3.0, "joy": 6.0, "status": "Grænse / kalibrering", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 0, "note": "Duften lover mere fylde end smagen leverer."}, {"name": "Mayer am Pfarrplatz Asia Cuvée", "vintage": "2024", "type": "Hvid", "track": "Frugt & rundhed", "style": 5.0, "joy": 8.5, "status": "Stærkt match", "glass": "Hvidvin", "temp": "9–11 °C", "stock": 0, "note": "God balance; tæt på øvre sødmegrænse."}, {"name": "Huber Terrassen Grüner Veltliner", "vintage": "2025", "type": "Hvid", "track": "Friskhed & mineralitet", "style": 2.5, "joy": 7.5, "status": "God reference", "glass": "Hvidvin", "temp": "9–11 °C", "stock": 0, "note": "Mineralsk, men lidt skarp og let."}, {"name": "Prosper Maufoux Mâcon-Villages", "vintage": "2024", "type": "Hvid", "track": "Tekstur & mineralitet", "style": 4.0, "joy": 9.0, "status": "Sweet spot", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 0, "note": "Stærkt hverdags-sweet spot."}, {"name": "Bread & Butter Chardonnay", "vintage": "2023", "type": "Hvid", "track": "Fylde & fad", "style": 7.0, "joy": 8.5, "status": "God reference", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 0, "note": "Underholdende, men lidt demonstrativ/vulgær."}, {"name": "Maison Vaubourg Mâcon-Igé La Cra", "vintage": "2023", "type": "Hvid", "track": "Tekstur & mineralitet", "style": 4.5, "joy": 8.5, "status": "Stærkt match", "glass": "Hvidvin", "temp": "10–12 °C", "stock": 5, "note": "Elegant, cremet og mineralsk."}, {"name": "Riesling Trocken “Keine Hexerei” Pfalz Öko", "vintage": "2024", "type": "Hvid", "track": "Friskhed & mineralitet", "style": 2.5, "joy": 8.0, "status": "Stærkt match", "glass": "Hvidvin", "temp": "9–11 °C", "stock": 0, "note": "Fine mineraler; en anelse anonym."}, {"name": "Tony Bish Heartwood Chardonnay", "vintage": "2024", "type": "Hvid", "track": "Fylde & fad", "style": 7.5, "joy": 9.0, "status": "Stærkt match", "glass": "Hvidvin / Bourgogne", "temp": "10–12 °C", "stock": 5, "note": "Meget underholdende; fadet lidt for demonstrativt til helt sweet spot."}];
+let inventory = [{"name": "Tony Bish Heartwood Chardonnay", "vintage": "2024", "qty": 5, "type": "Hvid", "track": "Fylde & fad", "status": "Smagt"}, {"name": "Maison Vaubourg Mâcon-Igé La Cra", "vintage": "2023", "qty": 5, "type": "Hvid", "track": "Tekstur & mineralitet", "status": "Smagt"}, {"name": "Cantine Pliniana Re Noire Primitivo di Manduria", "vintage": "", "qty": 12, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Crémant de Limoux Brut", "vintage": "", "qty": 6, "type": "Mousserende", "track": "Mousserende", "status": "Ikke registreret"}, {"name": "Conte Zardi Caveja Sangiovese Rubicone", "vintage": "2022", "qty": 6, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Philipp Kuhn Riesling Tradition", "vintage": "", "qty": 0, "type": "Hvid", "track": "Friskhed & mineralitet", "status": "Husket som rigtig god"}, {"name": "Ziereisen TAL Spätburgunder", "vintage": "2023", "qty": 1, "type": "Rød", "track": "Finesse & saftighed", "status": "Smagt"}, {"name": "Clos Bellane Côtes du Rhône Villages Valréas", "vintage": "2023", "qty": 4, "type": "Rød", "track": "Dybde & balance", "status": "Husket som særdeles god"}, {"name": "Borgo Rosso Amarone della Valpolicella", "vintage": "2021", "qty": 1, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Rudi Rüttger Spätburgunder Vom Kalkboden", "vintage": "2024", "qty": 4, "type": "Rød", "track": "Finesse & saftighed", "status": "Smagt"}, {"name": "Château Lamothe-Vincent Réserve Rouge", "vintage": "2020", "qty": 1, "type": "Rød", "track": "Dybde & balance", "status": "Smagt"}, {"name": "Chais du Batard Côtes du Rhône", "vintage": "2023", "qty": 2, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Piccini Appassimento 1882 Puglia", "vintage": "2021", "qty": 4, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Cantine Paradiso 1954 Primitivo", "vintage": "2023", "qty": 3, "type": "Rød", "track": "Balanceret kraft", "status": "Smagt"}, {"name": "Chevalier Delaude", "vintage": "2022", "qty": 3, "type": "Rød", "track": "Balanceret kraft", "status": "Smagt"}, {"name": "Tenuta del Principe Mensale Toscana IGP Sangiovese", "vintage": "2018", "qty": 2, "type": "Rød", "track": "Dybde & balance", "status": "Smagt"}, {"name": "Château de la Grande Gardiole Les Vieilles Vignes Châteauneuf-du-Pape", "vintage": "2022", "qty": 2, "type": "Rød", "track": "Balanceret kraft", "status": "Ikke registreret"}, {"name": "Maori Moana Sauvignon Blanc", "vintage": "2025", "qty": 3, "type": "Hvid", "track": "Friskhed & mineralitet", "status": "Smagt"}, {"name": "Cuvée Dissenay Chardonnay", "vintage": "2025", "qty": 1, "type": "Hvid", "track": "Hverdags-hvid / baseline", "status": "Ikke registreret"}];
+const colors = {"Finesse & saftighed": "#7aa5d8", "Dybde & balance": "#9f7aea", "Balanceret kraft": "#d97757", "Tekstur & mineralitet": "#3f9f88", "Friskhed & mineralitet": "#5b9bd5", "Fylde & fad": "#c7954f", "Frugt & rundhed": "#b07aa1", "Mousserende": "#d4b42c"};
+
+let currentType = "Rød";
+let activeTrack = "Alle";
+
+const svg = document.getElementById("chart");
+const tooltip = document.getElementById("tooltip");
+
+
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function fmtName(w) {
+  return `${w.name}${w.vintage ? " " + w.vintage : ""}`;
+}
+
+let tastingCount = 27;
+function renderKPIs() {
+  const stock = inventory.reduce((a,b)=>a+b.qty,0);
+  document.getElementById("kpiStock").textContent = stock;
+  document.getElementById("kpiTasted").textContent = tastingCount;
+  document.getElementById("kpiSweet").textContent = wines.filter(w=>w.status.includes("Sweet spot")).length;
+  const stockedNames = new Set(inventory.filter(i=>i.qty>0 && i.status.includes("Smagt")).map(i=>i.name));
+  document.getElementById("kpiBoth").textContent = stockedNames.size;
+}
+
+function tracksForType(type) {
+  const preferredOrder = type === "Rød"
+    ? ["Finesse & saftighed", "Dybde & balance", "Balanceret kraft"]
+    : ["Friskhed & mineralitet", "Tekstur & mineralitet", "Fylde & fad", "Frugt & rundhed", "Mousserende"];
+
+  const found = [...new Set(wines.filter(w=>w.type===type).map(w=>w.track))];
+  const ordered = preferredOrder.filter(t => found.includes(t));
+  const rest = found.filter(t => !preferredOrder.includes(t)).sort((a,b) => a.localeCompare(b, "da"));
+  return [...ordered, ...rest];
+}
+
+function renderFilters() {
+  const wrap = document.getElementById("trackFilters");
+  wrap.innerHTML = "";
+  const all = document.createElement("button");
+  all.className = "filter" + (activeTrack==="Alle" ? " active":"");
+  all.textContent = "Alle spor";
+  all.onclick = ()=>{activeTrack="Alle"; renderFilters(); renderChart();};
+  wrap.appendChild(all);
+
+  tracksForType(currentType).forEach(t=>{
+    const b=document.createElement("button");
+    b.className="filter"+(activeTrack===t?" active":"");
+    b.textContent=t;
+    b.onclick=()=>{activeTrack=t; renderFilters(); renderChart();};
+    wrap.appendChild(b);
+  });
+
+  const legend = document.getElementById("legend");
+  legend.innerHTML = tracksForType(currentType).map(t=>`<span><i class="dot" style="background:${colors[t]||'#777'}"></i>${esc(t)}</span>`).join("");
+}
+
+function renderChart() {
+  const W=900,H=560, m={l:62,r:24,t:20,b:58};
+  const innerW=W-m.l-m.r, innerH=H-m.t-m.b;
+  const x=v=>m.l + (v/10)*innerW;
+  const y=v=>m.t + innerH - (v/10)*innerH;
+
+  const data = wines.filter(w=>w.type===currentType && Number.isFinite(w.style) && Number.isFinite(w.joy) && (activeTrack==="Alle" || w.track===activeTrack));
+  const count=document.getElementById("chartCount");
+  if(count)count.textContent=data.length+" af "+wines.length+" smagninger vises";
+  let out="";
+
+  // grid + ticks
+  for(let i=0;i<=10;i++){
+    const gx=x(i), gy=y(i);
+    out += `<line class="gridline" x1="${gx}" y1="${m.t}" x2="${gx}" y2="${m.t+innerH}"/>`;
+    out += `<line class="gridline" x1="${m.l}" y1="${gy}" x2="${m.l+innerW}" y2="${gy}"/>`;
+    out += `<text class="tick" x="${gx}" y="${m.t+innerH+20}" text-anchor="middle">${i}</text>`;
+    out += `<text class="tick" x="${m.l-12}" y="${gy+4}" text-anchor="end">${i}</text>`;
+  }
+  out += `<line class="axis" x1="${m.l}" y1="${m.t+innerH}" x2="${m.l+innerW}" y2="${m.t+innerH}"/>`;
+  out += `<line class="axis" x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${m.t+innerH}"/>`;
+  out += `<text class="axisLabel" x="${m.l+innerW/2}" y="${H-10}" text-anchor="middle">Finesse / lethed  →  Kraft / dybde</text>`;
+  out += `<text class="axisLabel" transform="translate(16 ${m.t+innerH/2}) rotate(-90)" text-anchor="middle">Drikkeglæde</text>`;
+
+  data.forEach((w,idx)=>{
+    const duplicates=data.slice(0,idx).filter(p=>p.style===w.style&&p.joy===w.joy).length;
+    const same=data.filter(p=>p.style===w.style&&p.joy===w.joy).length;
+    const offset=(duplicates-(same-1)/2)*10;
+    const cx=x(w.style)+offset, cy=y(w.joy), color=colors[w.track]||"#666";
+    const sweet=w.status.includes("Sweet spot");
+    out += `<circle class="point" data-index="${idx}" cx="${cx}" cy="${cy}" r="${sweet?7:5.5}" fill="${color}" opacity="${sweet?1:.88}"/>`;
+    if(sweet) out += `<circle cx="${cx}" cy="${cy}" r="10" fill="none" stroke="${color}" stroke-width="1.5" opacity=".28"/>`;
+  });
+
+  svg.innerHTML=out;
+  svg.querySelectorAll(".point").forEach((p)=>{
+    p.addEventListener("mousemove", e=>{
+      const w=data[+p.dataset.index];
+      tooltip.innerHTML=`<strong>${esc(fmtName(w))}</strong>${esc(w.track)}<br>Drikkeglæde: ${w.joy.toFixed(1)} · Stilakse: ${w.style.toFixed(1)}`;
+      tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
+    });
+    p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
+    p.addEventListener("click", ()=>{ const selected=data[+p.dataset.index]; openPalateWine(selected.name,selected.vintage); });
+  });
+}
+
+function renderStock(filter="Alle"){
+  const body=document.getElementById("stockBody");
+  const rows=inventory.filter(i=>filter==="Alle"||i.type===filter)
+    .sort((a,b)=>b.qty-a.qty)
+    .map(i=>`<tr><td><button type="button" class="wine-name-button" data-palate-wine="${esc(i.name)}" data-palate-year="${esc(i.vintage||"")}">${esc(i.name)}</button></td><td>${esc(i.vintage||"—")}</td><td>${esc(i.track)}</td><td>${esc(i.status)}</td><td class="qty">${i.qty}</td></tr>`)
+    .join("");
+  body.innerHTML=rows;
+}
+
+document.querySelectorAll(".tab[data-type]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".tab[data-type]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    currentType=btn.dataset.type;
+    activeTrack="Alle";
+    renderFilters(); renderChart();
+  };
+});
+document.querySelectorAll(".tab[data-stock]").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".tab[data-stock]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    renderStock(btn.dataset.stock);
+  };
+});
+
+// Vent på de autoritative CSV-data før tal og grafik vises.
+["kpiStock","kpiTasted","kpiSweet","kpiBoth"].forEach(id=>{document.getElementById(id).textContent="–";});
+
+// PALATE: Lager og antal smagninger hentes fra de autoritative CSV-eksporter.
+// Indbyggede data fungerer som reserve, hvis netværket er utilgængeligt.
+function parsePalateCSV(input) {
+  const rows=[]; let row=[], field="", quoted=false;
+  for(let i=0;i<input.length;i++){
+    const c=input[i];
+    if(c==='"'){if(quoted&&input[i+1]==='"'){field+='"';i++;}else quoted=!quoted;}
+    else if(c===','&&!quoted){row.push(field);field="";}
+    else if((c==='\n'||c==='\r')&&!quoted){
+      if(c==='\r'&&input[i+1]==='\n')i++;
+      row.push(field);field="";
+      if(row.some(x=>x!==""))rows.push(row);
+      row=[];
+    } else field+=c;
+  }
+  if(field||row.length){row.push(field);rows.push(row);}
+  const headers=rows.shift()||[];
+  return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]||""])));
+}
+
+function renderTastingHistory(rows){
+  const container=document.getElementById("tastingHistory");
+  if(!container)return;
+  const query=(document.getElementById("tastingSearch")?.value||"").toLocaleLowerCase("da").trim();
+  const type=document.getElementById("tastingType")?.value||"Alle";
+  const minimum=Number(document.getElementById("tastingMinScore")?.value||0);
+  const order=document.getElementById("tastingSort")?.value||"newest";
+  // En vin og årgang vises kun én gang; seneste registrering styrer den viste score og dato.
+  const grouped=new Map();
+  rows.forEach(r=>{
+    const key=palateWineKey(r["Vin"],r["Årgang"]||"");
+    const previous=grouped.get(key);
+    if(!previous){grouped.set(key,{latest:r,events:1});return;}
+    previous.events++;
+    const older=previous.latest;
+    if((r["Registreringsdato"]||"")>(older["Registreringsdato"]||"") ||
+      ((r["Registreringsdato"]||"")===(older["Registreringsdato"]||"") &&
+       Number(r["Smagning_ID"])>Number(older["Smagning_ID"])))previous.latest=r;
+  });
+  const unique=Array.from(grouped.values());
+  const filtered=unique.filter(({latest:r})=>{
+    const text=(r["Vin"]+" "+(r["Årgang"]||"")).toLocaleLowerCase("da");
+    return text.includes(query)&&(type==="Alle"||r["Type"]===type)&&Number(r["Drikkeglæde"]||0)>=minimum;
+  }).sort((aa,bb)=>{
+    const a=aa.latest,b=bb.latest;
+    if(order==="score")return Number(b["Drikkeglæde"]||0)-Number(a["Drikkeglæde"]||0)||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
+    if(order==="alpha")return a["Vin"].localeCompare(b["Vin"],"da")||Number(a["Smagning_ID"])-Number(b["Smagning_ID"]);
+    return (b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
+  });
+  document.getElementById("tastingCount").textContent=filtered.length+" af "+unique.length+" vine vises · "+rows.length+" smagningsregistreringer i alt";
+  container.innerHTML=filtered.map(({latest:r,events})=>{
+    const title=[r["Vin"],r["Årgang"]].filter(Boolean).join(" ");
+    const rawDate=r["Registreringsdato"]||"";
+    const displayDate=/^\d{4}-\d{2}-\d{2}$/.test(rawDate)?rawDate.split("-").reverse().join("."):"Dato ikke registreret";
+    const description=[r["Type"],"Registreret "+displayDate,events>1?events+" smagninger":""].filter(Boolean).map(esc).join(" · ");
+    return '<div class="tasting compact-tasting"><button type="button" class="tasting-row" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'"><span class="tasting-row-name">'+esc(title)+'<small>'+description+'</small></span><strong>'+esc(r["Drikkeglæde"]||"—")+'/10</strong><span aria-hidden="true">›</span></button></div>';
+  }).join("")||'<p class="lead">Ingen vine matcher søgningen.</p>';
+}
+["tastingSearch","tastingType","tastingMinScore","tastingSort"].forEach(id=>{
+  document.getElementById(id).addEventListener(id==="tastingSearch"?"input":"change",()=>renderTastingHistory(palateTastingEvents));
+});
+
+let palateTastingEvents=[];
+
+let palateDataRequest=null;
+async function loadPalateData(){
+  if(palateDataRequest)return palateDataRequest;
+  palateDataRequest=(async()=>{
+  try {
+    const [lagerResponse,smagResponse]=await Promise.all([
+      fetch("./data/lager.csv",{cache:"no-store"}),
+      fetch("./data/smagninger.csv",{cache:"no-store"})
+    ]);
+    if(!lagerResponse.ok||!smagResponse.ok)throw new Error("CSV ikke tilgængelig");
+    const [lagerText,smagText]=await Promise.all([lagerResponse.text(),smagResponse.text()]);
+    const lagerRows=parsePalateCSV(lagerText), smagRows=parsePalateCSV(smagText);
+    if(!lagerRows.length||!smagRows.length||!lagerRows[0].hasOwnProperty("Vin")||!smagRows[0].hasOwnProperty("Smagning_ID"))throw new Error("Ugyldige PALATE-data");
+    inventory=lagerRows.map(r=>({
+      name:r["Vin"], vintage:r["Årgang"], qty:Number(r["Antal"])||0,
+      type:r["Type"],track:r["Spor"],status:r["Status"]
+    }));
+    tastingCount=smagRows.length;
+    // Hver CSV-række er én smagning; temperatur-gensmagninger bevares separat.
+    const asNumber = value => value.trim()==="" ? null : Number(value.replace(",","."));
+    const cleanYear = value => value.replace(/\.0$/,"");
+    const normalized = value => (value||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+    const stockByWine=new Map(inventory.map(item=>[normalized(item.name)+"|"+cleanYear(item.vintage||""),item.qty]));
+    wines=smagRows.map(r=>{
+      const vintage=cleanYear(r["Årgang"]||"");
+      const stock=stockByWine.get(normalized(r["Vin"])+"|"+vintage) ?? 0;
+      return {
+        name:r["Vin"],vintage,type:r["Type"],track:r["Spor"],
+        style:asNumber(r["Stilakse"]),joy:asNumber(r["Drikkeglæde"]),
+        status:r["Status"]||"",glass:r["Glas"]||"",temp:r["Temperatur"]||"",
+        stock,note:r["Note"]||"",eventId:r["Smagning_ID"]
+      };
+    });
+    palateTastingEvents=smagRows;
+    renderTastingHistory(smagRows);
+    renderFilters();
+    renderChart();
+    renderKPIs();
+    const selectedStock=document.querySelector(".tab[data-stock].active");
+    renderStock(selectedStock?selectedStock.dataset.stock:"Alle");
+  } catch(error) {
+    console.warn("PALATE-data kunne ikke opdateres; senest indlæste data bevares:",error);
+  }
+  })().finally(()=>{palateDataRequest=null;});
+  return palateDataRequest;
+}
+
+function getRegistration(){
+  const form=document.getElementById("palateRegistration");
+  if(!form.reportValidity())return null;
+  const values=Object.fromEntries(new FormData(form).entries());
+  if(!values.Vin.trim()&&!values.Vinlink.trim()){registrationStatus.textContent="Indtast enten vinens navn eller et link til vinen.";return null;}
+  if(!values["Drikkeglæde"]){registrationStatus.textContent="Vælg en score for Drikkeglæde ved at flytte skyderen.";return null;}
+  return values;
+}
+document.querySelectorAll("[data-rating-slider]").forEach(slider=>{
+ const box=slider.closest(".palate-rating");
+ const output=box.querySelector(".rating-current");
+ const hidden=box.querySelector('input[type="hidden"]');
+ slider.addEventListener("input",()=>{
+  hidden.disabled=false;
+  hidden.value=slider.value;
+  output.textContent=Number(slider.value).toLocaleString("da-DK")+"/10";
+ });
+});
+document.querySelectorAll("[data-scale-slider]").forEach(slider=>{
+ const group=slider.closest(".palate-scale");
+ const output=group.querySelector(".scale-current");
+ const hidden=group.querySelector('input[type="hidden"]');
+ const isFylde=slider.dataset.scaleSlider==="Fylde";
+ const categories=isFylde
+  ?["Alt for lidt","Lidt for lidt","Passende","Lidt for meget","Alt for meget"]
+  :["Alt for tør","Lidt for tør","Passende","Lidt for sød","Alt for sød"];
+ slider.addEventListener("input",()=>{
+  const number=Number(slider.value);
+  const index=number<=2?0:number<=4?1:number<=5.5?2:number<=8?3:4;
+  let description=categories[index];
+  if(number===4.5)description+=" · mod den "+(isFylde?"lette":"tørre")+" side";
+  if(number===5)description="Helt passende";
+  if(number===5.5)description+=" · mod den "+(isFylde?"fyldige":"søde")+" side";
+  const formatted=number.toLocaleString("da-DK");
+  output.textContent=formatted+"/10 · "+description;
+  hidden.value=String(number)+"/10 ("+description+")";
+  hidden.disabled=false;
+ });
+});
+const registrationStatus=document.getElementById("registrationStatus");
+document.getElementById("copyRegistration").addEventListener("click",async()=>{
+  const r=getRegistration();if(!r)return;
+  const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(r).map(([k,v])=>k+": "+v).join("\n")+
+    "\n\nUdfyld PALATE-felter som spor, glas og status efter vores metode. Bevar mine egne stilmatch-scorer. Indarbejd først smagningen i de officielle data efter gennemgang.";
+  try{
+    await navigator.clipboard.writeText(content);
+    registrationStatus.textContent="Smagningen er kopieret. Åbn ChatGPT og indsæt den i vores samtale. Formularen bevares, indtil du selv ændrer den.";
+  }catch(error){
+    const fallback=document.createElement("textarea");
+    fallback.value=content;fallback.setAttribute("readonly","");fallback.style.position="fixed";fallback.style.opacity="0";
+    document.body.appendChild(fallback);fallback.focus();fallback.select();
+    let success=false;
+    try{success=document.execCommand("copy");}catch(e){}
+    fallback.remove();
+    registrationStatus.textContent=success
+      ?"Smagningen er kopieret. Indsæt den i vores ChatGPT-samtale."
+      :"Automatisk kopiering blev blokeret. Prøv at åbne siden i Safari og tryk igen. Dine indtastninger er bevaret.";
+  }
+});
+
+function selectPalateView(name){
+  const valid=["overblik","smagninger","lager","registrer"];
+  const target=valid.includes(name)?name:"overblik";
+  document.querySelectorAll(".palate-nav [data-view]").forEach(button=>{
+    const active=button.dataset.view===target;
+    button.setAttribute("aria-selected",String(active));
+    button.tabIndex=active?0:-1;
+  });
+  document.querySelectorAll(".palate-view").forEach(panel=>{panel.hidden=panel.id!=="view-"+target;});
+  if(target!=="registrer")loadPalateData();
+  void checkPalateVersion();
+  if(location.hash!=="#"+target)history.replaceState(null,"","#"+target);
+}
+document.querySelectorAll(".palate-nav [data-view]").forEach(button=>{
+  button.addEventListener("click",()=>selectPalateView(button.dataset.view));
+});
+window.addEventListener("hashchange",()=>selectPalateView(location.hash.slice(1)));
+selectPalateView(location.hash.slice(1));
+
+
+function palateWineKey(name,year){
+ return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+}
+function findPalateWine(name,year){
+ const key=palateWineKey(name,year);
+ return wines.find(w=>palateWineKey(w.name,w.vintage)===key)
+   ||wines.find(w=>palateWineKey(w.name,w.vintage).includes(key)||key.includes(palateWineKey(w.name,w.vintage)))
+   ||null;
+}
+function openPalateWine(name,year){
+ const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===palateWineKey(name,year));
+ const wine=findPalateWine(name,year);
+ const displayName=stock?.name||wine?.name||name;
+ const displayYear=stock?.vintage||wine?.vintage||year||"";
+ const info=[
+ ["Vintype",stock?.type||wine?.type],
+ ["Spor",stock?.track||wine?.track],
+ ["Drikkeglæde",Number.isFinite(wine?.joy)?wine.joy+"/10":""],
+ ["Temperatur",wine?.temp],
+ ["Glas",wine?.glass],
+ ["Status",stock?.status||wine?.status],
+ ["På lager",stock?stock.qty+" fl.":""]
+ ].filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
+ const events=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===palateWineKey(name,year))
+   .sort((a,b)=>(a["Registreringsdato"]||"").localeCompare(b["Registreringsdato"]||"")||Number(a["Smagning_ID"])-Number(b["Smagning_ID"]))
+   .map((r,i)=>({record:r,label:i===0?"Første smagning":"Gensmagning "+i}))
+   .reverse();
+ const dateText=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||"")?value.split("-").reverse().join("."):"Dato ikke registreret";
+ const eventHistory=events.length
+   ?'<div class="palate-history"><h3>Registreringshistorik</h3>'+events.map(({record:r,label})=>{
+      if(events.length===1)label="Registreret";
+      const when=dateText(r["Registreringsdato"]);
+      const temp=r["Temperatur"]?'<span class="palate-history-temperature"> · '+esc(r["Temperatur"])+'</span>':"";
+      const rating=r["Drikkeglæde"]?'<strong>'+esc(r["Drikkeglæde"])+'/10</strong>':"";
+      return '<div class="palate-history-item"><div><div><b>'+esc(label)+'</b></div><span>'+esc(when)+temp+'</span></div>'+rating+'</div>';
+    }).join("")+'</div>'
+   :"";
+ const bottle='<svg viewBox="0 0 50 105" role="img" aria-label="Neutral flaskeillustration"><path d="M20 3h10v18l4 7v10c0 5 10 12 10 21v36c0 5-4 8-9 8H15c-5 0-9-3-9-8V59c0-9 10-16 10-21V28l4-7z" fill="#7a1f3d"/><rect x="11" y="62" width="28" height="25" rx="2" fill="#f7f4ef"/><path d="M20 5h10" stroke="#d2b88a" stroke-width="5"/></svg>';
+ document.getElementById("wineProfileContent").innerHTML=
+ '<div class="wine-dialog-top"><div class="wine-dialog-bottle">'+bottle+'</div><div><h2>'+esc(displayName)+'</h2><div>'+esc(displayYear)+'</div><p style="font-size:12px;color:var(--muted)">Flaskebillede afventer verificeret kilde</p></div></div>'+
+ '<div class="kv">'+info.map(([k,v])=>'<div>'+esc(k)+'</div><div>'+esc(String(v))+'</div>').join("")+'</div>'+
+ (wine?.note?'<div class="note">'+esc(wine.note)+'</div>':"")+eventHistory;
+ const dialog=document.getElementById("wineProfileDialog");
+ if(!dialog.open)dialog.showModal();
+}
+document.getElementById("closeWineProfile").addEventListener("click",()=>document.getElementById("wineProfileDialog").close());
+document.addEventListener("click",event=>{
+ const button=event.target.closest("[data-palate-wine]");
+ if(button)openPalateWine(button.dataset.palateWine,button.dataset.palateYear||"");
+});
+
+
+</script>
+</body>
+</html>

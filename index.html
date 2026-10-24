@@ -145,6 +145,11 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 .mobile-refresh{display:flex;max-width:1440px;margin:0 auto;padding:8px 12px 0;justify-content:flex-end}
 .mobile-refresh button{font:inherit;font-weight:650;font-size:12px;border:1px solid var(--line);border-radius:9px;color:var(--ink);background:var(--panel);padding:9px 12px;cursor:pointer}
 }
+.palate-history{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.palate-history h3{font-size:15px;margin:0 0 10px}
+.palate-history-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.palate-history-item span{color:var(--muted);font-size:12px}
+.palate-history-item strong{white-space:nowrap;color:var(--wine)}
 </style>
 </head>
 <body>
@@ -229,7 +234,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 <label class="full">Link<input name="Vinlink" type="url" placeholder="https://... (valgfrit)"></label>
 <label class="full">Navn<input name="Vin" autocomplete="off" placeholder="Vinens navn"></label>
 <label>Årgang<input name="Årgang" inputmode="numeric" placeholder="ÅÅÅÅ"></label>
-<label>Dato for smagning<input name="Smagningsdato" type="date" id="palateTastingDate"></label>
+
 <div class="full"><h3>Din vurdering</h3><p class="scale-help">Flyt skyderne for at angive din score fra 1 til 10 i halve point. En uberørt skyder tæller ikke med.</p></div>
 <div class="palate-rating"><div class="scale-heading"><strong>Drikkeglæde</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Drikkeglæde" min="1" max="10" step="0.5" value="5.5" aria-label="Drikkeglæde, 1 til 10 i halve point"><input type="hidden" name="Drikkeglæde" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
 <div class="palate-rating"><div class="scale-heading"><strong>Helhedsoplevelse</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Helhed" min="1" max="10" step="0.5" value="5.5" aria-label="Helhedsoplevelse, 1 til 10 i halve point"><input type="hidden" name="Helhed" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
@@ -436,8 +441,7 @@ function renderTastingHistory(rows){
   container.innerHTML=rows.map(r=>{
     const title=[r["Vin"],r["Årgang"]].filter(Boolean).join(" ");
     const score=r["Drikkeglæde"]||"—";
-    const tastingDate=/^\d{4}-\d{2}-\d{2}$/.test(r["Smagningsdato"]||"")?r["Smagningsdato"].split("-").reverse().join("."): "";
-    const descriptors=[tastingDate?("Smagt "+tastingDate):"",r["Type"],r["Temperatur"],r["Glas"]].filter(Boolean).map(esc).join(" · ");
+    const descriptors=[r["Type"],r["Temperatur"],r["Glas"]].filter(Boolean).map(esc).join(" · ");
     const fields=["Helhed","Balance","Stilmatch","Genkøb","Anbefaling"]
       .filter(key=>r[key]!=="")
       .map(key=>"<b>"+esc(key)+":</b> "+esc(r[key])).join(" · ");
@@ -447,6 +451,8 @@ function renderTastingHistory(rows){
       '</p><p>'+esc(r["Note"]||"")+'</p></div></div>';
   }).join("");
 }
+
+let palateTastingEvents=[];
 
 async function loadPalateData(){
   try {
@@ -478,6 +484,7 @@ async function loadPalateData(){
         stock,note:r["Note"]||"",eventId:r["Smagning_ID"]
       };
     });
+    palateTastingEvents=smagRows;
     renderTastingHistory(smagRows);
     renderFilters();
     renderChart();
@@ -491,8 +498,6 @@ async function loadPalateData(){
 loadPalateData();
 
 
-const palateDateInput=document.getElementById("palateTastingDate");
-if(palateDateInput&&!palateDateInput.value){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);palateDateInput.value=local.toISOString().slice(0,10);}
 document.getElementById("refreshPalate").addEventListener("click",()=>window.location.reload());
 function getRegistration(){
   const form=document.getElementById("palateRegistration");
@@ -595,11 +600,22 @@ function openPalateWine(name,year){
  ["Status",stock?.status||wine?.status],
  ["På lager",stock?stock.qty+" fl.":""]
  ].filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
+ const events=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===palateWineKey(name,year));
+ const dateText=value=>/^\\d{4}-\\d{2}-\\d{2}$/.test(value||"")?value.split("-").reverse().join("."):"Dato ikke registreret";
+ const eventHistory=events.length
+   ?'<div class="palate-history"><h3>Registreringshistorik</h3>'+events.map((r,i)=>{
+      const label=events.length>1?(i===0?"Første smagning":"Gensmagning "+i):"Registreret";
+      const when=dateText(r["Registreringsdato"]);
+      const temp=r["Temperatur"]?'<span class="palate-history-temperature"> · '+esc(r["Temperatur"])+'</span>':"";
+      const rating=r["Drikkeglæde"]?'<strong>'+esc(r["Drikkeglæde"])+'/10</strong>':"";
+      return '<div class="palate-history-item"><div><div><b>'+esc(label)+'</b></div><span>'+esc(when)+temp+'</span></div>'+rating+'</div>';
+    }).join("")+'</div>'
+   :"";
  const bottle='<svg viewBox="0 0 50 105" role="img" aria-label="Neutral flaskeillustration"><path d="M20 3h10v18l4 7v10c0 5 10 12 10 21v36c0 5-4 8-9 8H15c-5 0-9-3-9-8V59c0-9 10-16 10-21V28l4-7z" fill="#7a1f3d"/><rect x="11" y="62" width="28" height="25" rx="2" fill="#f7f4ef"/><path d="M20 5h10" stroke="#d2b88a" stroke-width="5"/></svg>';
  document.getElementById("wineProfileContent").innerHTML=
  '<div class="wine-dialog-top"><div class="wine-dialog-bottle">'+bottle+'</div><div><h2>'+esc(displayName)+'</h2><div>'+esc(displayYear)+'</div><p style="font-size:12px;color:var(--muted)">Flaskebillede afventer verificeret kilde</p></div></div>'+
  '<div class="kv">'+info.map(([k,v])=>'<div>'+esc(k)+'</div><div>'+esc(String(v))+'</div>').join("")+'</div>'+
- (wine?.note?'<div class="note">'+esc(wine.note)+'</div>':"");
+ (wine?.note?'<div class="note">'+esc(wine.note)+'</div>':"")+eventHistory;
  const dialog=document.getElementById("wineProfileDialog");
  if(!dialog.open)dialog.showModal();
 }

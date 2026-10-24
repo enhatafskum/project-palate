@@ -193,10 +193,12 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
       <div class="tabs">
         <button class="tab active" data-type="Rød">Rødvin</button>
         <button class="tab" data-type="Hvid">Hvidvin</button>
+        <button class="tab" data-type="Mousserende">Mousserende</button>
       </div>
 
       <div class="toolbar" id="trackFilters"></div>
       <div class="legend" id="legend"></div>
+      <p class="lead" id="chartCount" aria-live="polite"></p>
       <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
     </div>
 
@@ -370,6 +372,8 @@ function renderChart() {
   const y=v=>m.t + innerH - (v/10)*innerH;
 
   const data = wines.filter(w=>w.type===currentType && Number.isFinite(w.style) && Number.isFinite(w.joy) && (activeTrack==="Alle" || w.track===activeTrack));
+  const count=document.getElementById("chartCount");
+  if(count)count.textContent=data.length+" af "+wines.length+" smagninger vises";
   let out="";
 
   // grid + ticks
@@ -386,7 +390,10 @@ function renderChart() {
   out += `<text class="axisLabel" transform="translate(16 ${m.t+innerH/2}) rotate(-90)" text-anchor="middle">Drikkeglæde</text>`;
 
   data.forEach((w,idx)=>{
-    const cx=x(w.style), cy=y(w.joy), color=colors[w.track]||"#666";
+    const duplicates=data.slice(0,idx).filter(p=>p.style===w.style&&p.joy===w.joy).length;
+    const same=data.filter(p=>p.style===w.style&&p.joy===w.joy).length;
+    const offset=(duplicates-(same-1)/2)*10;
+    const cx=x(w.style)+offset, cy=y(w.joy), color=colors[w.track]||"#666";
     const sweet=w.status.includes("Sweet spot");
     out += `<circle class="point" data-index="${idx}" cx="${cx}" cy="${cy}" r="${sweet?7:5.5}" fill="${color}" opacity="${sweet?1:.88}"/>`;
     if(sweet) out += `<circle cx="${cx}" cy="${cy}" r="10" fill="none" stroke="${color}" stroke-width="1.5" opacity=".28"/>`;

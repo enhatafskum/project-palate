@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
-<meta name="palate-build" content="2026-10-24-stable-kpis-1">
+<meta name="palate-build" content="2026-10-24-c21-live-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -161,8 +161,255 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 .tasting-row strong{white-space:nowrap;color:var(--wine);font-size:14px}
 @media(max-width:650px){.tasting-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.tasting-controls label:first-child{grid-column:1/-1}}
 </style>
-</head>
+<style>
+/* PROJECT PALATE — Fase 1: Modern Wine Journal × Nordic Wine Studio */
+:root{--bg:#f5f2eb;--panel:#fffefa;--ink:#262522;--muted:#77766f;--wine:#662b3d;--gold:#a8956b;--line:#e6e1d7;--green:#edf0e7}
+body{background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+header{background:var(--bg);color:var(--ink);padding:32px max(28px,calc((100vw - 1320px)/2));border-bottom:1px solid var(--line);gap:24px}
+header h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(35px,3.5vw,51px);font-weight:400;letter-spacing:-.035em}
+header .sub{font-size:12px;letter-spacing:.06em;color:var(--muted);line-height:1.7}
+header>div:last-child{max-width:360px;text-align:right;font-style:italic;font-family:Georgia,serif;font-size:15px;letter-spacing:0}
+main{max-width:1360px;padding:30px 24px 58px}
+.palate-nav{background:var(--bg)!important;border-bottom:1px solid var(--line);box-shadow:none!important}
+.palate-nav button{border-radius:0!important;font-size:13px!important;letter-spacing:.01em}
+.palate-nav button[aria-selected="true"]{color:var(--wine)!important;background:transparent!important;border-bottom:2px solid var(--wine)!important}
+.palate-intro{padding:10px 0 29px;border-bottom:1px solid var(--line);margin-bottom:27px}
+.palate-eyebrow{display:block;font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:var(--wine);font-weight:700;margin-bottom:11px}
+.palate-intro h2{font:400 clamp(30px,4.3vw,52px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.045em;margin:0 0 12px;color:#262522}
+.palate-intro p{font-size:14px;max-width:620px;color:var(--muted);line-height:1.65;margin:0}
+.cards{gap:12px;margin-bottom:28px}
+.card{border:1px solid var(--line);border-radius:4px;box-shadow:none;padding:22px 22px 18px;min-height:140px;background:#fffefa}
+.card .kicker{font-size:10px;letter-spacing:.15em;color:#797169}
+.card .big{font:400 clamp(34px,3.2vw,48px)/1.25 Georgia,'Times New Roman',serif;margin-top:12px;color:var(--wine);letter-spacing:-.04em}
+.card .small{font-size:11px;line-height:1.5}
+.panel{box-shadow:none;border:1px solid var(--line);border-radius:4px;padding:clamp(18px,3vw,32px);background:#fffefa}
+.panel h2{font:400 clamp(25px,2.5vw,33px)/1.15 Georgia,'Times New Roman',serif;letter-spacing:-.025em;margin-bottom:10px}
+.panel p.lead{font-size:13px;line-height:1.65}
+.tabs{border-bottom:1px solid var(--line);gap:20px}
+.tab{background:transparent;border-radius:0;padding:12px 2px;color:var(--muted);font-weight:500}
+.tab.active{background:transparent;color:var(--wine);border-bottom:2px solid var(--wine)}
+button.filter{background:transparent;border:1px solid #d9d4ca;color:#5b5650;font-size:12px;font-weight:500;padding:7px 13px}
+button.filter.active{background:var(--wine);border-color:var(--wine);color:white}
+.legend{color:var(--muted);gap:14px}
+.gridline{stroke:#eae6de}
+.axis{stroke:#b5aea3}
+.axisLabel{fill:#686159}
+.tick{fill:#8a857e}
+.note{background:#f6f1e9}
+.tasting-row strong,.qty{color:var(--wine)}
+.tasting-row-name{font-weight:600}
+.wine-dialog{background:var(--panel)}
+.wine-dialog h2{font-family:Georgia,'Times New Roman',serif}
+.palate-preview-ribbon{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#e9e0d3;border-bottom:1px solid #d8cbb9;color:#543746;font-size:12px;padding:10px max(24px,calc((100vw - 1360px)/2));letter-spacing:.01em}
+.palate-preview-ribbon a{color:var(--wine);font-weight:700;text-underline-offset:3px}
+footer{color:#8a857e}
+@media(max-width:740px){
+ header{padding:24px 20px;align-items:flex-start;gap:8px}
+ header>div:last-child{display:none}
+ main{padding:20px 14px 40px}
+ .palate-intro{padding:6px 4px 22px;margin-bottom:20px}
+ .card{min-height:115px;padding:16px 14px}
+ .card .big{font-size:38px}
+ .panel{padding:18px 14px}
+ .palate-preview-ribbon{padding:10px 14px;align-items:flex-start;flex-direction:column;gap:4px}
+}
+</style>
+<style>
+/* C2.1 – tydeligt informationshierarki uden dekorative kort */
+#view-overblik .palate-intro{border:0;margin:0;padding:18px 0 34px;max-width:900px}
+#view-overblik .palate-eyebrow{letter-spacing:.16em;color:#783e50;font-size:11px;margin-bottom:14px}
+#view-overblik .palate-intro h2{font:400 clamp(37px,4.4vw,57px)/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.04em;color:#242320;margin:0 0 14px}
+#view-overblik .palate-intro p{font-size:16px;color:#625e58;line-height:1.6}
+#view-overblik .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid #cfc7bd;border-bottom:1px solid #cfc7bd;gap:0;margin:0 0 40px}
+#view-overblik .card{background:transparent;box-shadow:none;border:0;border-radius:0;padding:22px 20px 26px 0;min-height:124px;position:relative}
+#view-overblik .card:not(:first-child){padding-left:22px;border-left:1px solid #dfd8ce}
+#view-overblik .card .kicker{font-size:11px;color:#625b55;letter-spacing:.07em;font-weight:600;text-transform:none}
+#view-overblik .card .big{font:400 clamp(39px,4vw,60px)/1.05 Georgia,'Times New Roman',serif;margin:10px 0 6px;letter-spacing:-.06em;color:#632b3c}
+#view-overblik .card .small{font-size:12px;color:#6a655f;max-width:190px}
+#view-overblik .panel{background:#fffefa;border:1px solid #e3dcd2;padding:clamp(20px,3vw,40px);border-radius:5px;box-shadow:none}
+#view-overblik .panel h2{font:400 clamp(29px,3vw,40px)/1.1 Georgia,'Times New Roman',serif;color:#292723;letter-spacing:-.045em;margin-bottom:10px}
+#view-overblik .panel p.lead{font-size:13px;max-width:720px;line-height:1.75;color:#615d56}
+#view-overblik .tab{font-size:13px}
+#view-overblik .toolbar{margin-top:17px}
+#view-overblik #chartCount{font-size:12px;color:#70685f}
+@media(max-width:860px){#view-overblik .cards{grid-template-columns:repeat(2,minmax(0,1fr))}#view-overblik .card:nth-child(3){border-left:0;padding-left:0;border-top:1px solid #dfd8ce}#view-overblik .card:nth-child(4){border-top:1px solid #dfd8ce}}
+@media(max-width:500px){#view-overblik .palate-intro{padding:8px 3px 27px}#view-overblik .palate-intro h2{font-size:38px}#view-overblik .card{padding:18px 10px 18px 0;min-height:108px}#view-overblik .card:not(:first-child){padding-left:13px}#view-overblik .card:nth-child(3){padding-left:0}#view-overblik .card .big{font-size:43px}#view-overblik .card .kicker{font-size:11px}#view-overblik .card .small{font-size:11px}#view-overblik .cards{margin-bottom:24px}#view-overblik .panel{padding:20px 14px}}
+</style><style>
+/* C2.1 – justeret tydeligt titelhierarki */
+header h1{font-size:clamp(46px,5.2vw,72px);line-height:1.04;letter-spacing:-.048em}
+#view-overblik .palate-intro h2{font-size:clamp(30px,3vw,43px);line-height:1.15;letter-spacing:-.028em}
+@media(max-width:740px){
+ header h1{font-size:clamp(37px,6.8vw,47px)}
+ #view-overblik .palate-intro h2{font-size:clamp(29px,4.8vw,35px)}
+}
+@media(max-width:390px){
+ header h1{font-size:36px}
+ #view-overblik .palate-intro h2{font-size:29px}
+}
+</style><style>
+/* C2.1 navigation B – diskret, afrundet, redaktionel */
+.palate-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:19px 22px 17px;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto;
+}
+.palate-nav button{
+  border:1px solid transparent!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:#57514c!important;
+  font-size:14px!important;
+  font-weight:550;
+  padding:11px 19px;
+  min-height:44px;
+  transition:background .18s ease,color .18s ease;
+}
+.palate-nav button:hover{background:#eee7e2!important;color:#522c3a!important}
+.palate-nav button:focus-visible{outline:2px solid #783e50;outline-offset:3px}
+.palate-nav button[aria-selected="true"]{
+  background:#e9dbdf!important;
+  color:#622b3e!important;
+  border:1px solid transparent!important;
+  font-weight:700;
+}
+@media(max-width:650px){
+  .palate-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:15px 14px 17px;overflow:visible}
+  .palate-nav button{width:100%;min-width:0;padding:12px 10px;text-align:center}
+}
+</style><style>/* C2.1 – projekttitel tættere på venstrekanten; menu og hovedindhold urørt */
+header{padding-left:clamp(20px,2.4vw,38px)}
+@media(max-width:740px){header{padding-left:20px}}
+</style><style>
+/* C2.1 – smagskortets diskrete kontrolpanel og læsehjælp */
+#view-overblik .palate-chart-controls{padding:18px 0 17px;border-top:1px solid #e9e3db;border-bottom:1px solid #e9e3db;margin:22px 0 17px}
+#view-overblik .palate-chart-group-label{font-size:11px;letter-spacing:.055em;font-weight:650;color:#6d615c;margin-bottom:10px}
+#view-overblik .tabs{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0 0 18px}
+#view-overblik .tabs .tab{border:1px solid transparent;background:transparent;color:#605952;border-radius:999px;padding:10px 18px;min-height:42px;font-weight:550;line-height:1.2}
+#view-overblik .tabs .tab.active{color:#5b2538;background:#eadde1;border-color:transparent;font-weight:700}
+#view-overblik .tabs .tab:hover:not(.active){background:#f3efea}
+#view-overblik .toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:0}
+#view-overblik button.filter{padding:9px 14px;min-height:41px;background:transparent;border:1px solid #ded5cf;border-radius:999px;color:#5b524d;font-size:12px;font-weight:550;transition:background .15s,color .15s}
+#view-overblik button.filter.active{background:#693046;border-color:#693046;color:#fff}
+#view-overblik button.filter:hover:not(.active){background:#f5f0ee}
+#view-overblik .palate-chart-legend-area{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 22px;margin:17px 0 8px}
+#view-overblik .legend{margin:0;font-size:12px;gap:16px;line-height:1.7}
+#view-overblik .palate-chart-ring-key{display:flex;align-items:center;gap:8px;color:#655f59;font-size:12px}
+#view-overblik .palate-ring-icon{display:inline-block;width:13px;height:13px;border-radius:50%;border:1.5px solid #906778;position:relative}
+#view-overblik .palate-ring-icon::after{content:"";position:absolute;inset:3px;background:#906778;border-radius:50%}
+#view-overblik #chartCount{margin:8px 0 14px;color:#69645e;font-size:12px}
+#view-overblik .palate-chart-reading-guide{padding:12px 0 0;color:#70675e;font-size:12px;line-height:1.5}
+#view-overblik #chartWrap{margin-top:12px}
+@media(max-width:650px){
+ #view-overblik .palate-chart-controls{margin-top:16px;padding:15px 0}
+ #view-overblik .tabs{gap:6px;margin-bottom:17px}
+ #view-overblik .tabs .tab{padding:10px 13px}
+ #view-overblik .palate-chart-legend-area{align-items:flex-start}
+ #view-overblik .palate-chart-reading-guide{font-size:11px}
+}
+</style><style>
+/* C2.1 mobilharmonisering – desktop som designreference */
+@media(max-width:740px){
+  header{padding:24px 18px 20px;gap:8px}
+  header h1{font-size:clamp(36px,7vw,47px);line-height:1.05;letter-spacing:-.045em}
+  header .sub{font-size:12px;letter-spacing:.04em;margin-top:7px}
+  main{padding:22px 16px 44px}
+  #view-overblik .palate-intro{padding:6px 0 24px}
+  #view-overblik .palate-intro h2{font-size:clamp(29px,5vw,35px);margin-bottom:10px}
+  #view-overblik .palate-intro p{font-size:14px;line-height:1.6}
+  .palate-nav{padding:14px 16px 17px;gap:9px}
+  .palate-nav button{font-size:13px!important;line-height:1.25}
+  #view-overblik .cards{margin-bottom:28px}
+  #view-overblik .card{min-height:115px;padding:20px 12px 19px 0}
+  #view-overblik .card:not(:first-child){padding-left:16px}
+  #view-overblik .card:nth-child(3){padding-left:0}
+  #view-overblik .card .big{font-size:clamp(39px,7vw,48px);margin:9px 0 5px}
+  #view-overblik .card .small{font-size:11.5px;line-height:1.45}
+  #view-overblik .panel{padding:23px 17px;border-radius:5px}
+  #view-overblik .panel h2{font-size:clamp(28px,5vw,34px)}
+  #view-overblik .panel p.lead{font-size:13px;line-height:1.6}
+  #view-overblik .palate-chart-controls{margin-top:19px;padding:16px 0}
+  #view-overblik .tabs{gap:7px;margin-bottom:16px}
+  #view-overblik .tabs .tab{padding:10px 13px;min-height:43px;font-size:12.5px}
+  #view-overblik .toolbar{gap:7px}
+  #view-overblik button.filter{font-size:12px;min-height:42px;padding:9px 12px}
+  #view-overblik .palate-chart-legend-area{gap:12px;margin-top:16px}
+  #view-overblik .legend{gap:10px 15px}
+  #view-overblik #chartCount{margin:10px 0}
+  #view-overblik .palate-chart-reading-guide{font-size:11.5px;line-height:1.6}
+  #view-overblik #chartWrap{margin-top:14px;height:auto;min-height:0;aspect-ratio:900 / 560}
+  #view-overblik #chart{width:100%;height:100%;display:block}
+}
+@media(max-width:390px){
+  header{padding-left:16px;padding-right:16px}
+  header h1{font-size:36px}
+  main{padding-left:12px;padding-right:12px}
+  .palate-nav{padding-left:12px;padding-right:12px}
+  #view-overblik .panel{padding:18px 12px}
+  #view-overblik .card{min-height:112px}
+  #view-overblik .card .big{font-size:40px}
+  #view-overblik .tabs .tab{padding:10px 11px}
+  #view-overblik button.filter{padding:9px 11px}
+}
+</style><style>
+/* C2.1 – samme visuelle identitet på de øvrige tre sider */
+#view-smagninger,#view-lager,#view-registrer{padding-top:12px}
+#view-smagninger .panel,#view-lager .panel,#view-registrer .panel{
+ background:#fffefa;border:1px solid #e3dcd2;border-radius:5px;
+ box-shadow:none;padding:clamp(20px,3vw,38px)
+}
+#view-smagninger .panel h2,#view-lager .panel h2,#view-registrer .panel h2{
+ font:400 clamp(28px,3vw,40px)/1.12 Georgia,'Times New Roman',serif;
+ letter-spacing:-.035em;color:#292723;margin-bottom:10px
+}
+#view-smagninger .panel p.lead,#view-lager .panel p.lead,#view-registrer .panel p.lead{
+ color:#615d56;font-size:13px;line-height:1.7;max-width:780px
+}
+#view-smagninger .tasting-controls{margin:24px 0 17px;gap:14px}
+#view-smagninger .tasting-controls label{font-size:12px;color:#625b54;font-weight:600;gap:7px}
+#view-smagninger .tasting-controls input,#view-smagninger .tasting-controls select{
+ background:#fffefa;color:#2d2b29;border:1px solid #dcd4c9;border-radius:9px;
+ min-height:46px;font-size:13px;padding:10px 13px
+}
+#view-smagninger .tasting-row{padding:17px 6px}
+#view-smagninger .tasting-row-name{font-size:14px;color:#2c2926;font-weight:600}
+#view-smagninger .tasting-row-name small{font-size:12px;color:#77716c;margin-top:6px}
+#view-smagninger .tasting-row strong{font:400 22px Georgia,'Times New Roman',serif;color:#662b3d}
+#view-smagninger .compact-tasting{border-color:#e9e4dc}
+#view-lager .tabs{border:0;gap:8px;flex-wrap:wrap;margin:20px 0 14px}
+#view-lager .tab{background:transparent;color:#625b54;border:1px solid transparent;border-radius:999px;padding:10px 16px;min-height:43px;font-weight:550}
+#view-lager .tab.active{background:#e9dbdf;color:#622b3e;font-weight:700}
+#view-lager table{font-size:13px}
+#view-lager th{color:#746d64;letter-spacing:.09em;font-weight:650}
+#view-lager td,#view-lager th{border-bottom:1px solid #e9e4dc;padding:13px 10px}
+#view-lager .tableWrap{border-radius:0}
+#view-lager .hypothesis{background:#f5f2eb!important;border:1px solid #e7e0d6!important;color:#554f49;border-radius:7px;line-height:1.65}
+#view-registrer .register-form{gap:17px}
+#view-registrer .register-form label{gap:7px;color:#5e5650;font-size:12px;font-weight:650}
+#view-registrer .register-form input,#view-registrer .register-form textarea,#view-registrer .register-form select{
+ border:1px solid #ddd5cb;border-radius:9px;background:#fffefa;color:#292723;
+ min-height:46px;padding:12px 13px
+}
+#view-registrer .register-form h3{font:400 24px Georgia,'Times New Roman',serif;letter-spacing:-.025em}
+#view-registrer .scale-help{color:#6d675e;line-height:1.65}
+#view-smagninger button:focus-visible,#view-lager button:focus-visible,#view-registrer button:focus-visible{
+ outline:2px solid #71334a;outline-offset:3px
+}
+@media(max-width:740px){
+ #view-smagninger,#view-lager,#view-registrer{padding-top:3px}
+ #view-smagninger .panel,#view-lager .panel,#view-registrer .panel{padding:21px 16px}
+ #view-smagninger .panel h2,#view-lager .panel h2,#view-registrer .panel h2{font-size:31px}
+ #view-smagninger .tasting-controls{gap:9px;margin-top:20px}
+ #view-smagninger .tasting-row{padding:15px 2px}
+ #view-lager td,#view-lager th{padding:11px 8px}
+}
+@media(max-width:390px){
+ #view-smagninger .panel,#view-lager .panel,#view-registrer .panel{padding:19px 12px}
+ #view-lager .tab{padding:10px 12px}
+}
+</style></head>
 <body>
+
 <header>
   <div>
     <h1>PROJECT PALATE</h1>
@@ -179,7 +426,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 </nav>
 
 <main>
-<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">  <section class="cards">
+<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik"><div class="palate-intro"><span class="palate-eyebrow">Din personlige vinjournal</span><h2>Overblik</h2><p>Et samlet blik på din vinrejse.</p></div><section class="cards">
     <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
     <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
     <div class="card"><div class="kicker">Sweet spots</div><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div>
@@ -189,17 +436,25 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
   <section class="grid">
     <div class="panel">
       <h2>Smagskort</h2>
-      <p class="lead">X-akse = stilretning fra finesse/lethed mod kraft/dybde. Y-akse = din drikkeglæde. Tryk på en prik for at se vinens profil.</p>
+      <p class="lead">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
 
+      <div class="palate-chart-controls">
+      <div class="palate-chart-group-label">Vælg vintype</div>
       <div class="tabs">
         <button class="tab active" data-type="Rød">Rødvin</button>
         <button class="tab" data-type="Hvid">Hvidvin</button>
         <button class="tab" data-type="Mousserende">Mousserende</button>
       </div>
 
+      <div class="palate-chart-group-label">Udforsk smagsspor</div>
       <div class="toolbar" id="trackFilters"></div>
-      <div class="legend" id="legend"></div>
-      <p class="lead" id="chartCount" aria-live="polite"></p>
+      </div>
+      <div class="palate-chart-legend-area">
+        <div class="legend" id="legend"></div>
+        <div class="palate-chart-ring-key"><span class="palate-ring-icon" aria-hidden="true"></span> Ring = Sweet spot</div>
+      </div>
+      <p class="lead palate-chart-counter" id="chartCount" aria-live="polite"></p>
+      <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
       <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
     </div>
 
@@ -209,7 +464,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 </div>
 <div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
 <section class="panel" style="margin-top:18px">
-<h2>Smagninger</h2><p class="lead">Find en vin, og tryk på den for at se alle oplysninger og registreringshistorik.</p>
+<h2>Smagninger</h2><p class="lead">Dine registrerede vine. Den seneste vurdering og registreringsdato vises i oversigten. Tryk på en vin for at se hele historikken.</p>
 <div class="tasting-controls">
 <label>Søg<input id="tastingSearch" type="search" placeholder="Vin eller årgang" autocomplete="off"></label>
 <label>Vintype<select id="tastingType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
@@ -221,8 +476,8 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 </section></div>
 <div class="palate-view" id="view-lager" role="tabpanel" aria-labelledby="nav-lager" hidden>  <section class="grid" style="margin-top:18px">
     <div class="panel">
-      <h2>Lager</h2>
-      <p class="lead">Brug bagkataloget aktivt før nye køb. Filtrér efter vintype.</p>
+      <h2>Vinlager</h2>
+      <p class="lead">Overblik over de flasker, du har til rådighed. Filtrér efter vintype, eller vælg en vin for at se dens profil.</p>
       <div class="tabs" id="stockTabs">
         <button class="tab active" data-stock="Alle">Alle</button>
         <button class="tab" data-stock="Rød">Rød</button>

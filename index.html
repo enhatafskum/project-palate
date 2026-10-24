@@ -21,7 +21,7 @@ main{max-width:1440px;margin:auto;padding:22px}
 .card .kicker{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700}
 .card .big{font-size:30px;font-weight:800;color:var(--wine);margin-top:4px}
 .card .small{font-size:12px;color:var(--muted);margin-top:3px}
-.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,.75fr);gap:18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 20px rgba(31,41,55,.04)}
 .panel h2{margin:0 0 6px;font-size:19px}
 .panel p.lead{margin:0 0 14px;color:var(--muted);font-size:13px}
@@ -202,10 +202,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
       <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
     </div>
 
-    <div class="panel detail" id="detail">
-      <h2>Vinens profil</h2>
-      <div class="placeholder">Klik på en prik i smagskortet for at se vinens spor, score, temperatur, glas og note.</div>
-    </div>
+
   </section>
 
 </div>
@@ -294,7 +291,7 @@ let activeTrack = "Alle";
 
 const svg = document.getElementById("chart");
 const tooltip = document.getElementById("tooltip");
-const detail = document.getElementById("detail");
+
 
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -344,25 +341,6 @@ function renderFilters() {
 
   const legend = document.getElementById("legend");
   legend.innerHTML = tracksForType(currentType).map(t=>`<span><i class="dot" style="background:${colors[t]||'#777'}"></i>${esc(t)}</span>`).join("");
-}
-
-function showDetail(w) {
-  detail.innerHTML = `
-    <h2>Vinens profil</h2>
-    <h3>${esc(fmtName(w))}</h3>
-    <div>
-      <span class="badge">${esc(w.track)}</span>
-      <span class="badge">${esc(w.status)}</span>
-      ${w.stock>0?`<span class="badge">${w.stock} på lager</span>`:""}
-    </div>
-    <div class="kv">
-      <div>Drikkeglæde</div><div><strong>${w.joy.toFixed(1)}</strong> / 10</div>
-      <div>Stilakse</div><div>${w.style.toFixed(1)} / 10</div>
-      <div>Glas</div><div>${esc(w.glass||"—")}</div>
-      <div>Temperatur</div><div>${esc(w.temp||"—")}</div>
-      <div>Vintype</div><div>${esc(w.type)}</div>
-    </div>
-    <div class="note">${esc(w.note||"")}</div>`;
 }
 
 function renderChart() {
@@ -469,22 +447,36 @@ function renderTastingHistory(rows){
   const type=document.getElementById("tastingType")?.value||"Alle";
   const minimum=Number(document.getElementById("tastingMinScore")?.value||0);
   const order=document.getElementById("tastingSort")?.value||"newest";
-  const filtered=rows.filter(r=>{
+  // En vin og årgang vises kun én gang; seneste registrering styrer den viste score og dato.
+  const grouped=new Map();
+  rows.forEach(r=>{
+    const key=palateWineKey(r["Vin"],r["Årgang"]||"");
+    const previous=grouped.get(key);
+    if(!previous){grouped.set(key,{latest:r,events:1});return;}
+    previous.events++;
+    const older=previous.latest;
+    if((r["Registreringsdato"]||"")>(older["Registreringsdato"]||"") ||
+      ((r["Registreringsdato"]||"")===(older["Registreringsdato"]||"") &&
+       Number(r["Smagning_ID"])>Number(older["Smagning_ID"])))previous.latest=r;
+  });
+  const unique=Array.from(grouped.values());
+  const filtered=unique.filter(({latest:r})=>{
     const text=(r["Vin"]+" "+(r["Årgang"]||"")).toLocaleLowerCase("da");
     return text.includes(query)&&(type==="Alle"||r["Type"]===type)&&Number(r["Drikkeglæde"]||0)>=minimum;
-  }).sort((a,b)=>{
+  }).sort((aa,bb)=>{
+    const a=aa.latest,b=bb.latest;
     if(order==="score")return Number(b["Drikkeglæde"]||0)-Number(a["Drikkeglæde"]||0)||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
     if(order==="alpha")return a["Vin"].localeCompare(b["Vin"],"da")||Number(a["Smagning_ID"])-Number(b["Smagning_ID"]);
     return (b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
   });
-  document.getElementById("tastingCount").textContent=filtered.length+" af "+rows.length+" smagninger vises";
-  container.innerHTML=filtered.map(r=>{
+  document.getElementById("tastingCount").textContent=filtered.length+" af "+unique.length+" vine vises · "+rows.length+" smagningsregistreringer i alt";
+  container.innerHTML=filtered.map(({latest:r,events})=>{
     const title=[r["Vin"],r["Årgang"]].filter(Boolean).join(" ");
     const rawDate=r["Registreringsdato"]||"";
-    const displayDate=/^\d{4}-\d{2}-\d{2}$/.test(rawDate)?rawDate.split("-").reverse().join("."):"";
-    const description=[r["Type"],displayDate].filter(Boolean).map(esc).join(" · ");
+    const displayDate=/^\d{4}-\d{2}-\d{2}$/.test(rawDate)?rawDate.split("-").reverse().join("."):"Dato ikke registreret";
+    const description=[r["Type"],"Registreret "+displayDate,events>1?events+" smagninger":""].filter(Boolean).map(esc).join(" · ");
     return '<div class="tasting compact-tasting"><button type="button" class="tasting-row" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'"><span class="tasting-row-name">'+esc(title)+'<small>'+description+'</small></span><strong>'+esc(r["Drikkeglæde"]||"—")+'/10</strong><span aria-hidden="true">›</span></button></div>';
-  }).join("")||'<p class="lead">Ingen smagninger matcher søgningen.</p>';
+  }).join("")||'<p class="lead">Ingen vine matcher søgningen.</p>';
 }
 ["tastingSearch","tastingType","tastingMinScore","tastingSort"].forEach(id=>{
   document.getElementById(id).addEventListener(id==="tastingSearch"?"input":"change",()=>renderTastingHistory(palateTastingEvents));

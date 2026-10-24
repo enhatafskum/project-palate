@@ -102,7 +102,7 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 .scale-heading{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:14px}
 .scale-current{font-size:13px;color:var(--wine);font-weight:650;text-align:right}
 .palate-scale input[type="range"]{width:100%;margin:15px 0 4px;padding:0;min-height:26px;accent-color:var(--wine);cursor:pointer}
-.scale-labels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;align-items:start;text-align:center;font-size:11px;color:var(--muted)}
+.scale-labels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-items:start;text-align:center;font-size:11px;color:var(--muted)}
 .scale-labels span:first-child{text-align:left}.scale-labels span:last-child{text-align:right}
 .scale-help{margin:4px 0 0;font-size:12px;color:var(--muted);font-weight:400}
 .palate-rating{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:#faf8f5;min-width:0}
@@ -208,8 +208,8 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 <div class="palate-rating"><div class="scale-heading"><strong>Genkøbslyst</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Genkøb" min="1" max="10" step="0.5" value="5.5" aria-label="Genkøbslyst, 1 til 10 i halve point"><input type="hidden" name="Genkøb" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
 <div class="palate-rating"><div class="scale-heading"><strong>Vil du anbefale den til en god ven</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Anbefaling" min="1" max="10" step="0.5" value="5.5" aria-label="Vil du anbefale den til en god ven, 1 til 10 i halve point"><input type="hidden" name="Anbefaling" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
 <div class="full"><h3>Hvordan oplevedes vinen?</h3></div>
-<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Fylde fra 0 til 10" data-scale-slider="Fylde"><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>For lidt</span><span>Passende</span><span>Lidt for meget</span><span>Klart for meget</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
-<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Sødme fra 0 til 10" data-scale-slider="Sødme"><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>For tør</span><span>Passende</span><span>En anelse for sød</span><span>For sød</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
+<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Fylde fra 0 til 10" data-scale-slider="Fylde"><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>Alt for lidt</span><span>Lidt for lidt</span><span>Passende</span><span>Lidt for meget</span><span>Alt for meget</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
+<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="0" max="10" step="1" value="5" aria-label="Sødme fra 0 til 10" data-scale-slider="Sødme"><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>Alt for tør</span><span>Lidt for tør</span><span>Passende</span><span>Lidt for sød</span><span>Alt for sød</span></div><p class="scale-help">Flyt skyderen for at registrere din vurdering.</p></div>
 <label class="full">Drikkesituation<textarea name="Situation" rows="2" placeholder="Hvor og i hvilken sammenhæng drak du vinen?"></textarea></label>
 <label class="full">Hvad var det bedste ved vinen?<textarea name="Note" rows="3" placeholder="Hvad gjorde størst positivt indtryk?"></textarea></label>
 <div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
@@ -482,13 +482,17 @@ document.querySelectorAll("[data-scale-slider]").forEach(slider=>{
  const group=slider.closest(".palate-scale");
  const output=group.querySelector(".scale-current");
  const hidden=group.querySelector('input[type="hidden"]');
- const descriptions=slider.dataset.scaleSlider==="Fylde"
-  ?["For lidt","Passende","Lidt for meget","Klart for meget"]
-  :["For tør","Passende","En anelse for sød","For sød"];
+ const isFylde=slider.dataset.scaleSlider==="Fylde";
+ const categories=isFylde
+  ?["Alt for lidt","Lidt for lidt","Passende","Lidt for meget","Alt for meget"]
+  :["Alt for tør","Lidt for tør","Passende","Lidt for sød","Alt for sød"];
  slider.addEventListener("input",()=>{
   const number=Number(slider.value);
-  const index=number<=2?0:number<=5?1:number<=8?2:3;
-  const description=descriptions[index];
+  const index=number<=1?0:number<=3?1:number<=6?2:number<=8?3:4;
+  let description=categories[index];
+  if(number===4)description+=" · mod den "+(isFylde?"lette":"tørre")+" side";
+  if(number===5)description="Helt passende";
+  if(number===6)description+=" · mod den "+(isFylde?"fyldige":"søde")+" side";
   output.textContent=number+"/10 · "+description;
   hidden.value=number+"/10 ("+description+")";
   hidden.disabled=false;

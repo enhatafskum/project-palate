@@ -4,6 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
+<meta name="palate-build" content="2026-10-24-stable-kpis-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -284,7 +285,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 <script>
 // Gem den oprindelige HTML før PALATE ændrer indholdet dynamisk.
 // Sammenlign med en frisk hentet udgave, så også kommende designændringer opdages.
-const palateLoadedHtml=document.documentElement.outerHTML;
+const palateBuild=document.querySelector('meta[name="palate-build"]')?.content;
 let palateCheckingVersion=null;
 let palateRegistrationDirty=false;
 document.getElementById("palateRegistration").addEventListener("input",event=>{
@@ -301,8 +302,9 @@ async function checkPalateVersion(){
       url.searchParams.set("_palate_check",String(Date.now()));
       const response=await fetch(url.toString(),{cache:"no-store"});
       if(!response.ok)return;
-      const latestHtml=new DOMParser().parseFromString(await response.text(),"text/html").documentElement.outerHTML;
-      if(latestHtml===palateLoadedHtml)return;
+      const latestDoc=new DOMParser().parseFromString(await response.text(),"text/html");
+      const latestBuild=latestDoc.querySelector('meta[name="palate-build"]')?.content;
+      if(!palateBuild||!latestBuild||latestBuild===palateBuild)return;
       if(palateRegistrationDirty){
         let notice=document.getElementById("palateVersionNotice");
         if(!notice){
@@ -457,10 +459,8 @@ document.querySelectorAll(".tab[data-stock]").forEach(btn=>{
   };
 });
 
-renderKPIs();
-renderFilters();
-renderChart();
-renderStock();
+// Vent på de autoritative CSV-data før tal og grafik vises.
+["kpiStock","kpiTasted","kpiSweet","kpiBoth"].forEach(id=>{document.getElementById(id).textContent="–";});
 
 // PALATE: Lager og antal smagninger hentes fra de autoritative CSV-eksporter.
 // Indbyggede data fungerer som reserve, hvis netværket er utilgængeligt.
@@ -526,7 +526,10 @@ function renderTastingHistory(rows){
 
 let palateTastingEvents=[];
 
+let palateDataRequest=null;
 async function loadPalateData(){
+  if(palateDataRequest)return palateDataRequest;
+  palateDataRequest=(async()=>{
   try {
     const [lagerResponse,smagResponse]=await Promise.all([
       fetch("./data/lager.csv",{cache:"no-store"}),
@@ -564,12 +567,11 @@ async function loadPalateData(){
     const selectedStock=document.querySelector(".tab[data-stock].active");
     renderStock(selectedStock?selectedStock.dataset.stock:"Alle");
   } catch(error) {
-    console.warn("PALATE bruger indbyggede reservedata:",error);
+    console.warn("PALATE-data kunne ikke opdateres; senest indlæste data bevares:",error);
   }
+  })().finally(()=>{palateDataRequest=null;});
+  return palateDataRequest;
 }
-loadPalateData();
-
-
 
 function getRegistration(){
   const form=document.getElementById("palateRegistration");

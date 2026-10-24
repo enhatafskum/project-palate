@@ -246,6 +246,37 @@ header h1{font-size:clamp(46px,5.2vw,72px);line-height:1.04;letter-spacing:-.048
  header h1{font-size:36px}
  #view-overblik .palate-intro h2{font-size:29px}
 }
+</style><style>
+/* C2.1 navigation B – diskret, afrundet, redaktionel */
+.palate-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:19px 22px 17px;
+  border-bottom:1px solid var(--line);
+  overflow-x:auto;
+}
+.palate-nav button{
+  border:1px solid transparent!important;
+  border-radius:999px!important;
+  background:transparent!important;
+  color:#57514c!important;
+  font-size:14px!important;
+  font-weight:550;
+  padding:11px 19px;
+  min-height:44px;
+  transition:background .18s ease,color .18s ease;
+}
+.palate-nav button:hover{background:#eee7e2!important;color:#522c3a!important}
+.palate-nav button:focus-visible{outline:2px solid #783e50;outline-offset:3px}
+.palate-nav button[aria-selected="true"]{
+  background:#e9dbdf!important;
+  color:#622b3e!important;
+  border:1px solid transparent!important;
+  font-weight:700;
+}
+@media(max-width:650px){
+  .palate-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:15px 14px 17px;overflow:visible}
+  .palate-nav button{width:100%;min-width:0;padding:12px 10px;text-align:center}
+}
 </style></head>
 <body>
 <div class="palate-preview-ribbon"><span>DESIGNSTUDIE · C2.1 — Typografi, kontrast og informationshierarki</span><a href="./index.html">Gå til den nuværende PALATE-side ↗</a></div>

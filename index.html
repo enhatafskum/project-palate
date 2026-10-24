@@ -150,6 +150,15 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 .palate-history-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
 .palate-history-item span{color:var(--muted);font-size:12px}
 .palate-history-item strong{white-space:nowrap;color:var(--wine)}
+
+.tasting-controls{display:grid;grid-template-columns:minmax(180px,1.6fr) repeat(3,minmax(130px,1fr));gap:10px;margin:14px 0}
+.tasting-controls label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:650;color:var(--muted);min-width:0}
+.tasting-controls input,.tasting-controls select{border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink);font:inherit;font-size:14px;min-height:43px;width:100%;min-width:0}
+.compact-tasting{padding:0}.tasting-row{width:100%;border:0;background:transparent;display:flex;align-items:center;text-align:left;gap:10px;padding:14px 4px;font:inherit;cursor:pointer;color:var(--ink)}
+.tasting-row-name{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:650;font-size:14px}
+.tasting-row-name small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:4px}
+.tasting-row strong{white-space:nowrap;color:var(--wine);font-size:14px}
+@media(max-width:650px){.tasting-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.tasting-controls label:first-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -167,7 +176,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 <button type="button" role="tab" id="nav-lager" aria-controls="view-lager" aria-selected="false" data-view="lager">Vinlager</button>
 <button type="button" role="tab" id="nav-registrer" aria-controls="view-registrer" aria-selected="false" data-view="registrer">＋ Registrer</button>
 </nav>
-<div class="mobile-refresh"><button type="button" id="refreshPalate" aria-label="Hent seneste version af Project PALATE">↻ Opdater siden</button></div>
+
 <main>
 <div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">  <section class="cards">
     <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
@@ -198,7 +207,18 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
   </section>
 
 </div>
-<div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden><section class="panel" style="margin-top:18px"><h2>Smagninger – historik</h2><p class="lead">Alle registrerede smagninger. Tryk på en vin for at se vurdering og noter.</p><div id="tastingHistory"><details class="tasting"><summary><span>Charles Roux Blanc de Blancs Demi-Sec</span><strong>8/10</strong></summary><div class="tasting-inner"><p>Mousserende · White</p><p><b>Helhed:</b> 10 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>Crowd pleaser og positiv reference i Catrines spor</p></div></details><details class="tasting"><summary><span>Araldica Brachetto d&#x27;Acqui Dolce</span><strong>5/10</strong></summary><div class="tasting-inner"><p>Mousserende · White</p><p><b>Helhed:</b> 5 · <b>Balance:</b> 4 · <b>Stilmatch:</b> 3</p><p>Tydeligt mismatch</p></div></details><details class="tasting"><summary><span>Tagaro Fortello Syrah Appassimento</span><strong>6/10</strong></summary><div class="tasting-inner"><p>Rød · Bordeaux</p><p><b>Helhed:</b> 6 · <b>Balance:</b> 3 · <b>Stilmatch:</b> 4</p><p>For voldsom / koncentreret</p></div></details><details class="tasting"><summary><span>Maori Moana Sauvignon Blanc 2025</span><strong>7/10</strong></summary><div class="tasting-inner"><p>Hvid · 9–11 °C · White</p><p><b>Helhed:</b> 6 · <b>Balance:</b> 6 · <b>Stilmatch:</b> 6</p><p>Frisk og mineralsk; mangler lidt tekstur</p></div></details><details class="tasting"><summary><span>Cave de Vinzelles Pouilly-Fuissé 1er Cru 2024</span><strong>9.5/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 9.5 · <b>Balance:</b> 9.5 · <b>Stilmatch:</b> 9.5</p><p>Balance mellem friskhed mineralitet og fylde; pris ved registrering 250 kr. v/6</p></div></details><details class="tasting"><summary><span>Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté 2022</span><strong>10/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 10 · <b>Balance:</b> 10 · <b>Stilmatch:</b> 10</p><p>10/10-reference; virkelig god balance og fylde</p></div></details><details class="tasting"><summary><span>Vidal-Fleury Ventoux Rouge 2024</span><strong>7/10</strong></summary><div class="tasting-inner"><p>Rød · Bordeaux</p><p><b>Helhed:</b> 6 · <b>Balance:</b> 6 · <b>Stilmatch:</b> 6</p><p>Letdrikkelig men mangler elegance</p></div></details><details class="tasting"><summary><span>Jean Gagnerot Bourgogne Chardonnay 2024</span><strong>6/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 6 · <b>Balance:</b> 7.5 · <b>Stilmatch:</b> 7.5</p><p>Duften lover mere fylde end smagen leverer</p></div></details><details class="tasting"><summary><span>Mayer am Pfarrplatz Asia Cuvée 2024</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Hvid · 9–11 °C · White</p><p><b>Helhed:</b> 8 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>God balance; en anelse sød og tæt på øvre sødmegrænse</p></div></details><details class="tasting"><summary><span>Gehlen-Cornelius Syrah</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Rød · 16–17 °C · Bordeaux</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>Eftersmag mineralitet kompleksitet og læskbarhed</p></div></details><details class="tasting"><summary><span>Huber Terrassen Grüner Veltliner 2025</span><strong>7.5/10</strong></summary><div class="tasting-inner"><p>Hvid · 9–11 °C · White</p><p><b>Helhed:</b> 7.5 · <b>Balance:</b> 7.5 · <b>Stilmatch:</b> 7.5</p><p>Mineraler men let skarp i anslaget</p></div></details><details class="tasting"><summary><span>Ziereisen TAL Spätburgunder 2023</span><strong>6/10</strong></summary><div class="tasting-inner"><p>Rød · 15–16 °C · Burgundy</p><p><b>Helhed:</b> 6 · <b>Balance:</b> 7 · <b>Stilmatch:</b> 6.5</p><p>Kompleksitet næse og mineralitet; oprindeligt for tør og slank</p></div></details><details class="tasting"><summary><span>Tenuta del Principe Mensale Toscana IGP Sangiovese 2018</span><strong>8/10</strong></summary><div class="tasting-inner"><p>Rød · 16–17 °C · Bordeaux</p><p><b>Helhed:</b> 8 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>Kraftige tanniner balanceret af krop og rundhed</p></div></details><details class="tasting"><summary><span>Prosper Maufoux Mâcon-Villages 2024</span><strong>9/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 9 · <b>Balance:</b> 9 · <b>Stilmatch:</b> 9</p><p>Balance og høj drikkeglæde</p></div></details><details class="tasting"><summary><span>Bread &amp; Butter Chardonnay 2023</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 7 · <b>Stilmatch:</b> 7.5</p><p>Underholdende men lidt vulgær / demonstrativ</p></div></details><details class="tasting"><summary><span>Maison Vaubourg Mâcon-Igé La Cra 2023</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 9 · <b>Stilmatch:</b> 8.5</p><p>Elegant cremet og mineralsk</p></div></details><details class="tasting"><summary><span>Rudi Rüttger Spätburgunder Vom Kalkboden 2024</span><strong>8/10</strong></summary><div class="tasting-inner"><p>Rød · 15–16 °C · Burgundy</p><p><b>Helhed:</b> 8 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>Harmoni mellem fylde sødme mineral og kraft</p></div></details><details class="tasting"><summary><span>Fleurie Granits Roses – Domaine de Bel-Air 2023</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Rød · 15–16 °C · Burgundy</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 8.5</p><p>Let anslag vokser i munden; kompleks og læskende</p></div></details><details class="tasting"><summary><span>Riesling Trocken “Keine Hexerei” Pfalz Öko 2024</span><strong>8/10</strong></summary><div class="tasting-inner"><p>Hvid · 9–11 °C · White</p><p><b>Helhed:</b> 8 · <b>Balance:</b> 8 · <b>Stilmatch:</b> 8</p><p>Fine mineraler; måske lidt anonym</p></div></details><details class="tasting"><summary><span>Tony Bish Heartwood Chardonnay 2024</span><strong>9/10</strong></summary><div class="tasting-inner"><p>Hvid · 10–12 °C · White / Burgundy</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 8</p><p>Meget underholdende; tydeligt fad og lidt for demonstrativ til helt sweet spot</p></div></details><details class="tasting"><summary><span>Chevalier Delaude 2022</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Rød · 16–17 °C · Bordeaux</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 8.5</p><p>Køligere servering gav cassis mineraler og elegance</p></div></details><details class="tasting"><summary><span>Beyra Reserva 2019</span><strong>8.8/10</strong></summary><div class="tasting-inner"><p>Rød · 16–17 °C · Bordeaux</p><p><b>Helhed:</b> 8.8 · <b>Balance:</b> 8.8 · <b>Stilmatch:</b> 8.8</p><p>Nuancer mørke bær tobak mineraler og læskbarhed</p></div></details><details class="tasting"><summary><span>Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022</span><strong>7.5/10</strong></summary><div class="tasting-inner"><p>Rød · ca. 18 °C · Burgundy</p><p><b>Helhed:</b> 7.5 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 7.5</p><p>Mineraler og kompleks elegance men først oplevet for let/tør; senere gentagelsestest ændrede konklusionen</p></div></details><details class="tasting"><summary><span>Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022</span><strong>9/10</strong></summary><div class="tasting-inner"><p>Rød · ca. 15 °C · Burgundy</p><p><b>Helhed:</b> 9 · <b>Balance:</b> 9 · <b>Stilmatch:</b> 9</p><p>Ved ca. 15 °C faldt aromaer og smage på plads</p></div></details><details class="tasting"><summary><span>Château Lamothe-Vincent Réserve Rouge 2020</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Rød · ca. 17 °C · Bordeaux</p><p><b>Helhed:</b> 8.5 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 8.5</p><p>Ved ca. 17 °C kom bær tobak og mineraler tydeligt frem</p></div></details><details class="tasting"><summary><span>Cantine Paradiso 1954 Primitivo 2023</span><strong>9/10</strong></summary><div class="tasting-inner"><p>Rød · 16–17 °C · Bordeaux</p><p><b>Helhed:</b> 9 · <b>Balance:</b> 9 · <b>Stilmatch:</b> 9</p><p>Kraftig men læskende harmonisk og blød ved korrekt temperatur</p></div></details><details class="tasting"><summary><span>Domaines Leflaive Les Chênes Mâcon-Verzé 2024</span><strong>8.5/10</strong></summary><div class="tasting-inner"><p>Hvid · Stærkt match</p><p><b>Helhed:</b> 8 · <b>Balance:</b> 8.5 · <b>Stilmatch:</b> 8.5</p><p>White</p></div></details></div></section></div>
+<div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
+<section class="panel" style="margin-top:18px">
+<h2>Smagninger</h2><p class="lead">Find en vin, og tryk på den for at se alle oplysninger og registreringshistorik.</p>
+<div class="tasting-controls">
+<label>Søg<input id="tastingSearch" type="search" placeholder="Vin eller årgang" autocomplete="off"></label>
+<label>Vintype<select id="tastingType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
+<label>Drikkeglæde<select id="tastingMinScore"><option value="0">Alle scorer</option><option value="8">8 og derover</option><option value="9">9 og derover</option></select></label>
+<label>Sortering<select id="tastingSort"><option value="newest">Nyeste først</option><option value="score">Højeste score</option><option value="alpha">Alfabetisk</option></select></label>
+</div>
+<p id="tastingCount" class="lead" aria-live="polite"></p>
+<div id="tastingHistory"></div>
+</section></div>
 <div class="palate-view" id="view-lager" role="tabpanel" aria-labelledby="nav-lager" hidden>  <section class="grid" style="margin-top:18px">
     <div class="panel">
       <h2>Lager</h2>
@@ -438,19 +458,30 @@ function parsePalateCSV(input) {
 function renderTastingHistory(rows){
   const container=document.getElementById("tastingHistory");
   if(!container)return;
-  container.innerHTML=rows.map(r=>{
+  const query=(document.getElementById("tastingSearch")?.value||"").toLocaleLowerCase("da").trim();
+  const type=document.getElementById("tastingType")?.value||"Alle";
+  const minimum=Number(document.getElementById("tastingMinScore")?.value||0);
+  const order=document.getElementById("tastingSort")?.value||"newest";
+  const filtered=rows.filter(r=>{
+    const text=(r["Vin"]+" "+(r["Årgang"]||"")).toLocaleLowerCase("da");
+    return text.includes(query)&&(type==="Alle"||r["Type"]===type)&&Number(r["Drikkeglæde"]||0)>=minimum;
+  }).sort((a,b)=>{
+    if(order==="score")return Number(b["Drikkeglæde"]||0)-Number(a["Drikkeglæde"]||0)||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
+    if(order==="alpha")return a["Vin"].localeCompare(b["Vin"],"da")||Number(a["Smagning_ID"])-Number(b["Smagning_ID"]);
+    return (b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]);
+  });
+  document.getElementById("tastingCount").textContent=filtered.length+" af "+rows.length+" smagninger vises";
+  container.innerHTML=filtered.map(r=>{
     const title=[r["Vin"],r["Årgang"]].filter(Boolean).join(" ");
-    const score=r["Drikkeglæde"]||"—";
-    const descriptors=[r["Type"],r["Temperatur"],r["Glas"]].filter(Boolean).map(esc).join(" · ");
-    const fields=["Helhed","Balance","Stilmatch","Genkøb","Anbefaling"]
-      .filter(key=>r[key]!=="")
-      .map(key=>"<b>"+esc(key)+":</b> "+esc(r[key])).join(" · ");
-    return '<div class="tasting"><div class="tasting-summary"><button type="button" class="wine-name-button" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'">'+esc(title)+'</button><strong>'+
-      esc(score)+'/10</strong></div><div class="tasting-inner"><p>'+descriptors+
-      '</p><p>'+fields+'</p><p>'+esc(r["Status"]||"")+
-      '</p><p>'+esc(r["Note"]||"")+'</p></div></div>';
-  }).join("");
+    const rawDate=r["Registreringsdato"]||"";
+    const displayDate=/^\d{4}-\d{2}-\d{2}$/.test(rawDate)?rawDate.split("-").reverse().join("."):"";
+    const description=[r["Type"],displayDate].filter(Boolean).map(esc).join(" · ");
+    return '<div class="tasting compact-tasting"><button type="button" class="tasting-row" data-palate-wine="'+esc(r["Vin"])+'" data-palate-year="'+esc(r["Årgang"]||"")+'"><span class="tasting-row-name">'+esc(title)+'<small>'+description+'</small></span><strong>'+esc(r["Drikkeglæde"]||"—")+'/10</strong><span aria-hidden="true">›</span></button></div>';
+  }).join("")||'<p class="lead">Ingen smagninger matcher søgningen.</p>';
 }
+["tastingSearch","tastingType","tastingMinScore","tastingSort"].forEach(id=>{
+  document.getElementById(id).addEventListener(id==="tastingSearch"?"input":"change",()=>renderTastingHistory(palateTastingEvents));
+});
 
 let palateTastingEvents=[];
 
@@ -498,7 +529,7 @@ async function loadPalateData(){
 loadPalateData();
 
 
-document.getElementById("refreshPalate").addEventListener("click",()=>window.location.reload());
+
 function getRegistration(){
   const form=document.getElementById("palateRegistration");
   if(!form.reportValidity())return null;
@@ -568,6 +599,7 @@ function selectPalateView(name){
     button.tabIndex=active?0:-1;
   });
   document.querySelectorAll(".palate-view").forEach(panel=>{panel.hidden=panel.id!=="view-"+target;});
+  if(target!=="registrer")loadPalateData();
   if(location.hash!=="#"+target)history.replaceState(null,"","#"+target);
 }
 document.querySelectorAll(".palate-nav [data-view]").forEach(button=>{

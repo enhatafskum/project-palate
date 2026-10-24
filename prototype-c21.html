@@ -307,6 +307,50 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  #view-overblik .palate-chart-legend-area{align-items:flex-start}
  #view-overblik .palate-chart-reading-guide{font-size:11px}
 }
+</style><style>
+/* C2.1 mobilharmonisering – desktop som designreference */
+@media(max-width:740px){
+  header{padding:24px 18px 20px;gap:8px}
+  header h1{font-size:clamp(36px,7vw,47px);line-height:1.05;letter-spacing:-.045em}
+  header .sub{font-size:12px;letter-spacing:.04em;margin-top:7px}
+  main{padding:22px 16px 44px}
+  #view-overblik .palate-intro{padding:6px 0 24px}
+  #view-overblik .palate-intro h2{font-size:clamp(29px,5vw,35px);margin-bottom:10px}
+  #view-overblik .palate-intro p{font-size:14px;line-height:1.6}
+  .palate-nav{padding:14px 16px 17px;gap:9px}
+  .palate-nav button{font-size:13px!important;line-height:1.25}
+  #view-overblik .cards{margin-bottom:28px}
+  #view-overblik .card{min-height:115px;padding:20px 12px 19px 0}
+  #view-overblik .card:not(:first-child){padding-left:16px}
+  #view-overblik .card:nth-child(3){padding-left:0}
+  #view-overblik .card .big{font-size:clamp(39px,7vw,48px);margin:9px 0 5px}
+  #view-overblik .card .small{font-size:11.5px;line-height:1.45}
+  #view-overblik .panel{padding:23px 17px;border-radius:5px}
+  #view-overblik .panel h2{font-size:clamp(28px,5vw,34px)}
+  #view-overblik .panel p.lead{font-size:13px;line-height:1.6}
+  #view-overblik .palate-chart-controls{margin-top:19px;padding:16px 0}
+  #view-overblik .tabs{gap:7px;margin-bottom:16px}
+  #view-overblik .tabs .tab{padding:10px 13px;min-height:43px;font-size:12.5px}
+  #view-overblik .toolbar{gap:7px}
+  #view-overblik button.filter{font-size:12px;min-height:42px;padding:9px 12px}
+  #view-overblik .palate-chart-legend-area{gap:12px;margin-top:16px}
+  #view-overblik .legend{gap:10px 15px}
+  #view-overblik #chartCount{margin:10px 0}
+  #view-overblik .palate-chart-reading-guide{font-size:11.5px;line-height:1.6}
+  #view-overblik #chartWrap{margin-top:14px;height:auto;min-height:0;aspect-ratio:900 / 560}
+  #view-overblik #chart{width:100%;height:100%;display:block}
+}
+@media(max-width:390px){
+  header{padding-left:16px;padding-right:16px}
+  header h1{font-size:36px}
+  main{padding-left:12px;padding-right:12px}
+  .palate-nav{padding-left:12px;padding-right:12px}
+  #view-overblik .panel{padding:18px 12px}
+  #view-overblik .card{min-height:112px}
+  #view-overblik .card .big{font-size:40px}
+  #view-overblik .tabs .tab{padding:10px 11px}
+  #view-overblik button.filter{padding:9px 11px}
+}
 </style></head>
 <body>
 <div class="palate-preview-ribbon"><span>DESIGNSTUDIE · C2.1 — Typografi, kontrast og informationshierarki</span><a href="./index.html">Gå til den nuværende PALATE-side ↗</a></div>

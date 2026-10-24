@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Project PALATE – Plougs Vinlaboratorium</title>
+<title>PROJECT PALATE</title>
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -110,13 +110,42 @@ footer{max-width:1440px;margin:0 auto 30px;padding:0 22px;color:var(--muted);fon
 .rating-current{color:var(--wine);font-size:14px;font-weight:700;white-space:nowrap}
 .rating-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 @media(max-width:650px){.palate-rating{grid-column:1/-1}}
+
+/* Responsiv PALATE-visning: desktoplayout bevares, mobilelementer får egen bredde */
+main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-form > *, .pilot-wines,.pilot-wine{min-width:0}
+.panel,.card{max-width:100%}
+.panel p,.panel h2,.tasting summary span,.note{overflow-wrap:anywhere}
+#chartWrap{max-width:100%;min-width:0}
+#chart{display:block;max-width:100%}
+.tableWrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:650px){
+  header{padding:22px 16px;display:block}
+  header h1{font-size:26px;line-height:1.15;overflow-wrap:normal}
+  header .sub{font-size:12px;line-height:1.45}
+  header > .sub{margin-top:12px;max-width:34ch}
+  .palate-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;overflow:visible;padding:12px 12px 0}
+  .palate-nav button{min-width:0;width:100%;white-space:normal;padding:12px 7px;text-align:center;overflow-wrap:break-word}
+  main{width:100%;max-width:100%;padding:14px 12px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .card{padding:13px 12px}
+  .card .big{font-size:28px}
+  .panel{padding:14px}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  #chartWrap{height:auto;min-height:0;aspect-ratio:900/560}
+  #chart{width:100%;height:100%}
+  .tabs{flex-wrap:wrap}
+  .kv,.wine-dialog .kv{grid-template-columns:minmax(0,95px) minmax(0,1fr)}
+  .scale-labels{font-size:10px;gap:2px}
+  .tasting summary span{min-width:0}
+  .pilot-bottle{width:50px;flex-basis:50px}
+}
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>PROJECT PALATE <span style="opacity:.55">|</span> Plougs Vinlaboratorium</h1>
-    <div class="sub">Smagskort, spor og lager · afledt visning af PALATE-masterdata</div>
+    <h1>PROJECT PALATE</h1>
+    <div class="sub">Et personligt vinlaboratorium</div>
   </div>
   <div class="sub">“Stil er sekundær. Balance i vinens egen arkitektur er det afgørende.”</div>
 </header>

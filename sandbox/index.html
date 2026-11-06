@@ -6,7 +6,7 @@
 <title>PROJECT PALATE – TEST</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-update-test-4">
+<meta name="palate-build" content="sandbox-update-test-5">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -957,7 +957,7 @@ function restorePalateDraft(){
 palateForm.addEventListener("input",event=>{if(event.isTrusted)savePalateDraft();});
 palateForm.addEventListener("change",event=>{if(event.isTrusted)savePalateDraft();});
 document.getElementById("clearRegistrationDraft").addEventListener("click",()=>{
-  if(!confirm("Vil du slette kladden og rydde hele registreringsformularen?"))return;
+  // Brugeren har valgt direkte rydning uden bekræftelsesdialog.
   try{localStorage.removeItem(PALATE_DRAFT_KEY);}catch(error){console.warn(error);}
   palateForm.reset();
   palateForm.querySelectorAll(".palate-rating,.palate-scale").forEach(group=>{

@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
-<meta name="palate-build" content="2026-11-06-overblik-clean-1">
+<meta name="palate-build" content="2026-11-06-data-validation-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -431,6 +431,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <button type="button" role="tab" id="nav-lager" aria-controls="view-lager" aria-selected="false" data-view="lager">Vinlager</button>
 <button type="button" role="tab" id="nav-registrer" aria-controls="view-registrer" aria-selected="false" data-view="registrer">＋ Registrer</button>
 </nav>
+<div id="palateDataAlert" role="alert" hidden style="max-width:1400px;margin:8px auto;padding:12px 16px;border:1px solid #b45309;background:#fff7ed;color:#78350f;border-radius:9px;font-size:13px"></div>
 
 <main>
 <div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik"><section class="cards">
@@ -799,7 +800,29 @@ function renderTastingHistory(rows){
 let palateTastingEvents=[];
 
 let palateDataRequest=null;
-async function loadPalateData(){
+async function validatePalateRows(lagerRows,smagRows){
+  const requiredLager=["Vin","Årgang","Antal"];
+  const requiredSmag=["Smagning_ID","Vin","Årgang","Drikkeglæde"];
+  if(!lagerRows.length||!smagRows.length)throw new Error("En PALATE-fil er tom");
+  for(const field of requiredLager)if(!Object.hasOwn(lagerRows[0],field))throw new Error("Lager mangler feltet "+field);
+  for(const field of requiredSmag)if(!Object.hasOwn(smagRows[0],field))throw new Error("Smagninger mangler feltet "+field);
+  for(const row of lagerRows){
+    const amount=(row["Antal"]||"").trim();
+    if(!row["Vin"]?.trim()||!/^\\d+$/.test(amount))throw new Error("Ugyldigt lagernavn eller flaskeantal");
+  }
+  const ids=new Set();
+  for(const row of smagRows){
+    const id=(row["Smagning_ID"]||"").trim();
+    if(!id||!row["Vin"]?.trim()||ids.has(id))throw new Error("Manglende vin eller dubleret smagnings-ID: "+id);
+    ids.add(id);
+  }
+}
+function setPalateDataAlert(message){
+  const alert=document.getElementById("palateDataAlert");
+  alert.hidden=!message;
+  alert.textContent=message||"";
+}
+function loadPalateData(){
   if(palateDataRequest)return palateDataRequest;
   palateDataRequest=(async()=>{
   try {
@@ -810,7 +833,7 @@ async function loadPalateData(){
     if(!lagerResponse.ok||!smagResponse.ok)throw new Error("CSV ikke tilgængelig");
     const [lagerText,smagText]=await Promise.all([lagerResponse.text(),smagResponse.text()]);
     const lagerRows=parsePalateCSV(lagerText), smagRows=parsePalateCSV(smagText);
-    if(!lagerRows.length||!smagRows.length||!lagerRows[0].hasOwnProperty("Vin")||!smagRows[0].hasOwnProperty("Smagning_ID"))throw new Error("Ugyldige PALATE-data");
+    validatePalateRows(lagerRows,smagRows);
     inventory=lagerRows.map(r=>({
       name:r["Vin"], vintage:r["Årgang"], qty:Number(r["Antal"])||0,
       type:r["Type"],track:r["Spor"],status:r["Status"]
@@ -838,8 +861,10 @@ async function loadPalateData(){
     renderKPIs();
     const selectedStock=document.querySelector(".tab[data-stock].active");
     renderStock(selectedStock?selectedStock.dataset.stock:"Alle");
+    setPalateDataAlert("");
   } catch(error) {
     console.warn("PALATE-data kunne ikke opdateres; senest indlæste data bevares:",error);
+    setPalateDataAlert("PALATE kunne ikke hente eller kontrollere de aktuelle data. Tallene kan være forældede. Prøv at åbne appen igen. ("+error.message+")");
   }
   })().finally(()=>{palateDataRequest=null;});
   return palateDataRequest;

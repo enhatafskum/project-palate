@@ -6,7 +6,7 @@
 <title>PROJECT PALATE – TEST</title>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-update-test-3">
+<meta name="palate-build" content="sandbox-update-test-4">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -593,7 +593,7 @@ async function checkPalateVersion(){
       updateButton.textContent="Opdater appen";
       updateButton.style.cssText="background:#7a1f3d;color:white;border:0;border-radius:7px;padding:10px 14px;font-weight:700;cursor:pointer";
       updateButton.addEventListener("click",()=>{
-        if(palateRegistrationDirty&&!confirm("Din igangværende registrering kan gå tabt. Vil du opdatere alligevel?"))return;
+        // Kladder gemmes automatisk lokalt; opdatering kræver ikke bekræftelse.
         const reloadUrl=new URL(location.href);
         reloadUrl.searchParams.set("_palate_version",String(Date.now()));
         location.replace(reloadUrl.toString());

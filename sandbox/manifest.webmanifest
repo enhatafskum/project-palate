@@ -1,0 +1,10 @@
+{
+  "name": "PALATE Testmiljø",
+  "short_name": "PALATE TEST",
+  "start_url": "./?source=home",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f4ef",
+  "theme_color": "#7a1f3d",
+  "description": "Isoleret test af PALATE opdateringer"
+}

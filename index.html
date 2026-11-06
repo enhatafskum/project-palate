@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
-<meta name="palate-build" content="2026-11-06-c21-restored-1">
+<meta name="palate-build" content="2026-11-06-c21-nav4-2">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -408,7 +408,13 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  #view-smagninger .panel,#view-lager .panel,#view-registrer .panel{padding:19px 12px}
  #view-lager .tab{padding:10px 12px}
 }
-</style></head>
+</style><style id="palate-mobile-nav-final">
+@media screen and (max-width:740px){
+ nav.palate-nav{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:4px!important;padding:10px 6px 12px!important;overflow:visible!important}
+ nav.palate-nav>button{display:block!important;min-width:0!important;max-width:100%!important;width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:11px 1px!important;font-size:clamp(9px,2.7vw,12px)!important;line-height:1.15!important;letter-spacing:-.2px!important}
+}
+</style>
+</head>
 <body>
 
 <header>

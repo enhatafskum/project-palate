@@ -4,7 +4,7 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
-<meta name="palate-build" content="2026-11-06-data-validation-1">
+<meta name="palate-build" content="2026-11-06-draft-save-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -530,7 +530,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Sødme fra 1 til 10" data-scale-slider="Sødme"27938><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>Alt for tør</span><span>Lidt for tør</span><span>Passende</span><span>Lidt for sød</span><span>Alt for sød</span></div><p class="scale-help">1–10 i halve point. Flyt skyderen for at registrere din vurdering.</p></div>
 <label class="full">Drikkesituation<textarea name="Situation" rows="2" placeholder="Hvor og i hvilken sammenhæng drak du vinen?"></textarea></label>
 <label class="full">Hvad var det bedste ved vinen?<textarea name="Note" rows="3" placeholder="Hvad gjorde størst positivt indtryk?"></textarea></label>
-<div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button></div>
+<div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button><button type="button" id="clearRegistrationDraft" style="background:transparent;color:inherit;border:1px solid currentColor">Ryd kladde</button></div>
 </form>
   <div id="registrationStatus" class="register-status" role="status" aria-live="polite">Intet er gemt eller sendt endnu.</div>
 </section>
@@ -910,6 +910,58 @@ document.querySelectorAll("[data-scale-slider]").forEach(slider=>{
  });
 });
 const registrationStatus=document.getElementById("registrationStatus");
+const PALATE_DRAFT_KEY="project-palate-registration-draft-v1";
+const palateForm=document.getElementById("palateRegistration");
+function savePalateDraft(){
+  const fields=[...palateForm.querySelectorAll("[name]")].filter(el=>el.type!=="hidden").map(el=>({name:el.name,value:el.value}));
+  const sliders=[...palateForm.querySelectorAll("[data-rating-slider],[data-scale-slider]")].map(el=>({
+    key:el.dataset.ratingSlider||el.dataset.scaleSlider,value:el.value,
+    touched:!el.closest(".palate-rating,.palate-scale").querySelector('input[type="hidden"]').disabled
+  }));
+  try{
+    localStorage.setItem(PALATE_DRAFT_KEY,JSON.stringify({fields,sliders}));
+    palateRegistrationDirty=true;
+    registrationStatus.textContent="Kladde gemt automatisk på denne enhed. Den er ikke sendt til ChatGPT.";
+  }catch(error){
+    registrationStatus.textContent="Kladde kunne ikke gemmes på enheden. Kopiér registreringen, før du forlader appen.";
+    console.warn("PALATE-kladden kunne ikke gemmes:",error);
+  }
+}
+function restorePalateDraft(){
+  let draft;
+  try{draft=JSON.parse(localStorage.getItem(PALATE_DRAFT_KEY)||"null");}catch(error){console.warn("PALATE-kladden kunne ikke læses:",error);return;}
+  if(!draft||!Array.isArray(draft.fields)||!Array.isArray(draft.sliders))return;
+  for(const field of draft.fields){
+    const el=[...palateForm.querySelectorAll("[name]")].find(x=>x.name===field.name&&x.type!=="hidden");
+    if(el&&typeof field.value==="string")el.value=field.value;
+  }
+  for(const saved of draft.sliders){
+    const el=[...palateForm.querySelectorAll("[data-rating-slider],[data-scale-slider]")].find(x=>(x.dataset.ratingSlider||x.dataset.scaleSlider)===saved.key);
+    if(el&&saved.touched&&Number.isFinite(Number(saved.value))){
+      el.value=saved.value;
+      el.dispatchEvent(new Event("input"));
+    }
+  }
+  palateRegistrationDirty=true;
+  registrationStatus.textContent="Din tidligere kladde er gendannet fra denne enhed.";
+}
+palateForm.addEventListener("input",event=>{if(event.isTrusted)savePalateDraft();});
+palateForm.addEventListener("change",event=>{if(event.isTrusted)savePalateDraft();});
+document.getElementById("clearRegistrationDraft").addEventListener("click",()=>{
+  if(!confirm("Vil du slette kladden og rydde hele registreringsformularen?"))return;
+  try{localStorage.removeItem(PALATE_DRAFT_KEY);}catch(error){console.warn(error);}
+  palateForm.reset();
+  palateForm.querySelectorAll(".palate-rating,.palate-scale").forEach(group=>{
+    const hidden=group.querySelector('input[type="hidden"]');
+    if(hidden){hidden.disabled=true;hidden.value="";}
+    const output=group.querySelector(".rating-current,.scale-current");
+    if(output)output.textContent="Ikke vurderet";
+  });
+  palateRegistrationDirty=false;
+  registrationStatus.textContent="Kladden er slettet, og formularen er ryddet.";
+});
+restorePalateDraft();
+
 document.getElementById("copyRegistration").addEventListener("click",async()=>{
   const r=getRegistration();if(!r)return;
   const content="PALATE-smagning til gennemgang og indarbejdelse:\n"+Object.entries(r).map(([k,v])=>k+": "+v).join("\n")+

@@ -146,8 +146,10 @@
       "type": "Hvid",
       "desire": "10",
       "overall": "9,5",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "355 kr./6",
+      "priceNote": "250 kr. historisk typisk; observeret 355 kr./6, 510 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/cave-de-vinzelles-pouilly-fuisse-1er-cru-2024",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 2,
@@ -156,7 +158,8 @@
       "desire": "10",
       "overall": "10",
       "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceNote": "Ingen sikker pris fundet for præcis denne vin og årgang.",
+      "priceStatus": "mangler"
     },
     {
       "rank": 3,
@@ -164,8 +167,10 @@
       "type": "Hvid",
       "desire": "9,5",
       "overall": "8,5",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "84,99 kr.",
+      "priceNote": "Observeret hos Calle (Click & Collect); årgang ikke angivet og ikke nødvendigvis dansk levering",
+      "priceSource": "https://www.calle.dk/da-dk/philipp-kuhn-riesling-tradition-500113958",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 4,
@@ -173,8 +178,10 @@
       "type": "Rød",
       "desire": "9",
       "overall": "9,5",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "255 kr./6",
+      "priceNote": "Historisk observeret 255–355 kr./6 hos Supervin",
+      "priceSource": "https://vinradar.dk/vin/axel-pauly-spatburgunder-reserve-2023/",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 5,
@@ -182,8 +189,10 @@
       "type": "Rød",
       "desire": "9",
       "overall": "9,5",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "155 kr./6",
+      "priceNote": "Historisk typisk 120 kr.; observeret 155 kr./6, 230 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/markowitsch-pinot-noir-2025-ko",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 6,
@@ -191,8 +200,10 @@
       "type": "Rød",
       "desire": "9",
       "overall": "9",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "150 kr.",
+      "priceNote": "Dokumenteret tilbud i Rhônevinfestival 2025; ikke aktuel dansk butikskøbspris",
+      "priceSource": "https://rhonevinfestival.dk/media/Rhone_Katalog_2025_low.pdf",
+      "priceStatus": "historisk tilbud"
     },
     {
       "rank": 7,
@@ -200,8 +211,10 @@
       "type": "Rød",
       "desire": "9",
       "overall": "9",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "199 kr./6",
+      "priceNote": "Observeret hos AndrupVin, 219,95 kr. enkeltvis; 205 kr. i mixkasse",
+      "priceSource": "https://www.andrupvin.dk/cantine-paradiso-1954-primitivo-2023",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 8,
@@ -209,8 +222,10 @@
       "type": "Hvid",
       "desire": "9",
       "overall": "9",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "88 kr./6",
+      "priceNote": "Observeret hos prisaggregator; alternativ dansk forhandler 100 kr./6",
+      "priceSource": "https://bottlio.dk/wines/2201421376857766?fra=vin",
+      "priceStatus": "observeret reference"
     },
     {
       "rank": 9,
@@ -218,8 +233,10 @@
       "type": "Rød",
       "desire": "9 ved optimal temperatur (~15 °C), ellers 7",
       "overall": "9 ved optimal temperatur",
-      "priceReference": null,
-      "priceNote": "Ingen dokumenteret prisreference i den godkendte genkøbsliste. Pris undersøges ved konkret køb."
+      "priceReference": "145 kr./6",
+      "priceNote": "Historisk typisk 100 kr.; observeret 145 kr./6, 190 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/rudi-ruttger-neuleininger-sonnenberg-spatburgunder-reserve-pfalz-2022",
+      "priceStatus": "observeret reference"
     }
   ],
   "possibleRebuy": [
@@ -230,5 +247,6 @@
     "Château Lamothe-Vincent Réserve Rouge 2020",
     "Pliniana Re Noire Primitivo di Manduria 2021"
   ],
-  "notes": "Beskrivelserne er redaktionelt udbygget uden ændring af kandidater eller rangering. Genkøbspriser mangler verificerede kilder og er derfor markeret som ukendte."
+  "notes": "Beskrivelserne er redaktionelt udbygget uden ændring af kandidater eller rangering. Genkøbspriser mangler verificerede kilder og er derfor markeret som ukendte. Genkøbspriser er observerede eller historiske referencer, ikke realtidsverificerede købsmuligheder.",
+  "priceResearchDate": "2026-11-07"
 }

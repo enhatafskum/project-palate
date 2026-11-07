@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-sweetspot-data-1">
+<meta name="palate-build" content="sandbox-kaelderkandidater-qa-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -480,7 +480,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <nav class="palate-nav" aria-label="Project PALATE hovedmenu" role="tablist">
 <button type="button" role="tab" id="nav-overblik" aria-controls="view-overblik" aria-selected="true" data-view="overblik">Overblik</button>
 <button type="button" role="tab" id="nav-smagninger" aria-controls="view-smagninger" aria-selected="false" data-view="smagninger">Smagninger</button>
-<button type="button" role="tab" id="nav-sweetspot" aria-controls="view-sweetspot" aria-selected="false" data-view="sweetspot">Sweetspot</button>
+<button type="button" role="tab" id="nav-sweetspot" aria-controls="view-sweetspot" aria-selected="false" data-view="sweetspot">Kælderkandidater</button>
 <button type="button" role="tab" id="nav-lager" aria-controls="view-lager" aria-selected="false" data-view="lager">Vinlager</button>
 <button type="button" role="tab" id="nav-registrer" aria-controls="view-registrer" aria-selected="false" data-view="registrer">＋ Registrer</button>
 </nav>
@@ -682,9 +682,9 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </div>
 <div class="palate-view" id="view-sweetspot" role="tabpanel" aria-labelledby="nav-sweetspot" hidden>
 <section class="panel" style="margin-top:18px">
-<h2>Sweetspot</h2>
+<h2>Kælderkandidater</h2>
 <p class="lead palate-desktop-help">Dine kuraterede kandidater til fremtidige vinkøb. Toplisterne omfatter vine, du endnu ikke har smagt – og der er kun pladser til vine, der fortjener dem.</p>
-<div class="palate-sweet-tabs" role="group" aria-label="Sweetspot-kategori">
+<div class="palate-sweet-tabs" role="group" aria-label="Kælderkandidater – kategori">
 <button type="button" data-sweet-kind="red" aria-pressed="true">Rødvine <span>14/20</span></button>
 <button type="button" data-sweet-kind="white" aria-pressed="false">Hvidvine <span>8/20</span></button>
 <button type="button" data-sweet-kind="rebuy" aria-pressed="false">Genkøb <span>9</span></button>
@@ -694,7 +694,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
-<p class="palate-open-footnote" id="sweetspotSourceStatus" role="status">Indlæser Sweetspot-data …</p>
+<p class="palate-open-footnote" id="sweetspotSourceStatus" role="status">Indlæser kælderkandidater …</p>
 <div id="sweetspotList" class="palate-sweet-list"></div>
 <div id="sweetspotPossible" hidden><h3>Mulige genkøb</h3><p class="lead palate-desktop-help">Tidligere smagte vine med genkøbslyst på 8,5/10. Ikke hovedfavoritter endnu.</p><div id="sweetspotPossibleList" class="palate-sweet-list"></div></div>
 <p class="palate-open-footnote">Priserne er historiske eller vejledende referencer – ikke aktuelle tilbud. Årgang, pris, lagerstatus og købsindeks kontrolleres først ved konkret køb. Listen opdateres ikke automatisk.</p>
@@ -1368,7 +1368,7 @@ function renderPalateSweetspot(){
  for(const w of list){
   const card=document.createElement("details");card.className="palate-sweet-item";
   const summary=document.createElement("summary");summary.className="palate-sweet-summary";
-  const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent=isRebuy?"#"+w.rank:"★"+w.rank;rank.title=isRebuy?"Genkøbsplacering "+w.rank:"Sweetspot-rangering "+w.rank;
+  const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent=isRebuy?"#"+w.rank:"★"+w.rank;rank.title=isRebuy?"Genkøbsplacering "+w.rank:"Kandidatplacering "+w.rank;
   const heading=document.createElement("span");heading.className="palate-sweet-heading";
   const title=document.createElement("strong");title.textContent=w.name;
   const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10 · Pris: "+(w.priceReference||"ikke registreret"):"Prisreference: "+w.price;
@@ -1397,7 +1397,7 @@ async function loadPalateSweetspot(){
   status.textContent="Datakilde: "+data.source+" · udtræk "+data.sourceSnapshotDate+" · opdateres efter godkendelse";
   renderPalateSweetspot();
  }catch(err){
-  status.textContent="Sweetspot-data kunne ikke indlæses. Prøv at genindlæse siden.";
+  status.textContent="Kælderkandidater kunne ikke indlæses. Prøv at genindlæse siden.";
   document.getElementById("sweetspotCount").textContent="Indlæsning mislykkedes";
   console.error("Sweetspot indlæsning",err);
  }

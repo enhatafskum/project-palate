@@ -1360,9 +1360,9 @@ function palateReferencePrice(w){
 function renderPalateSweetspot(){
  const kind=palateSweetKind,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
  const isRebuy=kind==="rebuy",all=isRebuy?palateRebuyData:palateSweetspotData[kind];
- const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?a.rank-b.rank:(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
+ const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?(palateReferencePrice({price:a.priceReference})-palateReferencePrice({price:b.priceReference})||a.rank-b.rank):(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
  const root=document.getElementById("sweetspotList");root.replaceChildren();
- document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist":all.length+" af 20 pladser besat · "+list.length+" vist · billigst først (referencepriser)";
+ document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist · billigst først (referencepriser)":all.length+" af 20 pladser besat · "+list.length+" vist · billigst først (referencepriser)";
  document.getElementById("sweetspotPrice").closest("label").hidden=isRebuy;
  document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sweetKind===kind)));
  for(const w of list){

@@ -1035,12 +1035,20 @@ function renderRadarProfiles(){
   const x=v=>13+(v-1)/9*274;
   chart.append(radarSvg("line",{x1:13,y1:14,x2:287,y2:14,stroke:"#bfb4ad","stroke-width":1.7,"stroke-linecap":"round"}));
   for(let n=1;n<=10;n++)chart.append(radarSvg("text",{x:x(n),y:31,"text-anchor":"middle","font-size":9,fill:"#817771"},String(n)));
+  const positions=new Map();
   rows.forEach((r,j)=>{const v=insightNum(r,field);if(v===null)return;
-   const opacity=focused&&focused!==r.Smagning_ID?.2:1,color=palateRadarColors[j];
-   const dot=radarSvg("circle",{cx:x(v),cy:14,r:5.5,fill:color,"fill-opacity":opacity,stroke:"#fff","stroke-width":1.2});
-   dot.append(radarSvg("title",{},r.Vin+" · "+field+": "+v.toLocaleString("da-DK")));
-   chart.append(dot);
+   const key=String(v),group=positions.get(key)||[];group.push({r,j,v});positions.set(key,group);
   });
+  for(const group of positions.values()){
+   group.forEach(({r,j,v},i)=>{
+    const opacity=focused&&focused!==r.Smagning_ID?.2:1,color=palateRadarColors[j];
+    // Keep the exact horizontal score; fan identical values vertically.
+    const cy=14+(i-(group.length-1)/2)*7;
+    const dot=radarSvg("circle",{cx:x(v),cy,r:4.4,fill:color,"fill-opacity":opacity,stroke:"#fff","stroke-width":1});
+    dot.append(radarSvg("title",{},r.Vin+" · "+field+": "+v.toLocaleString("da-DK")+(group.length>1?" · delt score med "+(group.length-1)+" anden/andre vine":"")));
+    chart.append(dot);
+   });
+  }
   line.append(name,chart);scales.append(line);
  }
  const box=document.getElementById("radarExactScores");box.replaceChildren();

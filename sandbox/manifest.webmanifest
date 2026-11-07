@@ -6,5 +6,13 @@
   "display": "standalone",
   "background_color": "#f7f4ef",
   "theme_color": "#7a1f3d",
-  "description": "Isoleret test af PALATE opdateringer"
+  "description": "Isoleret test af PALATE opdateringer",
+  "icons": [
+    {
+      "src": "./palate-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }

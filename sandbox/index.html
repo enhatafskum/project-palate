@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-sweetspot-price-1">
+<meta name="palate-build" content="sandbox-sweetspot-editor-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -455,6 +455,16 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-sweet-possible{padding:11px 14px;border:1px solid #e8ded8;border-radius:10px;font-size:13px;background:#fffdf9}
 #sweetspotPossible{margin-top:24px}
 @media(max-width:650px){.palate-sweet-tabs button{font-size:12px}.palate-sweet-tabs span{display:block;margin-top:3px}.palate-sweet-controls{grid-template-columns:1fr 1fr}.palate-sweet-detail{padding-left:15px}}
+</style><style>
+.palate-sweet-editor{margin:20px 0;border:1px solid #e5d8d4;border-radius:12px;padding:14px;background:#fffdf9}
+.palate-sweet-editor>summary{font-weight:700;color:#7a1f3d;cursor:pointer}
+.palate-sweet-editor p{font-size:13px;line-height:1.5}
+.palate-sweet-edit-fields{display:grid;gap:10px;margin:12px 0}
+.palate-sweet-edit-fields label{display:grid;gap:5px;font-size:12px}
+.palate-sweet-edit-fields input,.palate-sweet-edit-fields textarea{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ddd2cc;border-radius:8px;font:inherit}
+.palate-sweet-edit-actions,.palate-sweet-edit-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.palate-sweet-edit-actions button,.palate-sweet-edit-row button{border:1px solid #c9aeb7;background:#fff;border-radius:8px;padding:8px 10px;color:#7a1f3d;cursor:pointer;font-size:12px}
+.palate-sweet-edit-row button:disabled{opacity:.35;cursor:default}
 </style></head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -686,6 +696,21 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
 <div id="sweetspotList" class="palate-sweet-list"></div>
 <div id="sweetspotPossible" hidden><h3>Mulige genkøb</h3><p class="lead palate-desktop-help">Tidligere smagte vine med genkøbslyst på 8,5/10. Ikke hovedfavoritter endnu.</p><div id="sweetspotPossibleList" class="palate-sweet-list"></div></div>
+<details id="sweetspotEditor" class="palate-sweet-editor">
+<summary>Redigér kandidater · kladde</summary>
+<p>Afprøv ændringer uden at ændre masterlisten. Kopiér kladden til ChatGPT, når vi skal gennemgå og godkende den. Ændringerne gemmes ikke automatisk.</p>
+<div class="palate-sweet-edit-fields">
+<label>Vinnavn<input id="sweetEditName" type="text" maxlength="160" placeholder="Producent – vin"></label>
+<label>Prisreference<input id="sweetEditPrice" type="text" maxlength="140" placeholder="Fx 129 kr. (2024), primær"></label>
+<label>Begrundelse<textarea id="sweetEditWhy" rows="3" maxlength="700" placeholder="Hvorfor passer vinen til PALATE?"></textarea></label>
+</div>
+<div class="palate-sweet-edit-actions">
+<button type="button" id="sweetEditAdd">Tilføj kandidat</button>
+<button type="button" id="sweetEditCopy">Kopiér kladde</button>
+<button type="button" id="sweetEditReset">Nulstil kladde</button>
+</div>
+<p id="sweetEditStatus" role="status" aria-live="polite"></p>
+</details>
 <p class="palate-open-footnote">Priserne er historiske eller vejledende referencer – ikke aktuelle tilbud. Årgang, pris, lagerstatus og købsindeks kontrolleres først ved konkret køb. Listen opdateres ikke automatisk.</p>
 </section></div>
 <div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
@@ -1338,6 +1363,20 @@ const palateSweetspotData={"red":[{"rank":1,"name":"Daniel Bouland – Morgon Be
 const palateRebuyData=[{"rank":1,"name":"Cave de Vinzelles Pouilly-Fuissé 1er Cru 2024","type":"Hvid","desire":"10","overall":"9,5"},{"rank":2,"name":"Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté 2022","type":"Hvid","desire":"10","overall":"10"},{"rank":3,"name":"Philipp Kuhn Riesling Tradition (årgang ikke registreret)","type":"Hvid","desire":"9,5","overall":"8,5"},{"rank":4,"name":"Axel Pauly Spätburgunder Réserve 2023","type":"Rød","desire":"9","overall":"9,5"},{"rank":5,"name":"Markowitsch Pinot Noir ØKO 2025","type":"Rød","desire":"9","overall":"9,5"},{"rank":6,"name":"Clos Bellane Côtes du Rhône Villages Valréas 2023","type":"Rød","desire":"9","overall":"9"},{"rank":7,"name":"Cantine Paradiso 1954 Primitivo 2023","type":"Rød","desire":"9","overall":"9"},{"rank":8,"name":"Prosper Maufoux Mâcon-Villages 2024","type":"Hvid","desire":"9","overall":"9"},{"rank":9,"name":"Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022","type":"Rød","desire":"9 ved optimal temperatur (~15 °C), ellers 7","overall":"9 ved optimal temperatur"}];
 const palatePossibleRebuy=["Fleurie Granits Roses – Domaine de Bel-Air 2023","Maison Vaubourg Mâcon-Igé La Cra 2023","Chevalier Delaude 2022","Beyra Reserva 2019","Château Lamothe-Vincent Réserve Rouge 2020","Pliniana Re Noire Primitivo di Manduria 2021"];
 let palateSweetKind="red";
+const palateSweetOriginal=JSON.parse(JSON.stringify(palateSweetspotData));
+let palateSweetDraftChanged=false;
+function palateSweetRenumber(kind){palateSweetspotData[kind].forEach((w,i)=>w.rank=i+1)}
+function palateSweetDraftStatus(message){document.getElementById("sweetEditStatus").textContent=message}
+function palateSweetDraftChange(kind,rank,delta){
+ const arr=palateSweetspotData[kind],i=arr.findIndex(w=>w.rank===rank),j=i+delta;
+ if(i<0||j<0||j>=arr.length)return;
+ [arr[i],arr[j]]=[arr[j],arr[i]];palateSweetRenumber(kind);palateSweetDraftChanged=true;renderPalateSweetspot();palateSweetDraftStatus("Rangeringen er ændret i kladden.");
+}
+function palateSweetDraftRemove(kind,rank){
+ const arr=palateSweetspotData[kind],i=arr.findIndex(w=>w.rank===rank);
+ if(i<0||!confirm("Fjern denne vin fra kladden?"))return;
+ arr.splice(i,1);palateSweetRenumber(kind);palateSweetDraftChanged=true;renderPalateSweetspot();palateSweetDraftStatus("Vinen er fjernet fra kladden.");
+}
 function palateReferencePrice(w){
  const str=String(w.price||"");
  if(/USD|uafklaret/i.test(str))return Infinity;
@@ -1352,7 +1391,7 @@ function renderPalateSweetspot(){
  const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?a.rank-b.rank:(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
  const root=document.getElementById("sweetspotList");root.replaceChildren();
  document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist":all.length+" af 20 pladser besat · "+list.length+" vist · billigst først (referencepriser)";
- document.getElementById("sweetspotPrice").closest("label").hidden=isRebuy;
+ document.getElementById("sweetspotPrice").closest("label").hidden=isRebuy;document.getElementById("sweetspotEditor").hidden=isRebuy;
  document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sweetKind===kind)));
  for(const w of list){
   const card=document.createElement("details");card.className="palate-sweet-item";
@@ -1363,12 +1402,44 @@ function renderPalateSweetspot(){
   const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10":"Prisreference: "+w.price;
   heading.append(title,secondary);const chevron=document.createElement("span");chevron.className="palate-sweet-chevron";chevron.textContent="⌄";summary.append(rank,heading,chevron);
   const detail=document.createElement("div");detail.className="palate-sweet-detail";detail.textContent=isRebuy?"Tidligere smagt · "+w.type+". Vurderingen er hentet fra den godkendte genkøbsliste.":w.why;
-  card.append(summary,detail);root.append(card);
+  if(!isRebuy){
+ const controls=document.createElement("div");controls.className="palate-sweet-edit-row";
+ for(const [label,delta] of [["Højere prioritet",-1],["Lavere prioritet",1]]){
+ const btn=document.createElement("button");btn.type="button";btn.textContent=label;btn.disabled=delta<0?w.rank===1:w.rank===all.length;btn.addEventListener("click",()=>palateSweetDraftChange(kind,w.rank,delta));controls.append(btn);
+ }
+ const remove=document.createElement("button");remove.type="button";remove.textContent="Fjern fra kladde";remove.addEventListener("click",()=>palateSweetDraftRemove(kind,w.rank));controls.append(remove);
+ const edit=document.createElement("button");edit.type="button";edit.textContent="Redigér";edit.addEventListener("click",()=>{document.getElementById("sweetEditName").value=w.name;document.getElementById("sweetEditPrice").value=w.price;document.getElementById("sweetEditWhy").value=w.why;document.getElementById("sweetspotEditor").open=true;document.getElementById("sweetEditAdd").dataset.editRank=String(w.rank);document.getElementById("sweetEditAdd").textContent="Gem ændring i kladde";document.getElementById("sweetEditName").focus()});controls.append(edit);
+ detail.append(controls);
+ }
+ card.append(summary,detail);root.append(card);
  }
  if(!list.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen vine matcher filtrene.";root.append(p);}
  const possible=document.getElementById("sweetspotPossible");possible.hidden=!isRebuy;
  if(isRebuy){const target=document.getElementById("sweetspotPossibleList");target.replaceChildren();for(const name of palatePossibleRebuy.filter(n=>!search||n.toLocaleLowerCase("da").includes(search))){const item=document.createElement("div");item.className="palate-sweet-possible";item.textContent=name;target.append(item);}}
 }
+document.getElementById("sweetEditAdd").addEventListener("click",()=>{
+ const kind=palateSweetKind;if(kind==="rebuy"){palateSweetDraftStatus("Genkøb redigeres via smagningsdata.");return}
+ const name=document.getElementById("sweetEditName").value.trim(),price=document.getElementById("sweetEditPrice").value.trim(),why=document.getElementById("sweetEditWhy").value.trim();
+ if(!name||!price||!why){palateSweetDraftStatus("Udfyld navn, prisreference og begrundelse.");return}
+ const arr=palateSweetspotData[kind],editRank=Number(document.getElementById("sweetEditAdd").dataset.editRank);
+ if(editRank){const wine=arr.find(w=>w.rank===editRank);if(wine){Object.assign(wine,{name,price,why})}}
+ else {if(arr.length>=20){palateSweetDraftStatus("Listen har allerede 20 kandidater.");return}arr.push({rank:arr.length+1,name,price,why})}
+ palateSweetDraftChanged=true;for(const id of ["sweetEditName","sweetEditPrice","sweetEditWhy"])document.getElementById(id).value="";
+ delete document.getElementById("sweetEditAdd").dataset.editRank;document.getElementById("sweetEditAdd").textContent="Tilføj kandidat";
+ renderPalateSweetspot();palateSweetDraftStatus("Kladden er opdateret. Kopiér den til ChatGPT for godkendelse.");
+});
+document.getElementById("sweetEditReset").addEventListener("click",()=>{
+ if(!confirm("Nulstil alle ændringer i kladden?"))return;
+ for(const kind of ["red","white"])palateSweetspotData[kind]=JSON.parse(JSON.stringify(palateSweetOriginal[kind]));
+ palateSweetDraftChanged=false;renderPalateSweetspot();palateSweetDraftStatus("Kladden er nulstillet.");
+});
+document.getElementById("sweetEditCopy").addEventListener("click",async()=>{
+ const lines=["PALATE SWEETSPOT – FORSLAG TIL ÆNDRINGER (ikke godkendt)"];
+ for(const kind of ["red","white"]){lines.push("",kind==="red"?"RØDVINE":"HVIDVINE");for(const w of palateSweetspotData[kind])lines.push(w.rank+". "+w.name+" | "+w.price+" | "+w.why)}
+ const payload=lines.join("\n");
+ try{await navigator.clipboard.writeText(payload);palateSweetDraftStatus("Kladden er kopieret. Indsæt den i ChatGPT til vurdering og godkendelse.")}
+ catch(e){palateSweetDraftStatus("Kunne ikke kopiere automatisk. Prøv i en browser med adgang til udklipsholderen.")}
+});
 document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.addEventListener("click",()=>{palateSweetKind=b.dataset.sweetKind;renderPalateSweetspot()}));
 ["sweetspotPrice","sweetspotSearch"].forEach(id=>document.getElementById(id).addEventListener(id==="sweetspotSearch"?"input":"change",renderPalateSweetspot));
 renderPalateSweetspot();

@@ -4,7 +4,9 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PROJECT PALATE</title>
-<meta name="palate-build" content="2026-11-06-draft-save-1">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#7a1f3d">
+<meta name="palate-build" content="2026-11-07-production-updates-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -548,6 +550,12 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <script>
 // Gem den oprindelige HTML før PALATE ændrer indholdet dynamisk.
 // Sammenlign med en frisk hentet udgave, så også kommende designændringer opdages.
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"})
+      .then(reg=>reg.update()).catch(error=>console.warn("PALATE opdateringstjeneste:",error));
+  });
+}
 const palateBuild=document.querySelector('meta[name="palate-build"]')?.content;
 let palateCheckingVersion=null;
 let palateRegistrationDirty=false;
@@ -584,7 +592,7 @@ async function checkPalateVersion(){
       updateButton.textContent="Opdater appen";
       updateButton.style.cssText="background:#7a1f3d;color:white;border:0;border-radius:7px;padding:10px 14px;font-weight:700;cursor:pointer";
       updateButton.addEventListener("click",()=>{
-        if(palateRegistrationDirty&&!confirm("Din igangværende registrering kan gå tabt. Vil du opdatere alligevel?"))return;
+        // Kladden lagres lokalt og opdateringen kræver ikke ekstra bekræftelse.
         const reloadUrl=new URL(location.href);
         reloadUrl.searchParams.set("_palate_version",String(Date.now()));
         location.replace(reloadUrl.toString());
@@ -948,7 +956,7 @@ function restorePalateDraft(){
 palateForm.addEventListener("input",event=>{if(event.isTrusted)savePalateDraft();});
 palateForm.addEventListener("change",event=>{if(event.isTrusted)savePalateDraft();});
 document.getElementById("clearRegistrationDraft").addEventListener("click",()=>{
-  if(!confirm("Vil du slette kladden og rydde hele registreringsformularen?"))return;
+  // Ryd kladden straks efter brugerens klik.
   try{localStorage.removeItem(PALATE_DRAFT_KEY);}catch(error){console.warn(error);}
   palateForm.reset();
   palateForm.querySelectorAll(".palate-rating,.palate-scale").forEach(group=>{

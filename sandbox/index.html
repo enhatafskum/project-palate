@@ -973,26 +973,8 @@ function renderInsights(){
  }
  document.getElementById("insightSummary").textContent=rows.length+" af "+subset.length+" smagninger har begge valgte scorer. "+(rows.length<5?"Datagrundlaget er for lille til at udlede et mønster.":"Se prikkerne som beskrivelser – ikke dokumentation for årsagssammenhænge.");
 }
-function renderComparison(){
- const rows=palateTastingEvents, a=rows.find(r=>r.Smagning_ID===document.getElementById("compareA").value),b=rows.find(r=>r.Smagning_ID===document.getElementById("compareB").value);
- const box=document.getElementById("compareResult");box.replaceChildren();if(!a||!b)return;
- const fields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];
- const table=document.createElement("table");table.style.width="100%";table.style.fontSize="13px";
- const head=document.createElement("tr");for(const v of ["Vurdering",a.Vin,b.Vin]){const th=document.createElement("th");th.textContent=v;th.style.padding="10px 5px";head.append(th)}table.append(head);
- for(const [key,label] of fields){const tr=document.createElement("tr");for(const val of [label,insightNum(a,key)?.toLocaleString("da-DK")??"—",insightNum(b,key)?.toLocaleString("da-DK")??"—"]){const td=document.createElement("td");td.textContent=val;td.style.padding="10px 5px";td.style.borderTop="1px solid #e9e4dc";tr.append(td)}table.append(tr)}
- box.append(table);
- const note=document.createElement("p");note.className="lead";note.style.fontSize="12px";note.textContent="Datoer: "+(a.Registreringsdato||"ukendt")+" og "+(b.Registreringsdato||"ukendt")+". Forskelle beskriver dine registreringer, ikke vinens objektive kvalitet.";box.append(note);
-}
-function setupPalateInsights(){
- const rows=palateTastingEvents,choices=rows.map(r=>({id:r.Smagning_ID,label:r.Vin+" · "+(r["Årgang"]||"u.å.")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")"}));
- for(const id of ["compareA","compareB"]){const el=document.getElementById(id),previous=el.value;el.replaceChildren();for(const item of choices){const option=document.createElement("option");option.value=item.id;option.textContent=item.label;el.append(option)}if(choices.some(c=>c.id===previous))el.value=previous;}
- if(!document.getElementById("compareA").value&&choices.length)document.getElementById("compareA").value=choices[0].id;
- if(choices.length>1&&document.getElementById("compareA").value===document.getElementById("compareB").value)document.getElementById("compareB").value=choices[choices.length-1].id;
- renderInsights();renderComparison();
-}
+function setupPalateInsights(){renderInsights();}
 for(const id of ["insightType","insightX","insightY"])document.getElementById(id).addEventListener("change",renderInsights);
-for(const id of ["compareA","compareB"])document.getElementById(id).addEventListener("change",renderComparison);
-
 
 /* PALATE TEST: samlet visuel vinprofil, med separate oplevelsesskalaer. */
 const palateRadarColors=["#80364f","#b18743","#397a87","#7d6aa2","#50826b"];

@@ -558,9 +558,9 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <section class="panel" id="palateOpenWine" style="margin-top:22px">
  <div class="kicker">PALATE TEST · DIT VINLAGER</div>
  <h2>Hvad skal jeg åbne?</h2>
- <p class="lead">Find en vin fra dit registrerede lager, der passer til anledningen. Forslagene tager udgangspunkt i dine egne smagninger og vinens registrerede stil.</p>
+ <p class="lead">Find en vin fra dit registrerede lager, der passer til det, du har lyst til. Forslagene tager udgangspunkt i dine egne smagninger og vinens registrerede stil.</p>
  <div class="palate-open-controls">
-  <label>Anledning<select id="palateOpenOccasion"><option value="hverdag">Et godt glas i hverdagen</option><option value="middag">Middag med mad</option><option value="saerlig">Særlig anledning</option></select></label>
+  <label>Hvad har du lyst til?<select id="palateOpenOccasion"><option value="godt">Bare et godt glas</option><option value="elegant">Noget elegant</option><option value="dybde">Noget med dybde</option><option value="kraft">Noget kraftfuldt</option><option value="overrask">Overrask mig</option><option value="rydop">Ryd op på lageret</option></select></label>
   <label>Vintype<select id="palateOpenType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
   <label>Stil<select id="palateOpenStyle"><option value="alle">Åben for alle stilarter</option><option value="elegant">Elegant, frisk og lettere</option><option value="fyldig">Fyldig og balanceret kraft</option></select></label>
  </div>
@@ -1016,34 +1016,42 @@ function palateWineStyle(track){
 }
 function renderPalateOpenWine(){
  const root=document.getElementById("palateOpenResults");root.replaceChildren();
- const occasion=document.getElementById("palateOpenOccasion").value,type=document.getElementById("palateOpenType").value,style=document.getElementById("palateOpenStyle").value;
+ const mode=document.getElementById("palateOpenOccasion").value,type=document.getElementById("palateOpenType").value,style=document.getElementById("palateOpenStyle").value;
  const candidates=palateOpenStock.filter(w=>(Number(w["Antal"])||0)>0&&(type==="Alle"||w.Type===type)&&
   (style==="alle"||palateWineStyle(w.Spor)===style));
  const scored=candidates.map(w=>{
   const tastings=palateTastingEvents.filter(r=>palateWineKey(r.Vin)===palateWineKey(w.Vin)&&palateWineYear(r["Årgang"])===palateWineYear(w["Årgang"]));
-  const joys=tastings.map(r=>insightNum(r,"Drikkeglæde")).filter(v=>v!==null);
-  const balances=tastings.map(r=>insightNum(r,"Balance")).filter(v=>v!==null);
-  const joy=joys.length?Math.max(...joys):null,balance=balances.length?Math.max(...balances):null;
-  const styleKnown=palateWineStyle(w.Spor)!=="ukendt";
-  let rank=(joy??6)*2+(balance??6)*.6+(tastings.length?2:0);
-  if(occasion==="hverdag")rank+=(joy!==null?1:0)+((w["PALATE-rolle"]||"").toLowerCase().includes("nyd")?1:0);
-  if(occasion==="saerlig")rank+=(balance??0)*.5+(joy??0)*.3;
-  if(occasion==="middag")rank+=(balance??0)*.6;
-  return {w,joy,balance,tastings,rank,styleKnown};
+  const mean=key=>{const vals=tastings.map(r=>insightNum(r,key)).filter(v=>v!==null);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;};
+  const joy=mean("Drikkeglæde"),balance=mean("Balance"),whole=mean("Helhed"),match=mean("Stilmatch");
+  const qty=Number(w.Antal)||0,track=palateWineStyle(w.Spor),role=(w["PALATE-rolle"]||"").toLowerCase();
+  const average=(joy??6)*1.7+(balance??6)*.7+(whole??6)*.4;
+  let rank=average,reason="";
+  if(mode==="godt"){rank=average+(role.includes("nyd")?1:0);reason=joy!==null?"Prioriteret efter din registrerede drikkeglæde.":"Valgt ud fra lagerets stiloplysninger; du har endnu ingen matchende smagning.";}
+  if(mode==="elegant"){rank=average+(track==="elegant"?7:0)+(track==="fyldig"?-3:0);reason=track==="elegant"?"Registreret i et spor med finesse, friskhed eller saftighed.":"Stilmatch er usikkert ud fra de registrerede oplysninger.";}
+  if(mode==="dybde"){rank=average+(balance??0)*.5+(/dybde|struktur|tekstur|fad/i.test(w.Spor||"")?5:0);reason="Prioriteret efter balance og eventuelle stilspor med dybde, struktur eller tekstur; kompleksitet er ikke målt direkte.";}
+  if(mode==="kraft"){rank=average+(track==="fyldig"?7:0)+(balance??0)*.4;reason=track==="fyldig"?"Lageret beskriver en fyldigere eller kraftigere stil.":"Vinens kraft er ikke dokumenteret direkte.";}
+  if(mode==="overrask"){rank=(joy===null?10:Math.max(0,9-joy)*2)+(tastings.length===0?5:0)+(qty>=2?1:0);reason=tastings.length?"Et alternativ til dine højest vurderede vine – prøv stilen igen.":"Du har endnu ingen matchende smagning af denne vin og årgang.";}
+  if(mode==="rydop"){
+   const low=joy!==null&&joy<8,untried=tastings.length===0;
+   rank=(low?12+(8-joy)*3:0)+(untried?6:0)+Math.min(qty,8)*1.5+(role.includes("feltforsøg")?3:0)-(joy!==null&&joy>=9?16:0);
+   reason=low?"Din gennemsnitlige drikkeglæde er under 8/10, og du har stadig flasker på lager.":
+    untried?"Du har flasker på lager, men ingen matchende smagning af denne vin og årgang.":
+    qty>=3?"Du har flere flasker på lager; vinen er ikke nødvendigvis en lavt vurderet vin.":"Et muligt lageralternativ, ikke nødvendigvis en vin du bør prioritere væk.";
+  }
+  return {w,joy,balance,tastings,rank,reason};
  }).sort((a,b)=>b.rank-a.rank||a.w.Vin.localeCompare(b.w.Vin,"da"));
  if(!scored.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen vine på lager matcher filtrene. Prøv en anden vintype eller en mere åben stil.";root.append(p);return;}
  const intro=document.createElement("p");intro.className="palate-open-footnote";intro.textContent="Her er "+Math.min(3,scored.length)+" forslag blandt "+scored.length+" vine på lager, der matcher filtrene.";root.append(intro);
- scored.slice(0,3).forEach(({w,joy,balance,tastings})=>{
+ scored.slice(0,3).forEach(({w,joy,balance,tastings,reason})=>{
   const card=document.createElement("article");card.className="palate-open-card";
   const head=document.createElement("div");head.className="palate-open-card-head";
   const name=document.createElement("h3");name.textContent=w.Vin+(palateWineYear(w["Årgang"])?" · "+palateWineYear(w["Årgang"]):"");
   const qty=document.createElement("span");qty.className="palate-open-qty";qty.textContent=w.Antal+" fl.";
   head.append(name,qty);card.append(head);
   const meta=document.createElement("p");meta.textContent=[w.Type,w.Spor].filter(Boolean).join(" · ");card.append(meta);
-  const why=document.createElement("p");
-  if(tastings.length&&joy!==null){why.textContent="Din drikkeglæde: "+joy.toLocaleString("da-DK")+"/10"+(balance!==null?" · Balance: "+balance.toLocaleString("da-DK")+"/10":"")+". Baseret på "+tastings.length+" registreret"+(tastings.length===1?" smagning.":" smagninger.");}
-  else{why.textContent="Ingen direkte matchende smagning af denne vin og årgang. Forslaget bygger på lagerets registrerede stil – ikke en personlig kvalitetsscore.";}
-  card.append(why);root.append(card);
+  const why=document.createElement("p");why.textContent=reason;card.append(why);
+  if(joy!==null){const score=document.createElement("p");score.textContent="Drikkeglæde: "+joy.toLocaleString("da-DK",{maximumFractionDigits:1})+"/10"+(balance!==null?" · Balance: "+balance.toLocaleString("da-DK",{maximumFractionDigits:1})+"/10":"")+" · "+tastings.length+" smagning"+(tastings.length===1?"":"er");card.append(score);}
+  root.append(card);
  });
 }
 document.getElementById("palateOpenSuggest").addEventListener("click",renderPalateOpenWine);

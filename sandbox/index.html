@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-responsive-help-1">
+<meta name="palate-build" content="sandbox-responsive-help-2">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -447,7 +447,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
     <h1>PROJECT PALATE</h1>
     <div class="sub">Et personligt vinlaboratorium</div>
   </div>
-  <div class="sub">“Stil er sekundær. Balance i vinens egen arkitektur er det afgørende.”</div>
+  <div class="sub palate-desktop-help">“Stil er sekundær. Balance i vinens egen arkitektur er det afgørende.”</div>
 </header>
 
 <nav class="palate-nav" aria-label="Project PALATE hovedmenu" role="tablist">
@@ -470,7 +470,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
   <section class="grid">
     <div class="panel">
       <h2>Smagskort</h2>
-      <p class="lead">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
+      <p class="lead palate-desktop-help">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
 
       <div class="palate-chart-controls">
       <div class="palate-chart-group-label">Vælg vintype</div>
@@ -579,7 +579,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <section class="panel" id="palateOpenWine" style="margin-top:22px">
  <div class="kicker">PALATE TEST · DIT VINLAGER</div>
  <h2>Hvad skal jeg åbne?</h2>
- <p class="lead">Find en vin fra dit registrerede lager, der passer til det, du har lyst til. Forslagene tager udgangspunkt i dine egne smagninger og vinens registrerede stil.</p>
+ <p class="lead palate-desktop-help">Find en vin fra dit registrerede lager, der passer til det, du har lyst til. Forslagene tager udgangspunkt i dine egne smagninger og vinens registrerede stil.</p>
  <div class="palate-open-controls">
   <label>Hvad har du lyst til?<select id="palateOpenOccasion"><option value="godt">Bare et godt glas</option><option value="elegant">Noget elegant</option><option value="dybde">Noget med dybde</option><option value="kraft">Noget kraftfuldt</option><option value="overrask">Overrask mig</option><option value="rydop">Ryd op på lageret</option></select></label>
   <label>Vintype<select id="palateOpenType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
@@ -615,7 +615,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </div>
 <div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
 <section class="panel" style="margin-top:18px">
-<h2>Smagninger</h2><p class="lead">Dine registrerede vine. Den seneste vurdering og registreringsdato vises i oversigten. Tryk på en vin for at se hele historikken.</p>
+<h2>Smagninger</h2><p class="lead palate-desktop-help">Dine registrerede vine. Den seneste vurdering og registreringsdato vises i oversigten. Tryk på en vin for at se hele historikken.</p>
 <div class="tasting-controls">
 <label>Søg<input id="tastingSearch" type="search" placeholder="Vin eller årgang" autocomplete="off"></label>
 <label>Vintype<select id="tastingType"><option value="Alle">Alle vintyper</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
@@ -628,7 +628,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div class="palate-view" id="view-lager" role="tabpanel" aria-labelledby="nav-lager" hidden>  <section class="grid" style="margin-top:18px">
     <div class="panel">
       <h2>Vinlager</h2>
-      <p class="lead">Overblik over de flasker, du har til rådighed. Filtrér efter vintype, eller vælg en vin for at se dens profil.</p>
+      <p class="lead palate-desktop-help">Overblik over de flasker, du har til rådighed. Filtrér efter vintype, eller vælg en vin for at se dens profil.</p>
       <div class="tabs" id="stockTabs">
         <button class="tab active" data-stock="Alle">Alle</button>
         <button class="tab" data-stock="Rød">Rød</button>
@@ -656,7 +656,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div class="palate-view" id="view-sweetspot" role="tabpanel" aria-labelledby="nav-sweetspot" hidden>
 <section class="panel" style="margin-top:18px">
 <h2>Sweetspot</h2>
-<p class="lead">Dine kuraterede kandidater til fremtidige vinkøb. Toplisterne omfatter vine, du endnu ikke har smagt – og der er kun pladser til vine, der fortjener dem.</p>
+<p class="lead palate-desktop-help">Dine kuraterede kandidater til fremtidige vinkøb. Toplisterne omfatter vine, du endnu ikke har smagt – og der er kun pladser til vine, der fortjener dem.</p>
 <div class="palate-sweet-controls">
 <label>Liste<select id="sweetspotType"><option value="red">Rødvin · Top 20</option><option value="white">Hvidvin · Top 20</option></select></label>
 <label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Primær</option><option value="udvidet">Udvidet</option><option value="særlig">Særlig</option></select></label>

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-navigation-3">
+<meta name="palate-build" content="sandbox-sweetspot-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -427,6 +427,17 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-sweetspot-placeholder h3{margin:0 0 8px;color:#7a1f3d}
 .palate-sweetspot-placeholder p{font-size:13px;color:#6b7280}
 @media(max-width:650px){.palate-quick-grid{grid-template-columns:1fr}.palate-sweetspot-placeholder{grid-template-columns:1fr}}
+</style><style>
+.palate-sweet-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+.palate-sweet-controls label{font-size:12px;color:#675c60}
+.palate-sweet-controls select,.palate-sweet-controls input{width:100%;display:block;margin-top:5px;padding:10px;border:1px solid #ddd2cc;border-radius:9px;background:#fff;font:inherit;font-size:13px;color:#4c3d43}
+.palate-sweet-list{display:grid;gap:10px}
+.palate-sweet-item{display:flex;align-items:flex-start;gap:14px;border:1px solid #e8ded8;border-radius:12px;background:#fffdf9;padding:15px}
+.palate-sweet-rank{display:grid;place-items:center;flex:0 0 42px;height:42px;border-radius:12px;background:#f3e8e9;color:#7a1f3d;font-weight:800}
+.palate-sweet-item h3{font-size:15px;color:#4b303b;margin:0 0 6px}
+.palate-sweet-item p{font-size:13px;line-height:1.5;color:#655d60;margin:5px 0}
+.palate-sweet-item .palate-sweet-price{font-weight:650;color:#846727}
+@media(max-width:650px){.palate-sweet-controls{grid-template-columns:1fr 1fr}.palate-sweet-controls label:last-child{grid-column:1/-1}}
 </style></head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -643,14 +654,16 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </div>
 <div class="palate-view" id="view-sweetspot" role="tabpanel" aria-labelledby="nav-sweetspot" hidden>
 <section class="panel" style="margin-top:18px">
-<div class="kicker">PALATE TEST · KØBSKANDIDATER</div>
 <h2>Sweetspot</h2>
-<p class="lead">Her samler vi dine Top 20-kandidater til fremtidige vinkøb. Listen er adskilt fra dit nuværende lager og dine registrerede smagninger.</p>
-<div class="palate-sweetspot-placeholder">
-<div><h3>Rødvine · Top 20</h3><p>Plads til prioriterede kandidater, stilmatch og begrundelser.</p></div>
-<div><h3>Hvidvine · Top 20</h3><p>Plads til prioriterede kandidater, stilmatch og begrundelser.</p></div>
+<p class="lead">Dine kuraterede kandidater til fremtidige vinkøb. Toplisterne omfatter vine, du endnu ikke har smagt – og der er kun pladser til vine, der fortjener dem.</p>
+<div class="palate-sweet-controls">
+<label>Liste<select id="sweetspotType"><option value="red">Rødvin · Top 20</option><option value="white">Hvidvin · Top 20</option></select></label>
+<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Primær</option><option value="udvidet">Udvidet</option><option value="særlig">Særlig</option></select></label>
+<label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
-<p class="lead">Listerne er endnu ikke indlæst. Vi udvikler visning og filtrering i næste trin uden at ændre masterlisten.</p>
+<p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
+<div id="sweetspotList" class="palate-sweet-list"></div>
+<p class="palate-open-footnote">Priserne er historiske eller vejledende referencer – ikke aktuelle tilbud. Årgang, pris, lagerstatus og købsindeks kontrolleres først ved konkret køb. Listen opdateres ikke automatisk.</p>
 </section></div>
 <div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
   <h2>Registrer smagning</h2>
@@ -1297,6 +1310,26 @@ document.getElementById("copyRegistration").addEventListener("click",async()=>{
 /* Flyt de godkendte værktøjer til deres naturlige sider uden at genskabe dem. */
 document.getElementById("view-lager").append(document.getElementById("palateOpenWine"));
 document.getElementById("view-smagninger").prepend(document.getElementById("palateRadar"));
+/* Kurateret snapshot af Project_PALATE_Sweetspot.md, godkendt 2026-11-06. Ingen automatisk synkronisering. */
+const palateSweetspotData={"red":[{"rank":1,"name":"Daniel Bouland – Morgon Bellevue Sable","price":"185 kr./3 (2024/2025), udvidet","why":"Meget stærkt match: saftighed, finesse, tekstur og dybde; veletableret Morgon-producent"},{"rank":2,"name":"Verónica Ortega – Quite","price":"Tidligere 139–179 kr. for 2023, primær/udvidet","why":"Elegant, frisk Mencía fra Bierzo; udtrykkeligt ikke smagt; pris og årgang kontrolleres ved køb"},{"rank":3,"name":"Holger Koch – Herrenstück Pinot Noir","price":"149–159 kr./6 (2023), primær/udvidet","why":"Pinot-finesse og saftighed; god sandsynlig personlig træfsikkerhed"},{"rank":4,"name":"Daniel Bouland – Morgon Corcelette Sable","price":"195 kr./3 (2024), udvidet","why":"Parfumeret, elegant Morgon med mere struktur; separat cuvée fra Bellevue"},{"rank":5,"name":"Finca Sandoval – Salia","price":"120–169 kr./6 (2024), primær/udvidet","why":"Frisk Syrah/Bobal/Garnacha, høj kvalitet til rimelig pris"},{"rank":6,"name":"Mee Godard – Morgon Corcelette","price":"Ca. 300 kr. (2023), særlig","why":"Ambitiøs Morgon, mulig ekstraordinær dybde uden at opgive finesse"},{"rank":7,"name":"Domaine de Bellene – Clos Bardot Pinot Noir","price":"159 kr./6 (2023), udvidet","why":"Elegant Bourgogne-spor; lavere sikkerhed for konsistens og personlig match"},{"rank":8,"name":"Finca Sandoval – Fundamentalista","price":"129,95 kr./6 (2024), primær","why":"Prisvenlig frisk spansk stil; kvalitet på tværs af årgange undersøges ved køb"},{"rank":9,"name":"Domaine Saint-Damien – Gigondas Les Souteyrades","price":"199 kr./6 (2022), udvidet","why":"Balanceret kraft; relevant andet spor, men tanninrisiko"},{"rank":10,"name":"Jean-Paul & Charly Thévenet – Morgon Vieilles Vignes","price":"Ca. 40 USD tidligere nævnt, særlig/uafklaret","why":"Beaujolais med elegance og dybde; dansk pris kan overstige rammen"},{"rank":11,"name":"Domaine de Bellene – Maison Dieu Pinot Noir","price":"159 kr./6 (2023), udvidet","why":"Bourgogne med mulig god finesse"},{"rank":12,"name":"Frédéric Esmonin – Les Genévrières Pinot Noir","price":"149 kr./6 (2024), primær","why":"Prisvenligt elegant Bourgogne-spor"},{"rank":13,"name":"Finca Sandoval – Finca Sandoval","price":"255 kr./3 (2024), særlig","why":"Mere ambitiøs Syrah/Bobal; stærkere struktur og mulig fylde"},{"rank":14,"name":"Paul Jaboulet Aîné – Crozes-Hermitage Domaine de Thalabert","price":"260 kr. (2017), særlig","why":"Moden nordrhônsk Syrah, dybde og kompleksitet; flaskens opbevaring vigtig"}],"white":[{"rank":1,"name":"Cave de Vinzelles – Pouilly-Vinzelles 1er Cru Les Quarts","price":"179,95 kr./6 (reference 2024/2025), udvidet","why":"Stærkeste forventede Chardonnay-match ud fra din begejstring for producentens Pouilly-Fuissé; anden cuvée"},{"rank":2,"name":"Finca Sandoval – Aurora","price":"199 kr./3 (2023), udvidet","why":"Tekstur, friskhed og kompleksitet; interessant alternativ til Chardonnay"},{"rank":3,"name":"Maison Roche de Bellene – Chardonnay Cuvée Réserve","price":"159 kr./6 (2022), udvidet","why":"Bourgogne, muligt velintegreret fad; stilmatch stadig usikkert"},{"rank":4,"name":"Schlossgut Ebringen – Chardonnay S","price":"139 kr. (2024), primær","why":"Muligt elegant, prisvenligt Chardonnay-spor"},{"rank":5,"name":"Markowitsch – Chardonnay Ried Schüttenberg","price":"284,95 kr./6 (2022), særlig","why":"Velanset producent, mineralitet og fad; reel risiko for for meget fylde"},{"rank":6,"name":"La Chablisienne – Cuvée Philipson Bourgogne Chardonnay","price":"89 kr./6 (2024), primær","why":"Prisvenlig Chardonnay; kvalitetsmatch endnu mindre sikkert"},{"rank":7,"name":"Heribert Boch – Trittenheimer Apotheke Urstück GG Riesling","price":"159 kr. (2024), udvidet","why":"Struktureret Riesling-spor, relevant for din interesse i seriøs Riesling"},{"rank":8,"name":"Boussard – La Chênaie Bourgogne Chardonnay","price":"Ca. 166 kr.; årgang uafklaret, udvidet","why":"Chardonnay-kandidat, men identitet og stil skal verificeres ved køb"}]};
+function renderPalateSweetspot(){
+ const kind=document.getElementById("sweetspotType").value,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
+ const all=palateSweetspotData[kind],list=all.filter(w=>(price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(w.name+" "+w.price+" "+w.why).toLocaleLowerCase("da").includes(search)));
+ const root=document.getElementById("sweetspotList");root.replaceChildren();
+ document.getElementById("sweetspotCount").textContent=all.length+" af 20 pladser besat · "+list.length+" vist";
+ for(const w of list){
+  const card=document.createElement("article");card.className="palate-sweet-item";
+  const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent="#"+w.rank;
+  const content=document.createElement("div");
+  const title=document.createElement("h3");title.textContent=w.name;
+  const price=document.createElement("p");price.className="palate-sweet-price";price.textContent="Prisreference: "+w.price;
+  const why=document.createElement("p");why.textContent=w.why;
+  content.append(title,price,why);card.append(rank,content);root.append(card);
+ }
+ if(!list.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen kandidater matcher filtrene.";root.append(p);}
+}
+["sweetspotType","sweetspotPrice","sweetspotSearch"].forEach(id=>document.getElementById(id).addEventListener(id==="sweetspotSearch"?"input":"change",renderPalateSweetspot));
+renderPalateSweetspot();
 function selectPalateView(name){
   const valid=["overblik","smagninger","lager","sweetspot","registrer"];
   const target=valid.includes(name)?name:"overblik";

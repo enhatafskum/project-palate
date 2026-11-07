@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-sweetspot-2">
+<meta name="palate-build" content="sandbox-sweetspot-price-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -680,7 +680,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <button type="button" data-sweet-kind="rebuy" aria-pressed="false">Genkøb <span>9</span></button>
 </div>
 <div class="palate-sweet-controls">
-<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Primær</option><option value="udvidet">Udvidet</option><option value="særlig">Særlig</option></select></label>
+<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option></select></label>
 <label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
@@ -1338,18 +1338,26 @@ const palateSweetspotData={"red":[{"rank":1,"name":"Daniel Bouland – Morgon Be
 const palateRebuyData=[{"rank":1,"name":"Cave de Vinzelles Pouilly-Fuissé 1er Cru 2024","type":"Hvid","desire":"10","overall":"9,5"},{"rank":2,"name":"Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté 2022","type":"Hvid","desire":"10","overall":"10"},{"rank":3,"name":"Philipp Kuhn Riesling Tradition (årgang ikke registreret)","type":"Hvid","desire":"9,5","overall":"8,5"},{"rank":4,"name":"Axel Pauly Spätburgunder Réserve 2023","type":"Rød","desire":"9","overall":"9,5"},{"rank":5,"name":"Markowitsch Pinot Noir ØKO 2025","type":"Rød","desire":"9","overall":"9,5"},{"rank":6,"name":"Clos Bellane Côtes du Rhône Villages Valréas 2023","type":"Rød","desire":"9","overall":"9"},{"rank":7,"name":"Cantine Paradiso 1954 Primitivo 2023","type":"Rød","desire":"9","overall":"9"},{"rank":8,"name":"Prosper Maufoux Mâcon-Villages 2024","type":"Hvid","desire":"9","overall":"9"},{"rank":9,"name":"Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022","type":"Rød","desire":"9 ved optimal temperatur (~15 °C), ellers 7","overall":"9 ved optimal temperatur"}];
 const palatePossibleRebuy=["Fleurie Granits Roses – Domaine de Bel-Air 2023","Maison Vaubourg Mâcon-Igé La Cra 2023","Chevalier Delaude 2022","Beyra Reserva 2019","Château Lamothe-Vincent Réserve Rouge 2020","Pliniana Re Noire Primitivo di Manduria 2021"];
 let palateSweetKind="red";
+function palateReferencePrice(w){
+ const str=String(w.price||"");
+ if(/USD|uafklaret/i.test(str))return Infinity;
+ const match=str.match(/(\d[\d.,]*)\s*kr\b/i);
+ if(!match)return Infinity;
+ const raw=match[1].replace(/\.(?=\d{3}\b)/g,"").replace(",",".");
+ return Number(raw);
+}
 function renderPalateSweetspot(){
  const kind=palateSweetKind,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
  const isRebuy=kind==="rebuy",all=isRebuy?palateRebuyData:palateSweetspotData[kind];
- const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search)));
+ const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?a.rank-b.rank:(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
  const root=document.getElementById("sweetspotList");root.replaceChildren();
- document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist":all.length+" af 20 pladser besat · "+list.length+" vist";
+ document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist":all.length+" af 20 pladser besat · "+list.length+" vist · billigst først (referencepriser)";
  document.getElementById("sweetspotPrice").closest("label").hidden=isRebuy;
  document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sweetKind===kind)));
  for(const w of list){
   const card=document.createElement("details");card.className="palate-sweet-item";
   const summary=document.createElement("summary");summary.className="palate-sweet-summary";
-  const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent="#"+w.rank;
+  const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent=isRebuy?"#"+w.rank:"★"+w.rank;rank.title=isRebuy?"Genkøbsplacering "+w.rank:"Sweetspot-rangering "+w.rank;
   const heading=document.createElement("span");heading.className="palate-sweet-heading";
   const title=document.createElement("strong");title.textContent=w.name;
   const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10":"Prisreference: "+w.price;

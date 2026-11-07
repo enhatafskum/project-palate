@@ -157,9 +157,10 @@
       "type": "Hvid",
       "desire": "10",
       "overall": "10",
-      "priceReference": null,
-      "priceNote": "Ingen sikker pris fundet for præcis denne vin og årgang.",
-      "priceStatus": "mangler"
+      "priceReference": "279 kr.",
+      "priceNote": "Observeret listepris hos VildMedVin for 2022; udsolgt. Ikke en aktuel købsmulighed.",
+      "priceStatus": "historisk listepris",
+      "priceSource": "https://www.vildmedvin.dk/hubert-bouzereau-gruere-et-filles-bourgogne-aligote-2022"
     },
     {
       "rank": 3,

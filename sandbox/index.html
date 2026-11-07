@@ -516,7 +516,10 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-profile-details th:not(:first-child),.palate-profile-details td:not(:first-child){text-align:center}
 .palate-profile-details .palate-table-scroll{overflow-x:auto;margin-top:10px}
 .palate-profile-footnote{font-size:12px;margin-top:15px}
-.palate-compact-scales{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 15px}
+.palate-compact-scales{display:grid;grid-template-columns:1fr;gap:3px;margin:0 0 13px}
+.palate-one-line-scale{display:flex;align-items:center;gap:10px;min-height:37px}
+.palate-one-line-name{width:49px;flex:0 0 49px;font-size:12px;font-weight:600;color:#68575e}
+.palate-one-line-scale svg{min-width:0;flex:1}
 .palate-mini-scale{min-width:0;padding:8px 10px 3px;background:#faf7f3;border:1px solid #eee5de;border-radius:9px}
 .palate-mini-scale strong{display:block;font-size:12px;color:#66575a;font-weight:600;margin-bottom:1px}
 @media(max-width:380px){.palate-compact-scales{gap:6px}.palate-mini-scale{padding:7px 5px 2px}}
@@ -1025,20 +1028,20 @@ function renderRadarProfiles(){
  });
  if(!rows.length)svg.append(radarSvg("text",{x:210,y:210,"text-anchor":"middle",fill:"#71656a","font-size":13},"Vælg vine for at se profiler"));
  const scales=document.getElementById("radarScales");scales.replaceChildren();
- for(const field of ["Fylde","Sødme"]){
-  const group=document.createElement("div");group.className="palate-mini-scale";
-  const heading=document.createElement("strong");heading.textContent=field;group.append(heading);
-  const chart=radarSvg("svg",{viewBox:"0 0 320 49",role:"img","aria-label":field+": personlig oplevelsesskala fra 1 til 10, med optimum ved 5",style:"width:100%;display:block"});
-  const x=v=>18+(v-1)/9*284;
-  chart.append(radarSvg("line",{x1:18,y1:22,x2:302,y2:22,stroke:"#cbbfb6","stroke-width":2,"stroke-linecap":"round"}));
-  chart.append(radarSvg("line",{x1:x(5),y1:10,x2:x(5),y2:34,stroke:"#b28c55","stroke-width":1.5,"stroke-dasharray":"2 3"}));
-  for(const n of [1,5,10])chart.append(radarSvg("text",{x:x(n),y:45,"text-anchor":"middle","font-size":10,fill:"#817570"},n===5?"5 · optimum":String(n)));
-  rows.forEach((r,j)=>{const v=insightNum(r,field);if(v===null)return;const opacity=focused&&focused!==r.Smagning_ID?.2:1,color=palateRadarColors[j],px=x(v);
-   const dot=radarSvg("circle",{cx:px,cy:22,r:6,fill:color,"fill-opacity":opacity,stroke:"#fff","stroke-width":1.5});
+ for(const field of ["Sødme","Fylde"]){
+  const line=document.createElement("div");line.className="palate-one-line-scale";
+  const name=document.createElement("span");name.className="palate-one-line-name";name.textContent=field;
+  const chart=radarSvg("svg",{viewBox:"0 0 300 34",role:"img","aria-label":field+" fra 1 til 10. Farvede prikker viser de valgte vines scorer.",style:"width:100%;display:block"});
+  const x=v=>13+(v-1)/9*274;
+  chart.append(radarSvg("line",{x1:13,y1:14,x2:287,y2:14,stroke:"#bfb4ad","stroke-width":1.7,"stroke-linecap":"round"}));
+  for(let n=1;n<=10;n++)chart.append(radarSvg("text",{x:x(n),y:31,"text-anchor":"middle","font-size":9,fill:"#817771"},String(n)));
+  rows.forEach((r,j)=>{const v=insightNum(r,field);if(v===null)return;
+   const opacity=focused&&focused!==r.Smagning_ID?.2:1,color=palateRadarColors[j];
+   const dot=radarSvg("circle",{cx:x(v),cy:14,r:5.5,fill:color,"fill-opacity":opacity,stroke:"#fff","stroke-width":1.2});
    dot.append(radarSvg("title",{},r.Vin+" · "+field+": "+v.toLocaleString("da-DK")));
    chart.append(dot);
   });
-  group.append(chart);scales.append(group);
+  line.append(name,chart);scales.append(line);
  }
  const box=document.getElementById("radarExactScores");box.replaceChildren();
  if(rows.length){

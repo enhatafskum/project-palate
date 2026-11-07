@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="./palate-icon-192.png?v=approved-1">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=approved-1">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="2026-11-07-kaelderkandidater-release-1">
+<meta name="palate-build" content="2026-11-07-rebuy-price-filter-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -690,7 +690,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <button type="button" data-sweet-kind="rebuy" aria-pressed="false">Genkøb <span>9</span></button>
 </div>
 <div class="palate-sweet-controls">
-<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option></select></label>
+<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option><option value="over300">Over 300 kr.</option></select></label>
 <label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
@@ -1360,10 +1360,10 @@ function palateReferencePrice(w){
 function renderPalateSweetspot(){
  const kind=palateSweetKind,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
  const isRebuy=kind==="rebuy",all=isRebuy?palateRebuyData:palateSweetspotData[kind];
- const list=all.filter(w=>(isRebuy||price==="alle"||w.price.toLocaleLowerCase("da").includes(price))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?(palateReferencePrice({price:a.priceReference})-palateReferencePrice({price:b.priceReference})||a.rank-b.rank):(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
+ const list=all.filter(w=>((isRebuy?(price==="alle"||(()=>{const p=palateReferencePrice({price:w.priceReference});return price==="primær"?p<=150:price==="udvidet"?p>150&&p<=200:price==="særlig"?p>200&&p<=300:price==="over300"?p>300:false;})()):(price==="alle"||w.price.toLocaleLowerCase("da").includes(price))))&&(!search||(isRebuy?(w.name+" "+w.type+" "+w.desire+" "+w.overall):(w.name+" "+w.price+" "+w.why)).toLocaleLowerCase("da").includes(search))).sort((a,b)=>isRebuy?(palateReferencePrice({price:a.priceReference})-palateReferencePrice({price:b.priceReference})||a.rank-b.rank):(palateReferencePrice(a)-palateReferencePrice(b)||a.rank-b.rank));
  const root=document.getElementById("sweetspotList");root.replaceChildren();
  document.getElementById("sweetspotCount").textContent=isRebuy?all.length+" dokumenterede genkøbsfavoritter · "+list.length+" vist · billigst først (referencepriser)":all.length+" af 20 pladser besat · "+list.length+" vist · billigst først (referencepriser)";
- document.getElementById("sweetspotPrice").closest("label").hidden=isRebuy;
+ document.querySelector('#sweetspotPrice option[value="over300"]').hidden=!isRebuy;
  document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.sweetKind===kind)));
  for(const w of list){
   const card=document.createElement("details");card.className="palate-sweet-item";
@@ -1380,7 +1380,7 @@ function renderPalateSweetspot(){
  const possible=document.getElementById("sweetspotPossible");possible.hidden=!isRebuy;
  if(isRebuy){const target=document.getElementById("sweetspotPossibleList");target.replaceChildren();for(const name of palatePossibleRebuy.filter(n=>!search||n.toLocaleLowerCase("da").includes(search))){const item=document.createElement("div");item.className="palate-sweet-possible";item.textContent=name;target.append(item);}}
 }
-document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.addEventListener("click",()=>{palateSweetKind=b.dataset.sweetKind;renderPalateSweetspot()}));
+document.querySelectorAll("[data-sweet-kind]").forEach(b=>b.addEventListener("click",()=>{palateSweetKind=b.dataset.sweetKind;document.getElementById("sweetspotPrice").value="alle";renderPalateSweetspot()}));
 ["sweetspotPrice","sweetspotSearch"].forEach(id=>document.getElementById(id).addEventListener(id==="sweetspotSearch"?"input":"change",renderPalateSweetspot));
 async function loadPalateSweetspot(){
  const status=document.getElementById("sweetspotSourceStatus");

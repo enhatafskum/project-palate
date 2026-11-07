@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-navigation-1">
+<meta name="palate-build" content="sandbox-navigation-2">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -1298,11 +1298,7 @@ document.getElementById("copyRegistration").addEventListener("click",async()=>{
 
 /* Flyt de godkendte værktøjer til deres naturlige sider uden at genskabe dem. */
 document.getElementById("view-lager").append(document.getElementById("palateOpenWine"));
-document.getElementById("view-smagninger").append(document.getElementById("palateRadar"));
-const quick=document.createElement("section");quick.className="panel palate-quicklinks";
-quick.innerHTML='<h2>Gå videre i PALATE</h2><p class="lead">Find en vin på lageret, sammenlign smagninger eller udforsk fremtidige køb.</p><div class="palate-quick-grid"><button type="button" data-go="lager">Hvad skal jeg åbne?</button><button type="button" data-go="smagninger">Sammenlign vinprofiler</button><button type="button" data-go="sweetspot">Sweetspot</button></div>';
-document.getElementById("view-overblik").prepend(quick);
-quick.querySelectorAll("[data-go]").forEach(button=>button.addEventListener("click",()=>selectPalateView(button.dataset.go)));
+document.getElementById("view-smagninger").prepend(document.getElementById("palateRadar"));
 function selectPalateView(name){
   const valid=["overblik","smagninger","lager","sweetspot","registrer"];
   const target=valid.includes(name)?name:"overblik";

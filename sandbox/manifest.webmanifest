@@ -9,7 +9,7 @@
   "description": "Isoleret test af PALATE opdateringer",
   "icons": [
     {
-      "src": "./palate-icon-180.png",
+      "src": "./palate-icon-180.png?v=palate-clean-3",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"

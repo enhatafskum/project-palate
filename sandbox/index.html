@@ -516,6 +516,10 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-profile-details th:not(:first-child),.palate-profile-details td:not(:first-child){text-align:center}
 .palate-profile-details .palate-table-scroll{overflow-x:auto;margin-top:10px}
 .palate-profile-footnote{font-size:12px;margin-top:15px}
+.palate-compact-scales{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 0 15px}
+.palate-mini-scale{min-width:0;padding:8px 10px 3px;background:#faf7f3;border:1px solid #eee5de;border-radius:9px}
+.palate-mini-scale strong{display:block;font-size:12px;color:#66575a;font-weight:600;margin-bottom:1px}
+@media(max-width:380px){.palate-compact-scales{gap:6px}.palate-mini-scale{padding:7px 5px 2px}}
 @media(min-width:700px){.palate-profile-selected{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <section class="panel" id="palateRadar" style="margin-top:22px">
@@ -529,8 +533,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
   <div id="radarChoices" class="palate-profile-choices"></div>
  </details>
  <div class="palate-radar-stage"><svg id="radarProfile" viewBox="0 0 420 410" role="img" aria-label="Overlejrede radardiagrammer over seks positive vurderinger"></svg></div>
- <div class="palate-profile-scales-head"><h3>Fylde og sødme</h3><p class="lead">Separate oplevelsesskalaer. 5 er dit optimum – ikke en lav eller høj kvalitetsscore.</p></div>
- <div id="radarScales"></div>
+ <div id="radarScales" class="palate-compact-scales" aria-label="Fylde og sødme på separate skalaer"></div>
  <details class="palate-profile-details"><summary>Vis de præcise vurderinger</summary><div id="radarExactScores"></div></details>
  <p class="lead palate-profile-footnote">Hver profil er én registreret smagning. Manglende scorer vises ikke. En høj stilmatch-score er ikke et krav for stor drikkeglæde.</p>
 </section>
@@ -1023,18 +1026,19 @@ function renderRadarProfiles(){
  if(!rows.length)svg.append(radarSvg("text",{x:210,y:210,"text-anchor":"middle",fill:"#71656a","font-size":13},"Vælg vine for at se profiler"));
  const scales=document.getElementById("radarScales");scales.replaceChildren();
  for(const field of ["Fylde","Sødme"]){
-  const group=document.createElement("div");group.style.cssText="margin:12px 0 19px";const title=document.createElement("strong");title.textContent=field;group.append(title);
-  const scale=radarSvg("svg",{viewBox:"0 0 420 "+(49+rows.length*31),style:"width:100%;display:block"});
-  const x=v=>65+(v-1)/9*315;
-  scale.append(radarSvg("line",{x1:65,y1:25,x2:380,y2:25,stroke:"#c8bdb5","stroke-width":2}));
-  for(const n of [1,3,5,7,10])scale.append(radarSvg("text",{x:x(n),y:16,"text-anchor":"middle","font-size":11,fill:"#71665e"},String(n)));
-  scale.append(radarSvg("line",{x1:x(5),y1:24,x2:x(5),y2:42+rows.length*31,stroke:"#b08b52","stroke-width":1.5,"stroke-dasharray":"4 4"}));
-  rows.forEach((r,j)=>{const v=insightNum(r,field),y=45+j*31,color=palateRadarColors[j],opacity=focused&&focused!==r.Smagning_ID?.25:1;
-   scale.append(radarSvg("circle",{cx:16,cy:y-4,r:5,fill:color,"fill-opacity":opacity}));
-   scale.append(radarSvg("text",{x:27,y:y,"font-size":10,fill:"#62585a"},"#"+r.Smagning_ID));
-   if(v!==null){scale.append(radarSvg("circle",{cx:x(v),cy:y-4,r:7,fill:color,"fill-opacity":opacity}));scale.append(radarSvg("text",{x:Math.min(394,x(v)+12),y:y,"font-size":12,fill:color},v.toLocaleString("da-DK")));}
-   else scale.append(radarSvg("text",{x:70,y:y,"font-size":11,fill:"#827a75"},"Ikke registreret"));
-  });group.append(scale);scales.append(group);
+  const group=document.createElement("div");group.className="palate-mini-scale";
+  const heading=document.createElement("strong");heading.textContent=field;group.append(heading);
+  const chart=radarSvg("svg",{viewBox:"0 0 320 49",role:"img","aria-label":field+": personlig oplevelsesskala fra 1 til 10, med optimum ved 5",style:"width:100%;display:block"});
+  const x=v=>18+(v-1)/9*284;
+  chart.append(radarSvg("line",{x1:18,y1:22,x2:302,y2:22,stroke:"#cbbfb6","stroke-width":2,"stroke-linecap":"round"}));
+  chart.append(radarSvg("line",{x1:x(5),y1:10,x2:x(5),y2:34,stroke:"#b28c55","stroke-width":1.5,"stroke-dasharray":"2 3"}));
+  for(const n of [1,5,10])chart.append(radarSvg("text",{x:x(n),y:45,"text-anchor":"middle","font-size":10,fill:"#817570"},n===5?"5 · optimum":String(n)));
+  rows.forEach((r,j)=>{const v=insightNum(r,field);if(v===null)return;const opacity=focused&&focused!==r.Smagning_ID?.2:1,color=palateRadarColors[j],px=x(v);
+   const dot=radarSvg("circle",{cx:px,cy:22,r:6,fill:color,"fill-opacity":opacity,stroke:"#fff","stroke-width":1.5});
+   dot.append(radarSvg("title",{},r.Vin+" · "+field+": "+v.toLocaleString("da-DK")));
+   chart.append(dot);
+  });
+  group.append(chart);scales.append(group);
  }
  const box=document.getElementById("radarExactScores");box.replaceChildren();
  if(rows.length){

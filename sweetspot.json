@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "source": "Project_PALATE_Sweetspot.md",
+  "sourceSnapshotDate": "2026-11-07",
+  "updatePolicy": "Manual export after explicit approval in PALATE conversation; never auto-edit master",
+  "red": [
+    {
+      "rank": 1,
+      "name": "Daniel Bouland – Morgon Bellevue Sable",
+      "price": "185 kr./3 (2024/2025), udvidet",
+      "why": "Stilmatch: Saftig Gamay med finesse og tydelig tekstur, som ligger tæt på dit foretrukne lette rødvinsspor.\nPotentiale: Bellevue er interessant for kombinationen af frugt, koncentration og elegance frem for ren kraft.\nForbehold: Morgon kan være mere struktureret end en helt let Pinot Noir; vurder den konkrete årgang."
+    },
+    {
+      "rank": 2,
+      "name": "Verónica Ortega – Quite",
+      "price": "Tidligere 139–179 kr. for 2023, primær/udvidet",
+      "why": "Stilmatch: Frisk, elegant Mencía fra Bierzo med den spændstighed og mindre tunge profil, du ofte søger.\nPotentiale: Et spændende alternativ til Pinot Noir og Gamay, fordi den kan kombinere saftighed med mineralsk præg.\nForbehold: Du har endnu ikke smagt vinen; årgang og tanninstruktur kan ændre stilmatch."
+    },
+    {
+      "rank": 3,
+      "name": "Holger Koch – Herrenstück Pinot Noir",
+      "price": "149–159 kr./6 (2023), primær/udvidet",
+      "why": "Stilmatch: Tysk Pinot Noir er et oplagt spor efter dine gode erfaringer med Spätburgunder.\nPotentiale: Herrenstück kan give ren frugt, finesse og drikkeglæde uden at være domineret af kraft.\nForbehold: Stil og fadpræg skal kontrolleres for den konkrete årgang."
+    },
+    {
+      "rank": 4,
+      "name": "Daniel Bouland – Morgon Corcelette Sable",
+      "price": "195 kr./3 (2024), udvidet",
+      "why": "Stilmatch: Corcelette giver en anden side af Boulands Morgon end Bellevue: mere parfume og muligvis tydeligere struktur.\nPotentiale: Den er relevant, fordi du værdsætter både elegance og dybde, når balancen er på plads.\nForbehold: Mere struktur kan også betyde fastere tanniner; bør ikke behandles som identisk med Bellevue."
+    },
+    {
+      "rank": 5,
+      "name": "Finca Sandoval – Salia",
+      "price": "120–169 kr./6 (2024), primær/udvidet",
+      "why": "Stilmatch: Salia er et lovende spansk alternativ med friskhed og kompleksitet fra flere druesorter.\nPotentiale: Det kan ramme dit ønske om balanceret kraft uden den sødmefulde, tunge stil, du undertiden fravælger.\nForbehold: Blandingen og årgangens modenhed kan give mere fylde end dine letteste favoritter."
+    },
+    {
+      "rank": 6,
+      "name": "Mee Godard – Morgon Corcelette",
+      "price": "Ca. 300 kr. (2023), særlig",
+      "why": "Stilmatch: Mee Godards Corcelette er en ambitiøs fortolkning af Morgon, der kan levere særlig dybde og tekstur.\nPotentiale: Den passer til din interesse for vine, hvor kompleksitet og finesse udvikler sig i glasset.\nForbehold: Højere pris og mulig fast struktur gør den mere til en særlig flaske end et sikkert hverdagskøb."
+    },
+    {
+      "rank": 7,
+      "name": "Domaine de Bellene – Clos Bardot Pinot Noir",
+      "price": "159 kr./6 (2023), udvidet",
+      "why": "Stilmatch: Clos Bardot ligger i det elegante Bourgogne-spor, du gerne vil udforske mere.\nPotentiale: En god kandidat, hvis den viser ren Pinot-frugt og velintegreret struktur frem for tungt fad.\nForbehold: Dokumentationen for præcis årgang og konsistent stilmatch er svagere end for topkandidaterne."
+    },
+    {
+      "rank": 8,
+      "name": "Finca Sandoval – Fundamentalista",
+      "price": "129,95 kr./6 (2024), primær",
+      "why": "Stilmatch: Fundamentalista er interessant som prisvenlig vej til friskere, mere levende spansk rødvin.\nPotentiale: Den kan udfordre forestillingen om, at spansk vin nødvendigvis er tung og moden.\nForbehold: Kvalitetsniveau og udtryk på tværs af årgange bør undersøges, før den bliver et konkret køb."
+    },
+    {
+      "rank": 9,
+      "name": "Domaine Saint-Damien – Gigondas Les Souteyrades",
+      "price": "199 kr./6 (2022), udvidet",
+      "why": "Stilmatch: Les Souteyrades repræsenterer dit andet rødvinsspor: dybde og balanceret kraft.\nPotentiale: Gigondas kan være et godt valg til kraftigere mad og gæster, der ønsker mere intensitet.\nForbehold: Tanniner og koncentration kan blive mere dominerende, end du personligt foretrækker."
+    },
+    {
+      "rank": 10,
+      "name": "Jean-Paul & Charly Thévenet – Morgon Vieilles Vignes",
+      "price": "Ca. 40 USD tidligere nævnt, særlig/uafklaret",
+      "why": "Stilmatch: Thévenets gamle stokke i Morgon er interessante for en kombination af levende frugt og kompleksitet.\nPotentiale: Den er et relevant pejlemærke for, hvor langt Beaujolais kan gå i dybde uden at miste elegance.\nForbehold: Dansk pris og adgang er uafklaret; værdi for pengene er derfor endnu ikke dokumenteret."
+    },
+    {
+      "rank": 11,
+      "name": "Domaine de Bellene – Maison Dieu Pinot Noir",
+      "price": "159 kr./6 (2023), udvidet",
+      "why": "Stilmatch: Maison Dieu er endnu et forsøg på at finde Bourgogne-finesse til en overkommelig pris.\nPotentiale: Stilen kan passe til din præference for saftighed og en rødvin, der ikke føles tung.\nForbehold: Der er mindre sikker dokumentation for, at netop denne cuvée overgår de højere rangerede alternativer."
+    },
+    {
+      "rank": 12,
+      "name": "Frédéric Esmonin – Les Genévrières Pinot Noir",
+      "price": "149 kr./6 (2024), primær",
+      "why": "Stilmatch: Les Genévrières er interessant som et relativt prisvenligt Pinot Noir-forsøg.\nPotentiale: Hvis frugten er frisk og strukturen blød, kan den blive en god hverdagsvin i dit elegante spor.\nForbehold: Den konkrete årgang skal vurderes for balance, kompleksitet og eventuelt fadpræg."
+    },
+    {
+      "rank": 13,
+      "name": "Finca Sandoval – Finca Sandoval",
+      "price": "255 kr./3 (2024), særlig",
+      "why": "Stilmatch: Finca Sandovals mere ambitiøse vin kan give dybere og mere sammensat Syrah/Bobal-karakter.\nPotentiale: Den er relevant til de situationer, hvor du ønsker mere intensitet, men stadig efterspørger balance.\nForbehold: Større fylde og struktur øger risikoen for, at den føles mindre elegant end dine lette favoritter."
+    },
+    {
+      "rank": 14,
+      "name": "Paul Jaboulet Aîné – Crozes-Hermitage Domaine de Thalabert",
+      "price": "260 kr. (2017), særlig",
+      "why": "Stilmatch: Thalabert giver mulighed for at udforske moden Syrah fra Nordrhône med dybde og udviklede aromaer.\nPotentiale: Det kan være en interessant kontrast til dine mere frugtdrevne Pinot- og Gamay-favoritter.\nForbehold: Referenceårgangen er ældre; opbevaring og flaskestand er afgørende, og pris kan ikke overføres til andre årgange."
+    }
+  ],
+  "white": [
+    {
+      "rank": 1,
+      "name": "Cave de Vinzelles – Pouilly-Vinzelles 1er Cru Les Quarts",
+      "price": "179,95 kr./6 (reference 2024/2025), udvidet",
+      "why": "Stilmatch: Du gav Cave de Vinzelles' Pouilly-Fuissé 1er Cru usædvanligt høje vurderinger; derfor er Les Quarts et oplagt næste forsøg.\nPotentiale: Her søger vi samme kombination af præcision, tekstur og drikkeglæde, men fra en anden mark og cuvée.\nForbehold: Producentmatch er ikke garanti for samme oplevelse; cuvée og årgang skal vurderes selvstændigt."
+    },
+    {
+      "rank": 2,
+      "name": "Finca Sandoval – Aurora",
+      "price": "199 kr./3 (2023), udvidet",
+      "why": "Stilmatch: Aurora er interessant som et hvidvinsspor uden for Bourgogne, hvor tekstur og friskhed kan gå hånd i hånd.\nPotentiale: Den kan udfordre din Chardonnay-præference uden at give køb på kompleksitet og balance.\nForbehold: Druesammensætning og stil skal verificeres; den er ikke nødvendigvis en fadpræget Chardonnay-erstatning."
+    },
+    {
+      "rank": 3,
+      "name": "Maison Roche de Bellene – Chardonnay Cuvée Réserve",
+      "price": "159 kr./6 (2022), udvidet",
+      "why": "Stilmatch: Cuvée Réserve er relevant for din interesse for Bourgogne-Chardonnay med diskret, integreret fad.\nPotentiale: Målet er at finde struktur og dybde uden den tyngde, du oplevede i en Meursault-reference.\nForbehold: Fadniveau og stilmatch er ikke tilstrækkeligt dokumenteret for denne årgang."
+    },
+    {
+      "rank": 4,
+      "name": "Schlossgut Ebringen – Chardonnay S",
+      "price": "139 kr. (2024), primær",
+      "why": "Stilmatch: Chardonnay S kan være en prisvenlig vej til en mere præcis og frisk Chardonnay-stil.\nPotentiale: Den er interessant, hvis den forener let tekstur med energi og undgår overdreven fedme.\nForbehold: Vi mangler sikker dokumentation for vinens konkrete fadbehandling og balance."
+    },
+    {
+      "rank": 5,
+      "name": "Markowitsch – Chardonnay Ried Schüttenberg",
+      "price": "284,95 kr./6 (2022), særlig",
+      "why": "Stilmatch: Markowitsch er en producent, du allerede har haft en meget god oplevelse med på Pinot Noir.\nPotentiale: Schüttenberg kan give seriøs Chardonnay med mineralitet, struktur og et mere ambitiøst udtryk.\nForbehold: Den kan være for fyldig eller fadpræget i forhold til dit Chardonnay-sweetspot."
+    },
+    {
+      "rank": 6,
+      "name": "La Chablisienne – Cuvée Philipson Bourgogne Chardonnay",
+      "price": "89 kr./6 (2024), primær",
+      "why": "Stilmatch: Denne Bourgogne Chardonnay kan være et attraktivt hverdagsforsøg på grund af den lave referencepris.\nPotentiale: Den er relevant, hvis friskhed og ren frugt fylder mere end fad og stor kompleksitet.\nForbehold: Lav pris alene gør den ikke til et godt PALATE-køb; kvalitetsmatch er endnu usikkert."
+    },
+    {
+      "rank": 7,
+      "name": "Heribert Boch – Trittenheimer Apotheke Urstück GG Riesling",
+      "price": "159 kr. (2024), udvidet",
+      "why": "Stilmatch: Urstück GG kan udforske din interesse for seriøs Riesling med struktur og længde.\nPotentiale: Det er især spændende som et alternativ til de Riesling-vine, du har haft glæde af ved den rette serveringstemperatur.\nForbehold: Sødmegrad, modenhed og syreprofil skal kontrolleres, da de er afgørende for dit match."
+    },
+    {
+      "rank": 8,
+      "name": "Boussard – La Chênaie Bourgogne Chardonnay",
+      "price": "Ca. 166 kr.; årgang uafklaret, udvidet",
+      "why": "Stilmatch: La Chênaie er en mulig kandidat i dit foretrukne Chardonnay-område mellem friskhed og diskret fylde.\nPotentiale: Den kan være relevant, hvis den viser præcision og tekstur uden tungt fad.\nForbehold: Identitet, årgang og producentoplysninger er uafklarede; den må ikke anbefales til køb før verificering."
+    }
+  ],
+  "rebuy": [
+    {
+      "rank": 1,
+      "name": "Cave de Vinzelles Pouilly-Fuissé 1er Cru 2024",
+      "type": "Hvid",
+      "desire": "10",
+      "overall": "9,5",
+      "priceReference": "355 kr./6",
+      "priceNote": "250 kr. historisk typisk; observeret 355 kr./6, 510 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/cave-de-vinzelles-pouilly-fuisse-1er-cru-2024",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 2,
+      "name": "Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté 2022",
+      "type": "Hvid",
+      "desire": "10",
+      "overall": "10",
+      "priceReference": "279 kr.",
+      "priceNote": "Observeret listepris hos VildMedVin for 2022; udsolgt. Ikke en aktuel købsmulighed.",
+      "priceStatus": "historisk listepris",
+      "priceSource": "https://www.vildmedvin.dk/hubert-bouzereau-gruere-et-filles-bourgogne-aligote-2022"
+    },
+    {
+      "rank": 3,
+      "name": "Philipp Kuhn Riesling Tradition (årgang ikke registreret)",
+      "type": "Hvid",
+      "desire": "9,5",
+      "overall": "8,5",
+      "priceReference": "84,99 kr.",
+      "priceNote": "Observeret hos Calle (Click & Collect); årgang ikke angivet og ikke nødvendigvis dansk levering",
+      "priceSource": "https://www.calle.dk/da-dk/philipp-kuhn-riesling-tradition-500113958",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 4,
+      "name": "Axel Pauly Spätburgunder Réserve 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9,5",
+      "priceReference": "255 kr./6",
+      "priceNote": "Historisk observeret 255–355 kr./6 hos Supervin",
+      "priceSource": "https://vinradar.dk/vin/axel-pauly-spatburgunder-reserve-2023/",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 5,
+      "name": "Markowitsch Pinot Noir ØKO 2025",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9,5",
+      "priceReference": "155 kr./6",
+      "priceNote": "Historisk typisk 120 kr.; observeret 155 kr./6, 230 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/markowitsch-pinot-noir-2025-ko",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 6,
+      "name": "Clos Bellane Côtes du Rhône Villages Valréas 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9",
+      "priceReference": "150 kr.",
+      "priceNote": "Dokumenteret tilbud i Rhônevinfestival 2025; ikke aktuel dansk butikskøbspris",
+      "priceSource": "https://rhonevinfestival.dk/media/Rhone_Katalog_2025_low.pdf",
+      "priceStatus": "historisk tilbud"
+    },
+    {
+      "rank": 7,
+      "name": "Cantine Paradiso 1954 Primitivo 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9",
+      "priceReference": "199 kr./6",
+      "priceNote": "Observeret hos AndrupVin, 219,95 kr. enkeltvis; 205 kr. i mixkasse",
+      "priceSource": "https://www.andrupvin.dk/cantine-paradiso-1954-primitivo-2023",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 8,
+      "name": "Prosper Maufoux Mâcon-Villages 2024",
+      "type": "Hvid",
+      "desire": "9",
+      "overall": "9",
+      "priceReference": "88 kr./6",
+      "priceNote": "Observeret hos prisaggregator; alternativ dansk forhandler 100 kr./6",
+      "priceSource": "https://bottlio.dk/wines/2201421376857766?fra=vin",
+      "priceStatus": "observeret reference"
+    },
+    {
+      "rank": 9,
+      "name": "Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022",
+      "type": "Rød",
+      "desire": "9 ved optimal temperatur (~15 °C), ellers 7",
+      "overall": "9 ved optimal temperatur",
+      "priceReference": "145 kr./6",
+      "priceNote": "Historisk typisk 100 kr.; observeret 145 kr./6, 190 kr. enkeltvis",
+      "priceSource": "https://bottlio.dk/vin/rudi-ruttger-neuleininger-sonnenberg-spatburgunder-reserve-pfalz-2022",
+      "priceStatus": "observeret reference"
+    }
+  ],
+  "possibleRebuy": [
+    "Fleurie Granits Roses – Domaine de Bel-Air 2023",
+    "Maison Vaubourg Mâcon-Igé La Cra 2023",
+    "Chevalier Delaude 2022",
+    "Beyra Reserva 2019",
+    "Château Lamothe-Vincent Réserve Rouge 2020",
+    "Pliniana Re Noire Primitivo di Manduria 2021"
+  ],
+  "notes": "Beskrivelserne er redaktionelt udbygget uden ændring af kandidater eller rangering. Genkøbspriser mangler verificerede kilder og er derfor markeret som ukendte. Genkøbspriser er observerede eller historiske referencer, ikke realtidsverificerede købsmuligheder.",
+  "priceResearchDate": "2026-11-07"
+}

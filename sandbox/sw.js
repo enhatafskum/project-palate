@@ -1,5 +1,5 @@
 // Only controls /project-palate/sandbox/ pages. Network first; offline fallback.
-const CACHE="palate-sandbox-shell-v1";
+const CACHE="palate-sandbox-shell-v2";
 self.addEventListener("install",event=>{self.skipWaiting();});
 self.addEventListener("activate",event=>{event.waitUntil((async()=>{
   const keys=await caches.keys();

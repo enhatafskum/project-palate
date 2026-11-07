@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "source": "Project_PALATE_Sweetspot.md",
+  "sourceSnapshotDate": "2026-11-06",
+  "updatePolicy": "Manual export after explicit approval in PALATE conversation; never auto-edit master",
+  "red": [
+    {
+      "rank": 1,
+      "name": "Daniel Bouland – Morgon Bellevue Sable",
+      "price": "185 kr./3 (2024/2025), udvidet",
+      "why": "Meget stærkt match: saftighed, finesse, tekstur og dybde; veletableret Morgon-producent"
+    },
+    {
+      "rank": 2,
+      "name": "Verónica Ortega – Quite",
+      "price": "Tidligere 139–179 kr. for 2023, primær/udvidet",
+      "why": "Elegant, frisk Mencía fra Bierzo; udtrykkeligt ikke smagt; pris og årgang kontrolleres ved køb"
+    },
+    {
+      "rank": 3,
+      "name": "Holger Koch – Herrenstück Pinot Noir",
+      "price": "149–159 kr./6 (2023), primær/udvidet",
+      "why": "Pinot-finesse og saftighed; god sandsynlig personlig træfsikkerhed"
+    },
+    {
+      "rank": 4,
+      "name": "Daniel Bouland – Morgon Corcelette Sable",
+      "price": "195 kr./3 (2024), udvidet",
+      "why": "Parfumeret, elegant Morgon med mere struktur; separat cuvée fra Bellevue"
+    },
+    {
+      "rank": 5,
+      "name": "Finca Sandoval – Salia",
+      "price": "120–169 kr./6 (2024), primær/udvidet",
+      "why": "Frisk Syrah/Bobal/Garnacha, høj kvalitet til rimelig pris"
+    },
+    {
+      "rank": 6,
+      "name": "Mee Godard – Morgon Corcelette",
+      "price": "Ca. 300 kr. (2023), særlig",
+      "why": "Ambitiøs Morgon, mulig ekstraordinær dybde uden at opgive finesse"
+    },
+    {
+      "rank": 7,
+      "name": "Domaine de Bellene – Clos Bardot Pinot Noir",
+      "price": "159 kr./6 (2023), udvidet",
+      "why": "Elegant Bourgogne-spor; lavere sikkerhed for konsistens og personlig match"
+    },
+    {
+      "rank": 8,
+      "name": "Finca Sandoval – Fundamentalista",
+      "price": "129,95 kr./6 (2024), primær",
+      "why": "Prisvenlig frisk spansk stil; kvalitet på tværs af årgange undersøges ved køb"
+    },
+    {
+      "rank": 9,
+      "name": "Domaine Saint-Damien – Gigondas Les Souteyrades",
+      "price": "199 kr./6 (2022), udvidet",
+      "why": "Balanceret kraft; relevant andet spor, men tanninrisiko"
+    },
+    {
+      "rank": 10,
+      "name": "Jean-Paul & Charly Thévenet – Morgon Vieilles Vignes",
+      "price": "Ca. 40 USD tidligere nævnt, særlig/uafklaret",
+      "why": "Beaujolais med elegance og dybde; dansk pris kan overstige rammen"
+    },
+    {
+      "rank": 11,
+      "name": "Domaine de Bellene – Maison Dieu Pinot Noir",
+      "price": "159 kr./6 (2023), udvidet",
+      "why": "Bourgogne med mulig god finesse"
+    },
+    {
+      "rank": 12,
+      "name": "Frédéric Esmonin – Les Genévrières Pinot Noir",
+      "price": "149 kr./6 (2024), primær",
+      "why": "Prisvenligt elegant Bourgogne-spor"
+    },
+    {
+      "rank": 13,
+      "name": "Finca Sandoval – Finca Sandoval",
+      "price": "255 kr./3 (2024), særlig",
+      "why": "Mere ambitiøs Syrah/Bobal; stærkere struktur og mulig fylde"
+    },
+    {
+      "rank": 14,
+      "name": "Paul Jaboulet Aîné – Crozes-Hermitage Domaine de Thalabert",
+      "price": "260 kr. (2017), særlig",
+      "why": "Moden nordrhônsk Syrah, dybde og kompleksitet; flaskens opbevaring vigtig"
+    }
+  ],
+  "white": [
+    {
+      "rank": 1,
+      "name": "Cave de Vinzelles – Pouilly-Vinzelles 1er Cru Les Quarts",
+      "price": "179,95 kr./6 (reference 2024/2025), udvidet",
+      "why": "Stærkeste forventede Chardonnay-match ud fra din begejstring for producentens Pouilly-Fuissé; anden cuvée"
+    },
+    {
+      "rank": 2,
+      "name": "Finca Sandoval – Aurora",
+      "price": "199 kr./3 (2023), udvidet",
+      "why": "Tekstur, friskhed og kompleksitet; interessant alternativ til Chardonnay"
+    },
+    {
+      "rank": 3,
+      "name": "Maison Roche de Bellene – Chardonnay Cuvée Réserve",
+      "price": "159 kr./6 (2022), udvidet",
+      "why": "Bourgogne, muligt velintegreret fad; stilmatch stadig usikkert"
+    },
+    {
+      "rank": 4,
+      "name": "Schlossgut Ebringen – Chardonnay S",
+      "price": "139 kr. (2024), primær",
+      "why": "Muligt elegant, prisvenligt Chardonnay-spor"
+    },
+    {
+      "rank": 5,
+      "name": "Markowitsch – Chardonnay Ried Schüttenberg",
+      "price": "284,95 kr./6 (2022), særlig",
+      "why": "Velanset producent, mineralitet og fad; reel risiko for for meget fylde"
+    },
+    {
+      "rank": 6,
+      "name": "La Chablisienne – Cuvée Philipson Bourgogne Chardonnay",
+      "price": "89 kr./6 (2024), primær",
+      "why": "Prisvenlig Chardonnay; kvalitetsmatch endnu mindre sikkert"
+    },
+    {
+      "rank": 7,
+      "name": "Heribert Boch – Trittenheimer Apotheke Urstück GG Riesling",
+      "price": "159 kr. (2024), udvidet",
+      "why": "Struktureret Riesling-spor, relevant for din interesse i seriøs Riesling"
+    },
+    {
+      "rank": 8,
+      "name": "Boussard – La Chênaie Bourgogne Chardonnay",
+      "price": "Ca. 166 kr.; årgang uafklaret, udvidet",
+      "why": "Chardonnay-kandidat, men identitet og stil skal verificeres ved køb"
+    }
+  ],
+  "rebuy": [
+    {
+      "rank": 1,
+      "name": "Cave de Vinzelles Pouilly-Fuissé 1er Cru 2024",
+      "type": "Hvid",
+      "desire": "10",
+      "overall": "9,5"
+    },
+    {
+      "rank": 2,
+      "name": "Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté 2022",
+      "type": "Hvid",
+      "desire": "10",
+      "overall": "10"
+    },
+    {
+      "rank": 3,
+      "name": "Philipp Kuhn Riesling Tradition (årgang ikke registreret)",
+      "type": "Hvid",
+      "desire": "9,5",
+      "overall": "8,5"
+    },
+    {
+      "rank": 4,
+      "name": "Axel Pauly Spätburgunder Réserve 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9,5"
+    },
+    {
+      "rank": 5,
+      "name": "Markowitsch Pinot Noir ØKO 2025",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9,5"
+    },
+    {
+      "rank": 6,
+      "name": "Clos Bellane Côtes du Rhône Villages Valréas 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9"
+    },
+    {
+      "rank": 7,
+      "name": "Cantine Paradiso 1954 Primitivo 2023",
+      "type": "Rød",
+      "desire": "9",
+      "overall": "9"
+    },
+    {
+      "rank": 8,
+      "name": "Prosper Maufoux Mâcon-Villages 2024",
+      "type": "Hvid",
+      "desire": "9",
+      "overall": "9"
+    },
+    {
+      "rank": 9,
+      "name": "Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve 2022",
+      "type": "Rød",
+      "desire": "9 ved optimal temperatur (~15 °C), ellers 7",
+      "overall": "9 ved optimal temperatur"
+    }
+  ],
+  "possibleRebuy": [
+    "Fleurie Granits Roses – Domaine de Bel-Air 2023",
+    "Maison Vaubourg Mâcon-Igé La Cra 2023",
+    "Chevalier Delaude 2022",
+    "Beyra Reserva 2019",
+    "Château Lamothe-Vincent Réserve Rouge 2020",
+    "Pliniana Re Noire Primitivo di Manduria 2021"
+  ]
+}

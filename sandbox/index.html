@@ -479,6 +479,18 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <style id="palate-profile-v2-style">
 #palateRadar{overflow:hidden}
 .palate-profile-selected{display:grid;gap:8px;margin:16px 0}
+.palate-profile-selected:empty{display:none}
+.palate-profile-selected-row{display:flex;align-items:stretch;gap:5px;min-width:0}
+.palate-profile-selected-row .palate-profile-chip{flex:1;min-width:0}
+.palate-profile-remove{border:1px solid #e2d9d2;border-radius:10px;background:#fffdf9;color:#713b4c;font-size:22px;width:39px;flex:0 0 39px;cursor:pointer}
+.palate-picker-title{font-size:14px;font-weight:650;color:#713b4c}
+.palate-picker-title span{font-weight:400;font-size:12px;opacity:.7;margin-left:6px}
+.palate-profile-result{width:100%;display:flex;align-items:center;gap:8px;text-align:left;border:0;border-bottom:1px solid #eee8e3;background:transparent;padding:11px 5px;font:inherit;font-size:13px;color:#423c3d;cursor:pointer}
+.palate-profile-result:disabled{opacity:.5;cursor:default}
+.palate-profile-result-status{white-space:nowrap;font-size:12px;color:#80364f}
+.palate-picker-hint{font-size:12px;color:#776e6c;margin:9px 3px}
+.palate-radar-stage[hidden],.palate-compact-scales[hidden],.palate-profile-details[hidden]{display:none!important}
+
 .palate-profile-chip{display:flex;align-items:center;gap:10px;width:100%;border:1px solid #e2d9d2;border-radius:11px;padding:10px 11px;background:#fffdf9;color:#41363a;text-align:left;cursor:pointer;font:inherit}
 .palate-profile-chip[aria-pressed="true"]{border-color:#86485b;box-shadow:0 0 0 2px #86485b25;background:#fcf6f5}
 .palate-profile-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
@@ -518,11 +530,11 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  <h2>Sammenlign vinprofiler</h2>
  <p class="lead">Se, hvordan forskellige vine skaber drikkeglæde. Vælg op til fem smagninger, og læg deres profiler oven på hinanden.</p>
  <div id="radarSelected" class="palate-profile-selected" aria-label="Valgte vine"></div>
- <details class="palate-profile-picker" id="radarPicker"><summary>＋ Vælg eller skift vine <span id="radarSelectionStatus"></span></summary>
+ <div class="palate-profile-picker" id="radarPicker"><div class="palate-picker-title">Find og tilføj vine <span id="radarSelectionStatus"></span></div>
   <label for="radarSearch" class="palate-picker-label">Søg i dine smagninger</label>
-  <input id="radarSearch" type="search" placeholder="Vin, årgang eller dato" autocomplete="off">
+  <input id="radarSearch" type="search" placeholder="Søg efter vin eller årgang" autocomplete="off">
   <div id="radarChoices" class="palate-profile-choices"></div>
- </details>
+ </div>
  <div class="palate-radar-stage"><svg id="radarProfile" viewBox="0 0 420 410" role="img" aria-label="Overlejrede radardiagrammer over seks positive vurderinger"></svg></div>
  <div id="radarScales" class="palate-compact-scales" aria-label="Fylde og sødme på separate skalaer"></div>
  <details class="palate-profile-details"><summary>Vis de præcise vurderinger</summary><div id="radarExactScores"></div></details>
@@ -947,18 +959,27 @@ function radarLabel(r){return r.Vin+" · "+(r["Årgang"]||"u.å.").replace(/\\.0
 function radarSvg(tag,attributes={},label){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attributes))el.setAttribute(k,v);if(label!==undefined)el.textContent=label;return el;}
 function radarRows(){return radarSelectedIds.map(id=>palateTastingEvents.find(r=>r.Smagning_ID===id)).filter(Boolean);}
 function renderRadarChoices(){
- const root=document.getElementById("radarChoices"),query=document.getElementById("radarSearch").value.toLocaleLowerCase("da");root.replaceChildren();
- for(const r of palateTastingEvents.filter(r=>radarLabel(r).toLocaleLowerCase("da").includes(query))){
-  const line=document.createElement("label");line.className="palate-profile-choice";
-  const check=document.createElement("input");check.type="checkbox";check.checked=radarSelectedIds.includes(r.Smagning_ID);check.disabled=!check.checked&&radarSelectedIds.length>=5;
-  check.addEventListener("change",()=>{if(check.checked){if(radarSelectedIds.length<5)radarSelectedIds.push(r.Smagning_ID);}else{radarSelectedIds=radarSelectedIds.filter(id=>id!==r.Smagning_ID);if(radarFocusedId===r.Smagning_ID)radarFocusedId=null;}renderRadarChoices();renderRadarProfiles();});
-  const span=document.createElement("span");span.textContent=radarLabel(r);line.append(check,span);root.append(line);
+ const root=document.getElementById("radarChoices"),query=document.getElementById("radarSearch").value.trim().toLocaleLowerCase("da");root.replaceChildren();
+ if(!query){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Skriv et vinnavn eller en årgang for at finde en smagning.";root.append(hint);return;}
+ const matches=palateTastingEvents.filter(r=>radarLabel(r).toLocaleLowerCase("da").includes(query));
+ for(const r of matches.slice(0,12)){
+  const chosen=radarSelectedIds.includes(r.Smagning_ID),btn=document.createElement("button");btn.type="button";btn.className="palate-profile-result";
+  btn.disabled=chosen||radarSelectedIds.length>=5;
+  const label=document.createElement("span");label.textContent=radarLabel(r);label.style.flex="1";
+  const status=document.createElement("span");status.className="palate-profile-result-status";status.textContent=chosen?"Valgt":radarSelectedIds.length>=5?"Maks. 5":"＋ Tilføj";
+  btn.append(label,status);
+  btn.addEventListener("click",()=>{if(radarSelectedIds.includes(r.Smagning_ID)||radarSelectedIds.length>=5)return;radarSelectedIds.push(r.Smagning_ID);document.getElementById("radarSearch").value="";renderRadarProfiles();renderRadarChoices();});
+  root.append(btn);
  }
- if(!root.childElementCount)root.textContent="Ingen smagninger matcher søgningen.";
+ if(!matches.length){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Ingen smagninger fundet.";root.append(hint);}
+ if(matches.length>12){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Viser 12 af "+matches.length+" resultater. Skriv mere for at afgrænse søgningen.";root.append(hint);}
 }
 function renderRadarProfiles(){
  const rows=radarRows(),focused=radarFocusedId;
- document.getElementById("radarSelectionStatus").textContent="("+rows.length+"/5)";
+ document.getElementById("radarSelectionStatus").textContent=rows.length+" af 5 valgt";
+ document.querySelector(".palate-radar-stage").hidden=!rows.length;
+ document.getElementById("radarScales").hidden=!rows.length;
+ document.querySelector(".palate-profile-details").hidden=!rows.length;
  const selected=document.getElementById("radarSelected");selected.replaceChildren();
  rows.forEach((r,j)=>{
   const btn=document.createElement("button");btn.type="button";btn.className="palate-profile-chip";btn.setAttribute("aria-pressed",String(focused===r.Smagning_ID));btn.title="Fremhæv denne vin; tryk igen for at vise alle";
@@ -967,7 +988,7 @@ function renderRadarProfiles(){
   const strong=document.createElement("strong");strong.textContent=r.Vin;
   const small=document.createElement("small");small.textContent=(r["Årgang"]||"u.å.").replace(/\\.0$/,"")+" · "+(r.Registreringsdato||"u.d.")+" · smagning #"+r.Smagning_ID;
   const action=document.createElement("span");action.className="palate-profile-chip-action";action.textContent=focused===r.Smagning_ID?"Valgt":"Fremhæv";
-  name.append(strong,small);btn.append(dot,name,action);btn.addEventListener("click",()=>{radarFocusedId=radarFocusedId===r.Smagning_ID?null:r.Smagning_ID;renderRadarProfiles();});selected.append(btn);
+  name.append(strong,small);btn.append(dot,name,action);btn.addEventListener("click",()=>{radarFocusedId=radarFocusedId===r.Smagning_ID?null:r.Smagning_ID;renderRadarProfiles();});const remove=document.createElement("button");remove.type="button";remove.className="palate-profile-remove";remove.textContent="×";remove.setAttribute("aria-label","Fjern "+r.Vin+" fra sammenligningen");remove.addEventListener("click",()=>{radarSelectedIds=radarSelectedIds.filter(id=>id!==r.Smagning_ID);if(radarFocusedId===r.Smagning_ID)radarFocusedId=null;renderRadarProfiles();renderRadarChoices();});const wrapper=document.createElement("div");wrapper.className="palate-profile-selected-row";wrapper.append(btn,remove);selected.append(wrapper);
  });
  const svg=document.getElementById("radarProfile");svg.replaceChildren();
  const cx=210,cy=200,max=136,point=(i,v)=>{const a=-Math.PI/2+i*Math.PI/3;return [cx+Math.cos(a)*max*v/10,cy+Math.sin(a)*max*v/10];};
@@ -1018,7 +1039,6 @@ function renderRadarProfiles(){
 }
 function setupPalateRadar(){
  radarSelectedIds=radarSelectedIds.filter(id=>palateTastingEvents.some(r=>r.Smagning_ID===id));
- if(!radarSelectedIds.length)radarSelectedIds=palateTastingEvents.slice(0,2).map(r=>r.Smagning_ID);
  renderRadarChoices();renderRadarProfiles();
 }
 document.getElementById("radarSearch").addEventListener("input",renderRadarChoices);

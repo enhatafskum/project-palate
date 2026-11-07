@@ -474,6 +474,30 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 
   </section>
 
+
+<section class="panel" id="palateInsights" style="margin-top:22px">
+  <div class="kicker">PALATE TEST · Analyse</div>
+  <h2>Dit smagskompas</h2>
+  <p class="lead">Undersøg sammenhængen mellem dine personlige vurderinger. Hver prik er én smagning – ikke en objektiv kvalitetsbedømmelse. Tryk på en prik for at se vinen.</p>
+  <div class="toolbar" style="gap:12px;flex-wrap:wrap;margin:15px 0">
+    <label>Vintype <select id="insightType"><option value="Alle">Alle</option><option>Rød</option><option>Hvid</option><option>Mousserende</option></select></label>
+    <label>Vandret akse <select id="insightX"><option value="Fylde">Fylde</option><option value="Sødme">Sødme</option><option value="Balance">Balance</option><option value="Stilmatch">Stilmatch</option></select></label>
+    <label>Lodret akse <select id="insightY"><option value="Drikkeglæde">Drikkeglæde</option><option value="Helhed">Helhed</option><option value="Genkøb">Genkøbslyst</option></select></label>
+  </div>
+  <div id="insightSummary" class="note" aria-live="polite"></div>
+  <div style="overflow-x:auto"><svg id="insightPlot" viewBox="0 0 640 350" role="img" aria-label="Smagskompas med individuelle smagninger" style="display:block;width:100%;min-width:290px;max-height:420px"></svg></div>
+  <p class="lead" style="font-size:12px">Bemærk: Fylde og sødme beskriver din personlige oplevelse, hvor 5 er dit optimum. Smagninger uden begge valgte scorer udelades. Gentagne smagninger tæller separat.</p>
+</section>
+<section class="panel" id="palateCompare" style="margin-top:22px">
+  <div class="kicker">PALATE TEST · Sammenligning</div>
+  <h2>Sammenlign to smagninger</h2>
+  <p class="lead">Sammenhold dine seks vurderinger. Samme vin kan optræde flere gange, eksempelvis ved temperaturforsøg.</p>
+  <div class="toolbar" style="gap:12px;flex-wrap:wrap;margin:15px 0">
+    <label>Vin 1 <select id="compareA" style="max-width:100%;width:240px"></select></label>
+    <label>Vin 2 <select id="compareB" style="max-width:100%;width:240px"></select></label>
+  </div>
+  <div id="compareResult" aria-live="polite"></div>
+</section>
 </div>
 <div class="palate-view" id="view-smagninger" role="tabpanel" aria-labelledby="nav-smagninger" hidden>
 <section class="panel" style="margin-top:18px">
@@ -866,6 +890,7 @@ function loadPalateData(){
       };
     });
     palateTastingEvents=smagRows;
+    setupPalateInsights();
     renderTastingHistory(smagRows);
     renderFilters();
     renderChart();
@@ -880,6 +905,56 @@ function loadPalateData(){
   })().finally(()=>{palateDataRequest=null;});
   return palateDataRequest;
 }
+
+
+/* PALATE TEST: beskrivende analyse, udelukkende baseret på de indlæste CSV-smagninger. */
+const insightFields={"Fylde":"Fylde","Sødme":"Sødme","Balance":"Balance","Stilmatch":"Stilmatch","Drikkeglæde":"Drikkeglæde","Helhed":"Helhed","Genkøb":"Genkøb"};
+function insightNum(row,key){const v=(row[key]||"").trim();if(!v)return null;const n=Number(v.replace(",","."));return Number.isFinite(n)&&n>=1&&n<=10?n:null;}
+function insightEl(tag,attrs={},content=""){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);if(content)el.textContent=content;return el;}
+function renderInsights(){
+ const type=document.getElementById("insightType").value,x=document.getElementById("insightX").value,y=document.getElementById("insightY").value;
+ const subset=palateTastingEvents.filter(r=>type==="Alle"||r.Type===type);
+ const rows=subset.filter(r=>insightNum(r,x)!==null&&insightNum(r,y)!==null);
+ const svg=document.getElementById("insightPlot");svg.replaceChildren();
+ const L=51,R=612,T=19,B=300,scaleX=n=>L+(n-1)/9*(R-L),scaleY=n=>B-(n-1)/9*(B-T);
+ for(const n of [1,3,5,7,9]){
+   svg.append(insightEl("line",{x1:L,y1:scaleY(n),x2:R,y2:scaleY(n),stroke:"#e8e0d9"}));
+   svg.append(insightEl("line",{x1:scaleX(n),y1:T,x2:scaleX(n),y2:B,stroke:"#e8e0d9"}));
+   svg.append(insightEl("text",{x:L-10,y:scaleY(n)+4,"text-anchor":"end",fill:"#756b65","font-size":12},String(n)));
+   svg.append(insightEl("text",{x:scaleX(n),y:B+20,"text-anchor":"middle",fill:"#756b65","font-size":12},String(n)));
+ }
+ if(x==="Fylde"||x==="Sødme")svg.append(insightEl("line",{x1:scaleX(5),y1:T,x2:scaleX(5),y2:B,stroke:"#aa8b57","stroke-dasharray":"5 5","stroke-width":2}));
+ svg.append(insightEl("text",{x:(L+R)/2,y:343,"text-anchor":"middle",fill:"#5f3948","font-size":14},x+" (1–10)"));
+ svg.append(insightEl("text",{x:12,y:14,fill:"#5f3948","font-size":13},y+" ↑"));
+ for(const [i,r] of rows.entries()){
+   const cx=scaleX(insightNum(r,x)),cy=scaleY(insightNum(r,y));
+   const dot=insightEl("circle",{cx,cy,r:6,fill:r.Type==="Hvid"?"#aa8b57":r.Type==="Rød"?"#783b50":"#73848a",stroke:"#fff","stroke-width":1.5,tabindex:0,role:"button","aria-label":r.Vin+": "+x+" "+insightNum(r,x)+", "+y+" "+insightNum(r,y)});
+   dot.append(insightEl("title",{},r.Vin+" ("+(r["Årgang"]||"årgang ukendt")+") · "+x+": "+insightNum(r,x)+" · "+y+": "+insightNum(r,y)));
+   dot.addEventListener("click",()=>openPalateWine(r.Vin,(r["Årgang"]||"").replace(/\.0$/,"")));
+   dot.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();dot.dispatchEvent(new Event("click"));}});
+   svg.append(dot);
+ }
+ document.getElementById("insightSummary").textContent=rows.length+" af "+subset.length+" smagninger har begge valgte scorer. "+(rows.length<5?"Datagrundlaget er for lille til at udlede et mønster.":"Se prikkerne som beskrivelser – ikke dokumentation for årsagssammenhænge.");
+}
+function renderComparison(){
+ const rows=palateTastingEvents, a=rows.find(r=>r.Smagning_ID===document.getElementById("compareA").value),b=rows.find(r=>r.Smagning_ID===document.getElementById("compareB").value);
+ const box=document.getElementById("compareResult");box.replaceChildren();if(!a||!b)return;
+ const fields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];
+ const table=document.createElement("table");table.style.width="100%";table.style.fontSize="13px";
+ const head=document.createElement("tr");for(const v of ["Vurdering",a.Vin,b.Vin]){const th=document.createElement("th");th.textContent=v;th.style.padding="10px 5px";head.append(th)}table.append(head);
+ for(const [key,label] of fields){const tr=document.createElement("tr");for(const val of [label,insightNum(a,key)?.toLocaleString("da-DK")??"—",insightNum(b,key)?.toLocaleString("da-DK")??"—"]){const td=document.createElement("td");td.textContent=val;td.style.padding="10px 5px";td.style.borderTop="1px solid #e9e4dc";tr.append(td)}table.append(tr)}
+ box.append(table);
+ const note=document.createElement("p");note.className="lead";note.style.fontSize="12px";note.textContent="Datoer: "+(a.Registreringsdato||"ukendt")+" og "+(b.Registreringsdato||"ukendt")+". Forskelle beskriver dine registreringer, ikke vinens objektive kvalitet.";box.append(note);
+}
+function setupPalateInsights(){
+ const rows=palateTastingEvents,choices=rows.map(r=>({id:r.Smagning_ID,label:r.Vin+" · "+(r["Årgang"]||"u.å.")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")"}));
+ for(const id of ["compareA","compareB"]){const el=document.getElementById(id),previous=el.value;el.replaceChildren();for(const item of choices){const option=document.createElement("option");option.value=item.id;option.textContent=item.label;el.append(option)}if(choices.some(c=>c.id===previous))el.value=previous;}
+ if(!document.getElementById("compareA").value&&choices.length)document.getElementById("compareA").value=choices[0].id;
+ if(!document.getElementById("compareB").value&&choices.length>1)document.getElementById("compareB").value=choices[choices.length-1].id;
+ renderInsights();renderComparison();
+}
+for(const id of ["insightType","insightX","insightY"])document.getElementById(id).addEventListener("change",renderInsights);
+for(const id of ["compareA","compareB"])document.getElementById(id).addEventListener("change",renderComparison);
 
 function getRegistration(){
   const form=document.getElementById("palateRegistration");

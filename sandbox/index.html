@@ -488,6 +488,20 @@ header{padding-left:clamp(20px,2.4vw,38px)}
   <div style="overflow-x:auto"><svg id="insightPlot" viewBox="0 0 640 350" role="img" aria-label="Smagskompas med individuelle smagninger" style="display:block;width:100%;min-width:290px;max-height:420px"></svg></div>
   <p class="lead" style="font-size:12px">Bemærk: Fylde og sødme beskriver din personlige oplevelse, hvor 5 er dit optimum. Smagninger uden begge valgte scorer udelades. Gentagne smagninger tæller separat.</p>
 </section>
+<section class="panel" id="palateRadar" style="margin-top:22px">
+ <div class="kicker">PALATE TEST · Visuel profil</div>
+ <h2>Vinprofiler på tværs af stil</h2>
+ <p class="lead">Vælg op til fem konkrete smagninger. De seks positive vurderinger vises i samme radardiagram. Fylde og sødme vises separat, da 5 er dit personlige optimum.</p>
+ <label for="radarSearch">Find vin</label>
+ <input id="radarSearch" type="search" placeholder="Søg efter vin eller årgang" style="width:100%;margin:8px 0 12px;padding:12px;border:1px solid #d8cfc8;border-radius:7px">
+ <div id="radarChoices" style="max-height:220px;overflow:auto;border:1px solid #e6ded8;border-radius:8px;padding:8px"></div>
+ <p id="radarSelectionStatus" class="lead" aria-live="polite"></p>
+ <div style="overflow-x:auto"><svg id="radarProfile" viewBox="0 0 640 460" role="img" aria-label="Sammenligning af vinprofiler i radardiagram" style="width:100%;display:block;min-width:280px"></svg></div>
+ <h3 style="margin-top:16px">Fylde og sødme</h3>
+ <p class="lead">Separate skalaer: 1 = for lidt/tør, 5 = passende, 10 = for meget/sød. Den stiplede markering viser dit optimum.</p>
+ <div id="radarScales"></div>
+ <p class="lead" style="font-size:12px">Kun registrerede værdier vises. En manglende score forbindes ikke med de øvrige punkter. Diagrammet beskriver oplevet kvalitet og drikkeglæde – ikke én ideel vinstil.</p>
+</section>
 <section class="panel" id="palateCompare" style="margin-top:22px">
   <div class="kicker">PALATE TEST · Sammenligning</div>
   <h2>Sammenlign to smagninger</h2>
@@ -891,6 +905,7 @@ function loadPalateData(){
     });
     palateTastingEvents=smagRows;
     setupPalateInsights();
+    setupPalateRadar();
     renderTastingHistory(smagRows);
     renderFilters();
     renderChart();
@@ -955,6 +970,57 @@ function setupPalateInsights(){
 }
 for(const id of ["insightType","insightX","insightY"])document.getElementById(id).addEventListener("change",renderInsights);
 for(const id of ["compareA","compareB"])document.getElementById(id).addEventListener("change",renderComparison);
+
+
+/* PALATE TEST: flere vinprofiler, kvalitetsscorer adskilt fra fylde og sødme. */
+const palateRadarColors=["#80364f","#af8242","#3d7784","#7d6aa2","#548367"];
+let radarSelectedIds=[];
+function radarLabel(r){return r.Vin+" · "+(r["Årgang"]||"u.å.").replace(/\\.0$/,"")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")";}
+function radarSvg(tag,attributes={},label){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attributes))el.setAttribute(k,v);if(label!==undefined)el.textContent=label;return el;}
+function renderRadarChoices(){
+ const root=document.getElementById("radarChoices"),query=document.getElementById("radarSearch").value.toLocaleLowerCase("da");root.replaceChildren();
+ for(const r of palateTastingEvents.filter(r=>radarLabel(r).toLocaleLowerCase("da").includes(query))){
+  const line=document.createElement("label");line.style.cssText="display:flex;align-items:flex-start;gap:9px;padding:7px 5px;font-size:13px;cursor:pointer";
+  const check=document.createElement("input");check.type="checkbox";check.checked=radarSelectedIds.includes(r.Smagning_ID);check.disabled=!check.checked&&radarSelectedIds.length>=5;
+  check.addEventListener("change",()=>{if(check.checked){if(radarSelectedIds.length<5)radarSelectedIds.push(r.Smagning_ID);}else radarSelectedIds=radarSelectedIds.filter(id=>id!==r.Smagning_ID);renderRadarChoices();renderRadarProfiles();});
+  const span=document.createElement("span");span.textContent=radarLabel(r);line.append(check,span);root.append(line);
+ }
+ if(!root.childElementCount)root.textContent="Ingen smagninger matcher søgningen.";
+}
+function renderRadarProfiles(){
+ const rows=radarSelectedIds.map(id=>palateTastingEvents.find(r=>r.Smagning_ID===id)).filter(Boolean);
+ document.getElementById("radarSelectionStatus").textContent=rows.length+" af højst 5 smagninger valgt.";
+ const svg=document.getElementById("radarProfile");svg.replaceChildren();
+ const fields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøb"],["Anbefaling","Anbefaling"]];
+ const cx=320,cy=211,max=152,point=(i,v)=>{const a=-Math.PI/2+i*Math.PI*2/6;return [cx+Math.cos(a)*max*v/10,cy+Math.sin(a)*max*v/10];};
+ for(const v of [2,4,6,8,10]){svg.append(radarSvg("polygon",{points:fields.map((_,i)=>point(i,v).join(",")).join(" "),fill:"none",stroke:"#e3dcd5"}));}
+ fields.forEach(([_,label],i)=>{const p=point(i,10),t=point(i,12);svg.append(radarSvg("line",{x1:cx,y1:cy,x2:p[0],y2:p[1],stroke:"#e3dcd5"}));svg.append(radarSvg("text",{x:t[0],y:t[1]+4,"text-anchor":"middle","font-size":12,fill:"#5c4e4a"},label));});
+ rows.forEach((r,j)=>{
+  const color=palateRadarColors[j],scores=fields.map(([key])=>insightNum(r,key));
+  if(scores.every(v=>v!==null)){svg.append(radarSvg("polygon",{points:scores.map((v,i)=>point(i,v).join(",")).join(" "),fill:color,"fill-opacity":0.10,stroke:color,"stroke-width":2.4}));}
+  else{for(let i=0;i<6;i++){const next=(i+1)%6;if(scores[i]!==null&&scores[next]!==null){const a=point(i,scores[i]),b=point(next,scores[next]);svg.append(radarSvg("line",{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:color,"stroke-width":2.4}));}}}
+  scores.forEach((v,i)=>{if(v!==null){const p=point(i,v);const dot=radarSvg("circle",{cx:p[0],cy:p[1],r:3.7,fill:color});dot.append(radarSvg("title",{},r.Vin+" · "+fields[i][1]+": "+v));svg.append(dot);}});
+  const ly=398+j*13;svg.append(radarSvg("rect",{x:25,y:ly-9,width:11,height:11,rx:2,fill:color}));svg.append(radarSvg("text",{x:42,y:ly,"font-size":11,fill:"#554a47"},(r.Vin.length>46?r.Vin.slice(0,43)+"…":r.Vin)+" (#"+r.Smagning_ID+")"));
+ });
+ const scales=document.getElementById("radarScales");scales.replaceChildren();
+ for(const field of ["Fylde","Sødme"]){
+  const group=document.createElement("div");group.style.cssText="margin:15px 0 24px";const title=document.createElement("strong");title.textContent=field;group.append(title);
+  const svgScale=radarSvg("svg",{viewBox:"0 0 640 "+(36+rows.length*31),style:"width:100%;display:block"});
+  const x=v=>140+(v-1)/9*470;
+  svgScale.append(radarSvg("line",{x1:140,y1:18,x2:610,y2:18,stroke:"#c7bdb4","stroke-width":2}));
+  for(const n of [1,3,5,7,10])svgScale.append(radarSvg("text",{x:x(n),y:11,"text-anchor":"middle","font-size":11,fill:"#746b65"},String(n)));
+  svgScale.append(radarSvg("line",{x1:x(5),y1:16,x2:x(5),y2:30+rows.length*31,stroke:"#aa8b57","stroke-width":1.5,"stroke-dasharray":"4 4"}));
+  rows.forEach((r,j)=>{const v=insightNum(r,field),y=39+j*31;color=palateRadarColors[j];svgScale.append(radarSvg("text",{x:6,y:y+4,"font-size":11,fill:color},"#"+r.Smagning_ID));if(v!==null){svgScale.append(radarSvg("circle",{cx:x(v),cy:y,r:7,fill:color}));svgScale.append(radarSvg("text",{x:Math.min(622,x(v)+12),y:y+4,"font-size":12,fill:color},String(v).replace(".",",")));}else svgScale.append(radarSvg("text",{x:145,y:y+4,"font-size":11,fill:"#817974"},"Ikke registreret"));});
+  group.append(svgScale);scales.append(group);
+ }
+}
+function setupPalateRadar(){
+ radarSelectedIds=radarSelectedIds.filter(id=>palateTastingEvents.some(r=>r.Smagning_ID===id));
+ if(!radarSelectedIds.length)radarSelectedIds=palateTastingEvents.filter(r=>["29","28"].includes(r.Smagning_ID)).map(r=>r.Smagning_ID);
+ if(!radarSelectedIds.length)radarSelectedIds=palateTastingEvents.slice(0,2).map(r=>r.Smagning_ID);
+ renderRadarChoices();renderRadarProfiles();
+}
+document.getElementById("radarSearch").addEventListener("input",renderRadarChoices);
 
 function getRegistration(){
   const form=document.getElementById("palateRegistration");

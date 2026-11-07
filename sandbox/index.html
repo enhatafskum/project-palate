@@ -479,6 +479,11 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <style id="palate-profile-v2-style">
 #palateRadar{overflow:hidden}
 .palate-profile-selected{display:grid;gap:8px;margin:16px 0}
+.palate-picker-dropdown{margin-top:13px;border:1px solid #dfd4cd;border-radius:9px;background:#fffdfb;padding:0 11px}
+.palate-picker-dropdown>summary{cursor:pointer;padding:12px 2px;font-size:13px;font-weight:600;color:#713b4c;list-style-position:inside}
+.palate-picker-dropdown[open]>summary{border-bottom:1px solid #eee7e1}
+.palate-picker-dropdown .palate-picker-count{display:inline;margin-left:5px;font-size:11px;font-weight:400}
+.palate-picker-dropdown .palate-profile-choices{max-height:260px;overflow:auto}
 .palate-picker-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
 .palate-picker-filters label{font-size:12px;color:#655b5d;min-width:0}
 .palate-picker-filters label:last-child{grid-column:1/-1}
@@ -547,11 +552,13 @@ header{padding-left:clamp(20px,2.4vw,38px)}
    <label>Drikkeglæde<select id="radarMin"><option value="0">Alle scorer</option><option value="8">8 eller højere</option><option value="9">9 eller højere</option><option value="9.5">9,5 eller højere</option></select></label>
    <label>Sortering<select id="radarSort"><option value="score">Højeste drikkeglæde</option><option value="date">Nyeste smagning</option><option value="name">Vinnavn A–Å</option></select></label>
   </div>
-  <label for="radarSearch" class="palate-picker-label">Søg (valgfrit)</label>
-  <input id="radarSearch" type="search" placeholder="Søg efter vin eller årgang" autocomplete="off">
-  <div id="radarResultCount" class="palate-picker-count" aria-live="polite"></div>
-  <div id="radarChoices" class="palate-profile-choices"></div>
-  <button type="button" id="radarMore" class="palate-picker-more" hidden>Vis flere vine</button>
+  <details id="radarListDropdown" class="palate-picker-dropdown">
+   <summary>Vælg vin fra den filtrerede liste <span id="radarResultCount" class="palate-picker-count" aria-live="polite"></span></summary>
+   <label for="radarSearch" class="palate-picker-label">Søg i listen (valgfrit)</label>
+   <input id="radarSearch" type="search" placeholder="Søg efter vin eller årgang" autocomplete="off">
+   <div id="radarChoices" class="palate-profile-choices"></div>
+   <button type="button" id="radarMore" class="palate-picker-more" hidden>Vis flere vine</button>
+  </details>
  </div>
  <div class="palate-radar-stage"><svg id="radarProfile" viewBox="0 0 420 410" role="img" aria-label="Overlejrede radardiagrammer over seks positive vurderinger"></svg></div>
  <div id="radarScales" class="palate-compact-scales" aria-label="Fylde og sødme på separate skalaer"></div>
@@ -999,7 +1006,7 @@ function renderRadarChoices(){
   const status=document.createElement("span");status.className="palate-profile-result-status";status.textContent=chosen?"✓":radarSelectedIds.length>=5?"":"＋";
   btn.append(info,score,status);
   btn.setAttribute("aria-label",(chosen?"Allerede valgt: ":"Tilføj: ")+radarLabel(r));
-  btn.addEventListener("click",()=>{if(chosen||radarSelectedIds.length>=5)return;radarSelectedIds.push(r.Smagning_ID);renderRadarProfiles();renderRadarChoices();});
+  btn.addEventListener("click",()=>{if(chosen||radarSelectedIds.length>=5)return;radarSelectedIds.push(r.Smagning_ID);document.getElementById("radarListDropdown").open=false;document.getElementById("radarSearch").value="";radarVisibleCount=12;renderRadarProfiles();renderRadarChoices();});
   root.append(btn);
  }
  if(!matches.length){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Ingen smagninger matcher filtrene.";root.append(hint);}

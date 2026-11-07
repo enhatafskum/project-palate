@@ -479,6 +479,17 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <style id="palate-profile-v2-style">
 #palateRadar{overflow:hidden}
 .palate-profile-selected{display:grid;gap:8px;margin:16px 0}
+.palate-picker-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}
+.palate-picker-filters label{font-size:12px;color:#655b5d;min-width:0}
+.palate-picker-filters label:last-child{grid-column:1/-1}
+.palate-picker-filters select{display:block;width:100%;padding:9px 5px;margin-top:4px;border:1px solid #ded4cd;border-radius:7px;background:#fff;font-size:13px;color:#473c40}
+.palate-picker-count{font-size:12px;color:#7c6f6e;margin:11px 0 4px}
+.palate-picker-wine{flex:1;min-width:0;line-height:1.35}
+.palate-picker-wine strong{display:block;font-size:13px;font-weight:600}
+.palate-picker-wine small{display:block;color:#817575;margin-top:3px;font-size:11px}
+.palate-picker-score{font-size:12px;color:#744454;white-space:nowrap;font-weight:600}
+.palate-picker-more{display:block;margin:9px auto 0;border:1px solid #dfd4cf;border-radius:8px;background:#fff;padding:10px 16px;color:#744454;font-size:13px}
+.palate-picker-more[hidden]{display:none}
 .palate-profile-selected:empty{display:none}
 .palate-profile-selected-row{display:flex;align-items:stretch;gap:5px;min-width:0}
 .palate-profile-selected-row .palate-profile-chip{flex:1;min-width:0}
@@ -531,9 +542,16 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  <p class="lead">Se, hvordan forskellige vine skaber drikkeglæde. Vælg op til fem smagninger, og læg deres profiler oven på hinanden.</p>
  <div id="radarSelected" class="palate-profile-selected" aria-label="Valgte vine"></div>
  <div class="palate-profile-picker" id="radarPicker"><div class="palate-picker-title">Find og tilføj vine <span id="radarSelectionStatus"></span></div>
-  <label for="radarSearch" class="palate-picker-label">Søg i dine smagninger</label>
+  <div class="palate-picker-filters">
+   <label>Vintype<select id="radarType"><option value="Alle">Alle</option><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Mousserende">Mousserende</option></select></label>
+   <label>Drikkeglæde<select id="radarMin"><option value="0">Alle scorer</option><option value="8">8 eller højere</option><option value="9">9 eller højere</option><option value="9.5">9,5 eller højere</option></select></label>
+   <label>Sortering<select id="radarSort"><option value="score">Højeste drikkeglæde</option><option value="date">Nyeste smagning</option><option value="name">Vinnavn A–Å</option></select></label>
+  </div>
+  <label for="radarSearch" class="palate-picker-label">Søg (valgfrit)</label>
   <input id="radarSearch" type="search" placeholder="Søg efter vin eller årgang" autocomplete="off">
+  <div id="radarResultCount" class="palate-picker-count" aria-live="polite"></div>
   <div id="radarChoices" class="palate-profile-choices"></div>
+  <button type="button" id="radarMore" class="palate-picker-more" hidden>Vis flere vine</button>
  </div>
  <div class="palate-radar-stage"><svg id="radarProfile" viewBox="0 0 420 410" role="img" aria-label="Overlejrede radardiagrammer over seks positive vurderinger"></svg></div>
  <div id="radarScales" class="palate-compact-scales" aria-label="Fylde og sødme på separate skalaer"></div>
@@ -958,21 +976,35 @@ let radarSelectedIds=[],radarFocusedId=null;
 function radarLabel(r){return r.Vin+" · "+(r["Årgang"]||"u.å.").replace(/\\.0$/,"")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")";}
 function radarSvg(tag,attributes={},label){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attributes))el.setAttribute(k,v);if(label!==undefined)el.textContent=label;return el;}
 function radarRows(){return radarSelectedIds.map(id=>palateTastingEvents.find(r=>r.Smagning_ID===id)).filter(Boolean);}
+let radarVisibleCount=12;
 function renderRadarChoices(){
- const root=document.getElementById("radarChoices"),query=document.getElementById("radarSearch").value.trim().toLocaleLowerCase("da");root.replaceChildren();
- if(!query){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Skriv et vinnavn eller en årgang for at finde en smagning.";root.append(hint);return;}
- const matches=palateTastingEvents.filter(r=>radarLabel(r).toLocaleLowerCase("da").includes(query));
- for(const r of matches.slice(0,12)){
+ const root=document.getElementById("radarChoices"),query=document.getElementById("radarSearch").value.trim().toLocaleLowerCase("da");
+ const type=document.getElementById("radarType").value,min=Number(document.getElementById("radarMin").value),sort=document.getElementById("radarSort").value;
+ root.replaceChildren();
+ const matches=palateTastingEvents.filter(r=>(type==="Alle"||r.Type===type)&&
+  (insightNum(r,"Drikkeglæde")??0)>=min&&radarLabel(r).toLocaleLowerCase("da").includes(query));
+ matches.sort((a,b)=>sort==="name"?a.Vin.localeCompare(b.Vin,"da")||b.Registreringsdato.localeCompare(a.Registreringsdato):
+ sort==="date"?b.Registreringsdato.localeCompare(a.Registreringsdato):
+ (insightNum(b,"Drikkeglæde")??0)-(insightNum(a,"Drikkeglæde")??0)||b.Registreringsdato.localeCompare(a.Registreringsdato));
+ document.getElementById("radarResultCount").textContent=matches.length+" smagninger · vælg op til fem";
+ for(const r of matches.slice(0,radarVisibleCount)){
   const chosen=radarSelectedIds.includes(r.Smagning_ID),btn=document.createElement("button");btn.type="button";btn.className="palate-profile-result";
   btn.disabled=chosen||radarSelectedIds.length>=5;
-  const label=document.createElement("span");label.textContent=radarLabel(r);label.style.flex="1";
-  const status=document.createElement("span");status.className="palate-profile-result-status";status.textContent=chosen?"Valgt":radarSelectedIds.length>=5?"Maks. 5":"＋ Tilføj";
-  btn.append(label,status);
-  btn.addEventListener("click",()=>{if(radarSelectedIds.includes(r.Smagning_ID)||radarSelectedIds.length>=5)return;radarSelectedIds.push(r.Smagning_ID);document.getElementById("radarSearch").value="";renderRadarProfiles();renderRadarChoices();});
+  const info=document.createElement("span");info.className="palate-picker-wine";
+  const title=document.createElement("strong");title.textContent=r.Vin;
+  const meta=document.createElement("small");meta.textContent=[r["Årgang"]||"u.å.",r.Type||"",r.Registreringsdato||""].filter(Boolean).join(" · ");
+  info.append(title,meta);
+  const score=document.createElement("span");score.className="palate-picker-score";
+  const value=insightNum(r,"Drikkeglæde");score.textContent=value===null?"—":value.toLocaleString("da-DK")+"/10";
+  const status=document.createElement("span");status.className="palate-profile-result-status";status.textContent=chosen?"✓":radarSelectedIds.length>=5?"":"＋";
+  btn.append(info,score,status);
+  btn.setAttribute("aria-label",(chosen?"Allerede valgt: ":"Tilføj: ")+radarLabel(r));
+  btn.addEventListener("click",()=>{if(chosen||radarSelectedIds.length>=5)return;radarSelectedIds.push(r.Smagning_ID);renderRadarProfiles();renderRadarChoices();});
   root.append(btn);
  }
- if(!matches.length){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Ingen smagninger fundet.";root.append(hint);}
- if(matches.length>12){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Viser 12 af "+matches.length+" resultater. Skriv mere for at afgrænse søgningen.";root.append(hint);}
+ if(!matches.length){const hint=document.createElement("p");hint.className="palate-picker-hint";hint.textContent="Ingen smagninger matcher filtrene.";root.append(hint);}
+ const more=document.getElementById("radarMore");more.hidden=matches.length<=radarVisibleCount;
+ more.textContent="Vis flere ("+(matches.length-radarVisibleCount)+" tilbage)";
 }
 function renderRadarProfiles(){
  const rows=radarRows(),focused=radarFocusedId;
@@ -1041,7 +1073,9 @@ function setupPalateRadar(){
  radarSelectedIds=radarSelectedIds.filter(id=>palateTastingEvents.some(r=>r.Smagning_ID===id));
  renderRadarChoices();renderRadarProfiles();
 }
-document.getElementById("radarSearch").addEventListener("input",renderRadarChoices);
+document.getElementById("radarSearch").addEventListener("input",()=>{radarVisibleCount=12;renderRadarChoices();});
+for(const id of ["radarType","radarMin","radarSort"])document.getElementById(id).addEventListener("change",()=>{radarVisibleCount=12;renderRadarChoices();});
+document.getElementById("radarMore").addEventListener("click",()=>{radarVisibleCount+=12;renderRadarChoices();});
 
 function getRegistration(){
   const form=document.getElementById("palateRegistration");

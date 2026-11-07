@@ -1006,8 +1006,8 @@ function loadPalateData(){
 function insightNum(row,key){const v=(row[key]||"").trim();if(!v)return null;const n=Number(v.replace(",","."));return Number.isFinite(n)&&n>=1&&n<=10?n:null;}
 /* PALATE TEST: lagerbaserede, forklarlige vinforslag; ingen automatisk lagerændring. */
 let palateOpenStock=[];
-function palateWineKey(v){return (v||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\\p{L}\\p{N}]+/gu," ").trim();}
-function palateWineYear(v){return String(v||"").replace(/\\.0$/,"").trim();}
+function palateWineKey(v){return (v||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();}
+function palateWineYear(v){return String(v||"").replace(/\.0$/,"").trim();}
 function palateWineStyle(track){
  const t=(track||"").toLocaleLowerCase("da");
  if(/finesse|saftighed|friskhed|mineralitet|elegan|pinot|spätburgunder/.test(t))return "elegant";

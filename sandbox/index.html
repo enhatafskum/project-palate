@@ -1010,7 +1010,7 @@ function renderRadarProfiles(){
   svgScale.append(radarSvg("line",{x1:140,y1:18,x2:610,y2:18,stroke:"#c7bdb4","stroke-width":2}));
   for(const n of [1,3,5,7,10])svgScale.append(radarSvg("text",{x:x(n),y:11,"text-anchor":"middle","font-size":11,fill:"#746b65"},String(n)));
   svgScale.append(radarSvg("line",{x1:x(5),y1:16,x2:x(5),y2:30+rows.length*31,stroke:"#aa8b57","stroke-width":1.5,"stroke-dasharray":"4 4"}));
-  rows.forEach((r,j)=>{const v=insightNum(r,field),y=39+j*31;color=palateRadarColors[j];svgScale.append(radarSvg("text",{x:6,y:y+4,"font-size":11,fill:color},"#"+r.Smagning_ID));if(v!==null){svgScale.append(radarSvg("circle",{cx:x(v),cy:y,r:7,fill:color}));svgScale.append(radarSvg("text",{x:Math.min(622,x(v)+12),y:y+4,"font-size":12,fill:color},String(v).replace(".",",")));}else svgScale.append(radarSvg("text",{x:145,y:y+4,"font-size":11,fill:"#817974"},"Ikke registreret"));});
+  rows.forEach((r,j)=>{const v=insightNum(r,field),y=39+j*31;const color=palateRadarColors[j];svgScale.append(radarSvg("text",{x:6,y:y+4,"font-size":11,fill:color},"#"+r.Smagning_ID));if(v!==null){svgScale.append(radarSvg("circle",{cx:x(v),cy:y,r:7,fill:color}));svgScale.append(radarSvg("text",{x:Math.min(622,x(v)+12),y:y+4,"font-size":12,fill:color},String(v).replace(".",",")));}else svgScale.append(radarSvg("text",{x:145,y:y+4,"font-size":11,fill:"#817974"},"Ikke registreret"));});
   group.append(svgScale);scales.append(group);
  }
 }

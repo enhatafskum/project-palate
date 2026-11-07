@@ -1371,9 +1371,9 @@ function renderPalateSweetspot(){
   const rank=document.createElement("span");rank.className="palate-sweet-rank";rank.textContent=isRebuy?"#"+w.rank:"★"+w.rank;rank.title=isRebuy?"Genkøbsplacering "+w.rank:"Sweetspot-rangering "+w.rank;
   const heading=document.createElement("span");heading.className="palate-sweet-heading";
   const title=document.createElement("strong");title.textContent=w.name;
-  const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10":"Prisreference: "+w.price;
+  const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10 · Pris: "+(w.priceReference||"ikke registreret"):"Prisreference: "+w.price;
   heading.append(title,secondary);const chevron=document.createElement("span");chevron.className="palate-sweet-chevron";chevron.textContent="⌄";summary.append(rank,heading,chevron);
-  const detail=document.createElement("div");detail.className="palate-sweet-detail";detail.textContent=isRebuy?"Tidligere smagt · "+w.type+". Vurderingen er hentet fra den godkendte genkøbsliste.":w.why;
+  const detail=document.createElement("div");detail.className="palate-sweet-detail";detail.textContent=isRebuy?"Tidligere smagt · "+w.type+". Vurderingen er hentet fra den godkendte genkøbsliste. "+(w.priceNote||"Pris kontrolleres ved køb."):w.why;detail.style.whiteSpace="pre-line";
    card.append(summary,detail);root.append(card);
  }
  if(!list.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen vine matcher filtrene.";root.append(p);}

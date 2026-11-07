@@ -475,7 +475,32 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-sweet-edit-actions,.palate-sweet-edit-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .palate-sweet-edit-actions button,.palate-sweet-edit-row button{border:1px solid #c9aeb7;background:#fff;border-radius:8px;padding:8px 10px;color:#7a1f3d;cursor:pointer;font-size:12px}
 .palate-sweet-edit-row button:disabled{opacity:.35;cursor:default}
-</style></head>
+</style><style>
+/* PALATE DNA – integreret prøveversion på Overblik */
+.dna-module{background:#fffefa;border:1px solid #d5c9bd;border-radius:12px;padding:clamp(16px,3vw,30px);margin:12px 0 30px;box-shadow:0 3px 12px rgba(50,34,30,.06)}
+.dna-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.dna-kicker{font-size:10px;letter-spacing:.17em;color:#7a1f3d;font-weight:800}
+.dna-head h2{font:400 clamp(30px,4vw,44px)/1.12 Georgia,serif;margin:7px 0;color:#292723}
+.dna-head p{max-width:610px;color:#655f59;font-size:14px;line-height:1.55;margin:0}
+.dna-type-label{font-size:12px;font-weight:700;display:grid;gap:5px}
+.dna-type-label select{padding:10px 13px;border:1.5px solid #a99c91;border-radius:8px;background:white;font:inherit;min-width:160px}
+.dna-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.dna-stat{background:#f6f1eb;border:1px solid #e0d7ce;border-radius:9px;padding:14px}
+.dna-stat strong{display:block;font-size:25px;color:#7a1f3d}.dna-stat span{font-size:12px;color:#655f59}
+.dna-layout{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.dna-box{border:1px solid #e1d8ce;border-radius:9px;padding:18px;min-width:0}
+.dna-box h3{font:400 23px Georgia,serif;margin:0 0 15px;color:#292723}
+.dna-bar-row{margin-bottom:13px}.dna-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.dna-track{height:10px;border-radius:10px;background:#e9e1d9;overflow:hidden}.dna-fill{height:100%;background:#7a1f3d;border-radius:10px}
+.dna-opt-row{margin:14px 0}.dna-opt-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px}
+.dna-opt-track{height:14px;border-radius:8px;background:linear-gradient(90deg,#ded7cf 0%,#ded7cf 38%,#b9d1b8 43%,#b9d1b8 57%,#ded7cf 62%,#ded7cf 100%);position:relative}
+.dna-opt-track:after{content:"";position:absolute;left:44.44%;height:20px;top:-3px;border-left:2px dashed #42664a}
+.dna-opt-dot{position:absolute;top:50%;transform:translate(-50%,-50%);height:17px;width:17px;border-radius:50%;background:#7a1f3d;border:2px solid white;z-index:1;box-shadow:0 1px 4px #777}
+.dna-foot{font-size:12px;line-height:1.5;color:#6c665f;margin:12px 0 0}
+.dna-insight{border-top:1px solid #e9e1d9;padding:12px 0;font-size:13px;line-height:1.55}.dna-insight:first-child{border-top:0;padding-top:0}
+@media(max-width:720px){.dna-layout{grid-template-columns:1fr}.dna-stats{gap:6px}.dna-stat{padding:10px}.dna-stat strong{font-size:21px}.dna-stat span{font-size:11px}.dna-box{padding:14px}}
+</style>
+</head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
 
@@ -497,7 +522,16 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div id="palateDataAlert" role="alert" hidden style="max-width:1400px;margin:8px auto;padding:12px 16px;border:1px solid #b45309;background:#fff7ed;color:#78350f;border-radius:9px;font-size:13px"></div>
 
 <main>
-<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik"><section class="cards">
+<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">
+<section class="dna-module" aria-labelledby="dna-title">
+ <div class="dna-head"><div><div class="dna-kicker">PERSONLIG SMAGSANALYSE · TEST</div><h2 id="dna-title">PALATE DNA</h2><p>Hvad driver din drikkeglæde? Udforsk dine egne smagninger og se både mønstre og undtagelser.</p></div><label class="dna-type-label" for="dnaType">Vintype<select id="dnaType"><option value="Rød">Rødvin</option><option value="Hvid">Hvidvin</option><option value="Alle">Alle typer</option></select></label></div>
+ <div class="dna-stats" id="dnaStats" aria-live="polite"></div>
+ <div class="dna-layout"><div class="dna-box"><h3>Din vurderingsprofil</h3><div id="dnaBars"></div><p class="dna-foot">Gennemsnit af registrerede smagninger – ikke en forudsigelse af nye vine.</p></div>
+ <div class="dna-box"><h3>Fylde og sødme</h3><p class="dna-foot">I PALATE er 5 dit personlige optimum, ikke et gennemsnit.</p><div id="dnaOptima"></div></div></div>
+ <div class="dna-box dna-insights"><h3>Indsigter fra dine data</h3><div id="dnaInsights"></div></div>
+ <p class="dna-foot">Samme vin kan indgå flere gange ved gensmagning. Manglende værdier udelades fra den enkelte beregning. Noter om elegance og friskhed bruges ikke som numeriske scorer.</p>
+</section>
+<section class="cards">
     <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
     <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
     <div class="card"><div class="kicker">Sweet spots</div><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div>
@@ -1060,6 +1094,8 @@ function loadPalateData(){
       };
     });
     palateTastingEvents=smagRows;
+    window.palateDNARows=smagRows;
+    window.renderPalateDNA?.(smagRows);
     palateOpenStock=lagerRows;
     setupPalateRadar();
     renderTastingHistory(smagRows);
@@ -1485,6 +1521,31 @@ document.addEventListener("click",event=>{
 });
 
 
+</script>
+<script>
+(function(){
+ const n=v=>{const x=Number(String(v||"").replace(",","."));return String(v||"").trim()!==""&&Number.isFinite(x)?x:null};
+ const fmt=v=>v===null?"—":v.toFixed(2).replace(".",",");
+ const mean=values=>{const a=values.filter(v=>v!==null);return a.length?a.reduce((x,y)=>x+y,0)/a.length:null};
+ const safe=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ window.renderPalateDNA=function(rows){
+  const type=document.getElementById("dnaType")?.value||"Rød";
+  const subset=rows.filter(r=>type==="Alle"||r.Type===type);
+  const avg=k=>mean(subset.map(r=>n(r[k])));
+  const metrics=[["Drikkeglæde","Drikkeglæde"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøbslyst","Genkøb"]];
+  document.getElementById("dnaStats").innerHTML='<div class="dna-stat"><strong>'+subset.length+'</strong><span>Smagninger</span></div><div class="dna-stat"><strong>'+fmt(avg("Drikkeglæde"))+'</strong><span>Drikkeglæde / 10</span></div><div class="dna-stat"><strong>'+fmt(avg("Genkøb"))+'</strong><span>Genkøbslyst / 10</span></div>';
+  document.getElementById("dnaBars").innerHTML=metrics.map(([label,key])=>{const v=avg(key);return '<div class="dna-bar-row"><div class="dna-bar-label"><span>'+label+'</span><strong>'+fmt(v)+'</strong></div><div class="dna-track"><div class="dna-fill" style="width:'+((v||0)*10)+'%"></div></div></div>'}).join("");
+  document.getElementById("dnaOptima").innerHTML=[["Fylde","Fylde"],["Sødme","Sødme"]].map(([label,key])=>{const valid=subset.map(r=>n(r[key])).filter(v=>v!==null);const v=mean(valid);return '<div class="dna-opt-row"><div class="dna-opt-top"><strong>'+label+'</strong><span>'+fmt(v)+' / 10 · '+valid.length+' målinger</span></div><div class="dna-opt-track">'+(v===null?'':'<span class="dna-opt-dot" style="left:'+Math.max(0,Math.min(100,(v-1)/9*100))+'%"></span>')+'</div></div>'}).join("")+'<p class="dna-foot">Grøn zone markerer området omkring 5. Prikken er gennemsnittet, ikke nødvendigvis din foretrukne værdi.</p>';
+  const joy=avg("Drikkeglæde"),rebuy=avg("Genkøb");
+  const candidates=subset.filter(r=>n(r["Drikkeglæde"])!==null&&n(r["Genkøb"])!==null).sort((a,b)=>((n(b["Drikkeglæde"])-n(b["Genkøb"]))-(n(a["Drikkeglæde"])-n(a["Genkøb"]))));
+  const out=[];
+  if(joy!==null&&rebuy!==null)out.push('Drikkeglæde ('+fmt(joy)+') og genkøbslyst ('+fmt(rebuy)+') er ikke det samme i dine registreringer. Forskellen beskriver de vine, du har smagt – ikke en årsagssammenhæng.');
+  if(candidates.length){const w=candidates[0];out.push('Største forskel mellem drikkeglæde og genkøbslyst: <strong>'+safe(w.Vin)+'</strong> ('+safe(w["Drikkeglæde"])+' mod '+safe(w["Genkøb"])+'). Det er en interessant vin at sammenholde med dine smagsnoter.');}
+  const temp=subset.filter(r=>/temperaturtest|temperature replication/i.test(r.Status+" "+r.Situation));if(temp.length)out.push(temp.length+' temperaturrelaterede registrering(er) findes i dette udvalg. Gensmagninger skal sammenlignes som par, ikke tolkes som uafhængige vine.');
+  document.getElementById("dnaInsights").innerHTML=out.length?out.map(x=>'<div class="dna-insight">'+x+'</div>').join(""):'<p class="dna-foot">Der er endnu ikke nok data til en indsigt i denne kategori.</p>';
+ };
+ document.getElementById("dnaType")?.addEventListener("change",()=>window.renderPalateDNA(window.palateDNARows||[]));
+})();
 </script>
 </body>
 </html>

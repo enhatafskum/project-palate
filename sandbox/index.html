@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-icon-clean-3">
+<meta name="palate-build" content="sandbox-navigation-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -418,7 +418,16 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  nav.palate-nav>button{display:block!important;min-width:0!important;max-width:100%!important;width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:clip!important;padding:11px 1px!important;font-size:clamp(9px,2.7vw,12px)!important;line-height:1.15!important;letter-spacing:-.2px!important}
 }
 </style>
-</head>
+<style>
+.palate-quicklinks{margin-bottom:18px}
+.palate-quick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.palate-quick-grid button{background:#fffdf9;border:1px solid #e5d9d3;color:#7a1f3d;border-radius:10px;padding:14px 10px;font-weight:700;cursor:pointer}
+.palate-sweetspot-placeholder{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}
+.palate-sweetspot-placeholder>div{border:1px solid #e5d9d3;border-radius:12px;padding:18px;background:#fffdf9}
+.palate-sweetspot-placeholder h3{margin:0 0 8px;color:#7a1f3d}
+.palate-sweetspot-placeholder p{font-size:13px;color:#6b7280}
+@media(max-width:650px){.palate-quick-grid{grid-template-columns:1fr}.palate-sweetspot-placeholder{grid-template-columns:1fr}}
+</style></head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
 
@@ -433,6 +442,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <nav class="palate-nav" aria-label="Project PALATE hovedmenu" role="tablist">
 <button type="button" role="tab" id="nav-overblik" aria-controls="view-overblik" aria-selected="true" data-view="overblik">Overblik</button>
 <button type="button" role="tab" id="nav-smagninger" aria-controls="view-smagninger" aria-selected="false" data-view="smagninger">Smagninger</button>
+<button type="button" role="tab" id="nav-sweetspot" aria-controls="view-sweetspot" aria-selected="false" data-view="sweetspot">Sweetspot</button>
 <button type="button" role="tab" id="nav-lager" aria-controls="view-lager" aria-selected="false" data-view="lager">Vinlager</button>
 <button type="button" role="tab" id="nav-registrer" aria-controls="view-registrer" aria-selected="false" data-view="registrer">＋ Registrer</button>
 </nav>
@@ -633,6 +643,17 @@ header{padding-left:clamp(20px,2.4vw,38px)}
     </div>
   </section>
 </div>
+<div class="palate-view" id="view-sweetspot" role="tabpanel" aria-labelledby="nav-sweetspot" hidden>
+<section class="panel" style="margin-top:18px">
+<div class="kicker">PALATE TEST · KØBSKANDIDATER</div>
+<h2>Sweetspot</h2>
+<p class="lead">Her samler vi dine Top 20-kandidater til fremtidige vinkøb. Listen er adskilt fra dit nuværende lager og dine registrerede smagninger.</p>
+<div class="palate-sweetspot-placeholder">
+<div><h3>Rødvine · Top 20</h3><p>Plads til prioriterede kandidater, stilmatch og begrundelser.</p></div>
+<div><h3>Hvidvine · Top 20</h3><p>Plads til prioriterede kandidater, stilmatch og begrundelser.</p></div>
+</div>
+<p class="lead">Listerne er endnu ikke indlæst. Vi udvikler visning og filtrering i næste trin uden at ændre masterlisten.</p>
+</section></div>
 <div class="palate-view" id="view-registrer" role="tabpanel" aria-labelledby="nav-registrer" hidden><section class="panel" style="margin-bottom:18px" id="registerPanel">
   <h2>Registrer smagning</h2>
   <p class="lead">Indsæt gerne et link til vinen, eller skriv navnet selv. Spor, anbefalet glas, stilmatch og status tilføjes af ChatGPT, når vi behandler smagningen. Tryk på “Kopiér til ChatGPT”, når du er færdig. Indsæt derefter oplysningerne i vores samtale, så vi kan behandle og indarbejde smagningen.</p>
@@ -1275,8 +1296,15 @@ document.getElementById("copyRegistration").addEventListener("click",async()=>{
   }
 });
 
+/* Flyt de godkendte værktøjer til deres naturlige sider uden at genskabe dem. */
+document.getElementById("view-lager").append(document.getElementById("palateOpenWine"));
+document.getElementById("view-smagninger").append(document.getElementById("palateRadar"));
+const quick=document.createElement("section");quick.className="panel palate-quicklinks";
+quick.innerHTML='<h2>Gå videre i PALATE</h2><p class="lead">Find en vin på lageret, sammenlign smagninger eller udforsk fremtidige køb.</p><div class="palate-quick-grid"><button type="button" data-go="lager">Hvad skal jeg åbne?</button><button type="button" data-go="smagninger">Sammenlign vinprofiler</button><button type="button" data-go="sweetspot">Sweetspot</button></div>';
+document.getElementById("view-overblik").prepend(quick);
+quick.querySelectorAll("[data-go]").forEach(button=>button.addEventListener("click",()=>selectPalateView(button.dataset.go)));
 function selectPalateView(name){
-  const valid=["overblik","smagninger","lager","registrer"];
+  const valid=["overblik","smagninger","lager","sweetspot","registrer"];
   const target=valid.includes(name)?name:"overblik";
   document.querySelectorAll(".palate-nav [data-view]").forEach(button=>{
     const active=button.dataset.view===target;

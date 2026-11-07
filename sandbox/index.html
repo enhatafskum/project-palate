@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-sweetspot-1">
+<meta name="palate-build" content="sandbox-responsive-help-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -438,7 +438,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-sweet-item p{font-size:13px;line-height:1.5;color:#655d60;margin:5px 0}
 .palate-sweet-item .palate-sweet-price{font-weight:650;color:#846727}
 @media(max-width:650px){.palate-sweet-controls{grid-template-columns:1fr 1fr}.palate-sweet-controls label:last-child{grid-column:1/-1}}
-</style></head>
+</style><style>@media(max-width:700px){.palate-desktop-help{display:none!important}}</style></head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
 
@@ -591,6 +591,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 </section>
 <section class="panel" id="palateRadar" style="margin-top:22px">
  <h2>Sammenlign vinprofiler</h2>
+ <p class="lead palate-desktop-help">Se, hvordan forskellige vine skaber drikkeglæde. Vælg op til fem smagninger, og læg deres profiler oven på hinanden.</p>
  <div id="radarSelected" class="palate-profile-selected" aria-label="Valgte vine"></div>
  <div class="palate-profile-picker" id="radarPicker"><div class="palate-picker-title">Find og tilføj vine <span id="radarSelectionStatus"></span></div>
   <div class="palate-picker-filters">

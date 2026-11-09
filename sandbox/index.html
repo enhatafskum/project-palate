@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-overview-spacing-v3-11">
+<meta name="palate-build" content="sandbox-design-a-unified-12">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -601,6 +601,59 @@ header .sub{margin-top:2px!important}
  main{padding-top:7px!important}
  #view-overblik .cards{margin-bottom:9px!important}
  #view-overblik .palate-chart-controls{padding-top:3px!important;margin-top:5px!important}
+}
+</style>
+<style id="palate-design-a-unified">
+/* PALATE design A — nordisk elegance, fælles knapsystem */
+:root{--palate-button-wine:#762f49;--palate-button-edge:#dcd4cc;--palate-button-paper:#fff;--palate-button-ink:#493f40}
+.palate-nav button,
+#view-overblik .tabs .tab,
+#view-overblik button.filter,
+#view-lager .tabs .tab,
+.palate-sweet-tabs button{
+ border:1px solid var(--palate-button-edge)!important;
+ border-radius:9px!important;
+ background:var(--palate-button-paper)!important;
+ color:var(--palate-button-ink)!important;
+ box-shadow:0 2px 5px rgba(43,30,35,.12)!important;
+ font-weight:600!important;
+ transition:background .16s,border-color .16s,box-shadow .16s,color .16s;
+}
+.palate-nav button[aria-selected="true"],
+#view-overblik .tabs .tab.active,
+#view-overblik button.filter.active,
+#view-lager .tabs .tab.active,
+.palate-sweet-tabs button[aria-pressed="true"]{
+ background:var(--palate-button-wine)!important;
+ color:#fff!important;
+ border-color:var(--palate-button-wine)!important;
+ font-weight:700!important;
+}
+.palate-nav button:hover:not([aria-selected="true"]),
+#view-overblik .tabs .tab:hover:not(.active),
+#view-overblik button.filter:hover:not(.active),
+#view-lager .tabs .tab:hover:not(.active),
+.palate-sweet-tabs button:hover:not([aria-pressed="true"]){
+ background:#faf5f6!important;
+ border-color:#bd9fa9!important;
+}
+.palate-nav button:focus-visible,
+#view-overblik .tabs .tab:focus-visible,
+#view-overblik button.filter:focus-visible,
+#view-lager .tabs .tab:focus-visible,
+.palate-sweet-tabs button:focus-visible{outline:2px solid #a15a74!important;outline-offset:2px}
+#view-overblik .tabs .tab,#view-overblik button.filter{min-height:35px;padding:7px 11px}
+#view-lager .tabs .tab,.palate-sweet-tabs button{min-height:37px}
+#view-overblik .card,#view-overblik .panel,
+#view-smagninger .panel,#view-lager .panel,
+#view-sweetspot .panel,#view-registrer .panel{
+ background:#fffefa;
+ border-color:#e2dad1;
+ border-radius:10px;
+}
+@media(max-width:650px){
+ .palate-nav button{min-height:34px!important;padding:6px 3px!important}
+ #view-overblik .tabs .tab,#view-overblik button.filter{min-height:36px;padding:7px 10px}
 }
 </style>
 </head>

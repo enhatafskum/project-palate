@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="./palate-icon-192.png?v=approved-1">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=approved-1">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="2026-11-09-approved-release-1">
+<meta name="palate-build" content="2026-11-09-white-tracks-2">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -724,19 +724,19 @@ header .sub{margin-top:2px!important}
 }
 </style>
 <style id="palate-smagskort-one-row">
-/* Smagskort: interpretation beneath chart, one row for four red-wine track controls */
+/* Smagskort: interpretation beneath chart, one row for four red or five white wine track controls */
 #view-overblik .palate-chart-reading-guide{margin-top:7px;padding:7px 0 0;font-size:11px;line-height:1.45;text-align:center;color:#756c65}
-#view-overblik .toolbar.palate-four-tracks{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;width:100%}
-#view-overblik .toolbar.palate-four-tracks button.filter{min-width:0;width:100%;white-space:normal;overflow-wrap:normal;hyphens:auto;text-align:center;line-height:1.15;font-size:11px!important;padding:7px 4px!important;min-height:38px!important}
+#view-overblik .toolbar.palate-single-row-tracks{display:grid!important;grid-template-columns:repeat(var(--track-columns),minmax(0,1fr));gap:5px!important;width:100%}
+#view-overblik .toolbar.palate-single-row-tracks button.filter{min-width:0;width:100%;white-space:normal;overflow-wrap:normal;hyphens:none;text-align:center;line-height:1.15;font-size:11px!important;padding:7px 4px!important;min-height:38px!important}
 @media(max-width:650px){
- #view-overblik .toolbar.palate-four-tracks{gap:3px!important}
- #view-overblik .toolbar.palate-four-tracks button.filter{font-size:10px!important;padding:6px 2px!important;min-height:42px!important;line-height:1.15}
+ #view-overblik .toolbar.palate-single-row-tracks{gap:3px!important}
+ #view-overblik .toolbar.palate-single-row-tracks button.filter{font-size:10px!important;padding:6px 2px!important;min-height:42px!important;line-height:1.15}
  #view-overblik .palate-chart-reading-guide{font-size:10px;text-align:left}
 }
 </style>
 <style id="palate-chart-legend-below">
 /* Smagskort: whole-word wraps and explanatory information beneath graph */
-#view-overblik .toolbar.palate-four-tracks button.filter{
+#view-overblik .toolbar.palate-single-row-tracks button.filter{
  hyphens:none!important;
  -webkit-hyphens:none!important;
  overflow-wrap:normal!important;
@@ -1190,15 +1190,18 @@ function tracksForType(type) {
 function renderFilters() {
   const wrap = document.getElementById("trackFilters");
   wrap.innerHTML = "";
-  wrap.classList.toggle("palate-four-tracks",tracksForType(currentType).length===3);
-  wrap.classList.toggle("palate-multi-tracks",tracksForType(currentType).length!==3);
+  const tracks = tracksForType(currentType);
+  const singleRow = tracks.length === 3 || (currentType === "Hvid" && tracks.length === 4);
+  wrap.classList.toggle("palate-single-row-tracks", singleRow);
+  wrap.classList.toggle("palate-multi-tracks", !singleRow);
+  wrap.style.setProperty("--track-columns", tracks.length + 1);
   const all = document.createElement("button");
   all.className = "filter" + (activeTrack==="Alle" ? " active":"");
   all.textContent = "Alle spor";
   all.onclick = ()=>{activeTrack="Alle"; renderFilters(); renderChart();};
   wrap.appendChild(all);
 
-  tracksForType(currentType).forEach(t=>{
+  tracks.forEach(t=>{
     const b=document.createElement("button");
     b.className="filter"+(activeTrack===t?" active":"");
     b.textContent=t;
@@ -1207,7 +1210,7 @@ function renderFilters() {
   });
 
   const legend = document.getElementById("legend");
-  legend.innerHTML = tracksForType(currentType).map(t=>`<span><i class="dot" style="background:${colors[t]||'#777'}"></i>${esc(t)}</span>`).join("");
+  legend.innerHTML = tracks.map(t=>`<span><i class="dot" style="background:${colors[t]||'#777'}"></i>${esc(t)}</span>`).join("");
 }
 
 function renderChart() {

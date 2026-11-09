@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-design-a-quiet-chart-controls-13">
+<meta name="palate-build" content="sandbox-smagskort-quiet-v2-14">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -683,6 +683,43 @@ header .sub{margin-top:2px!important}
   font-size:12px!important;
   min-height:35px!important;
   padding:7px 10px!important;
+ }
+}
+</style>
+<style id="palate-smagskort-quiet-v2">
+/* Smagskort: clear visual hierarchy; filters are quiet segmented text controls */
+#view-overblik .tabs .tab,
+#view-overblik button.filter{
+ background:transparent!important;
+ color:#665e59!important;
+ border:1px solid transparent!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+ font-size:12px!important;
+ font-weight:450!important;
+ min-height:35px!important;
+ padding:7px 10px!important;
+}
+#view-overblik .tabs .tab.active,
+#view-overblik button.filter.active{
+ background:#eadde1!important;
+ color:#632b42!important;
+ border:1px solid transparent!important;
+ box-shadow:none!important;
+ font-weight:650!important;
+}
+#view-overblik .tabs .tab:hover:not(.active),
+#view-overblik button.filter:hover:not(.active){
+ background:#f1ece7!important;
+ border-color:transparent!important;
+}
+#view-overblik .tabs,#view-overblik .toolbar{gap:3px!important}
+#view-overblik .palate-chart-controls{border-bottom:0!important;padding-bottom:5px!important}
+@media(max-width:650px){
+ #view-overblik .tabs .tab,#view-overblik button.filter{
+  font-size:12px!important;
+  min-height:38px!important;
+  padding:8px 9px!important;
  }
 }
 </style>

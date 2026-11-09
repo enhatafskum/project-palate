@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-profile-unified-navigation-5">
+<meta name="palate-build" content="sandbox-year-normalization-radar-6">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -1466,7 +1466,9 @@ selectPalateView(location.hash.slice(1));
 
 
 function palateWineKey(name,year){
- return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+ const n=String(name||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+ const y=String(year||"").trim().replace(/\.0+$/,"");
+ return n+"|"+y;
 }
 function findPalateWine(name,year){
  const key=palateWineKey(name,year);
@@ -1527,7 +1529,7 @@ function openPalateWine(name,year){
  const score=(r,k)=>{const v=val(r,k);return v?v.replace(".",","):"—"};
  const tasting=(r)=>'<section class="palate-profile-section palate-profile-visual"><h3>Smagsprofil <small>1–10</small></h3>'+palateProfileRadar(r)+'</section>'+
   '<div class="palate-profile-scales-inline">'+palateProfileScales(r)+'</div>'+ 
-  '<section class="palate-profile-section"><h3>Smagsnoter</h3>'+(val(r,"Bedste ved vinen")?'<p>'+esc(val(r,"Bedste ved vinen"))+'</p>':wine?.note?'<p>'+esc(wine.note)+'</p>':'<p class="palate-profile-empty">Ingen smagsnote registreret.</p>')+
+  '<section class="palate-profile-section"><h3>Smagsnoter</h3>'+(val(r,"Note")?'<p>'+esc(val(r,"Note"))+'</p>':wine?.note?'<p>'+esc(wine.note)+'</p>':'<p class="palate-profile-empty">Ingen smagsnote registreret.</p>')+
   (val(r,"Situation")?'<p class="palate-profile-subtle">Situation: '+esc(val(r,"Situation"))+'</p>':"")+'</section>'+
   '<section class="palate-profile-section"><h3>Servering og registrering</h3>'+info([["Registreret",dateText(val(r,"Registreringsdato"))],["Temperatur",val(r,"Temperatur")||wine?.temp],["Glas",val(r,"Glas")||wine?.glass],["Smagning",val(r,"Smagning_ID")?"#"+val(r,"Smagning_ID"):""]])+'</section>';
  const history=matches.length>1?'<details class="palate-profile-history"><summary>Tidligere smagninger ('+(matches.length-1)+')</summary>'+matches.slice(1).map(r=>'<details class="palate-profile-old"><summary>'+esc(dateText(val(r,"Registreringsdato")))+' · Drikkeglæde '+esc(score(r,"Drikkeglæde"))+'/10</summary>'+tasting(r)+'</details>').join("")+'</details>':"";

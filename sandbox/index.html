@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-chart-legend-below-16">
+<meta name="palate-build" content="sandbox-other-tracks-grid-17">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -746,6 +746,28 @@ header .sub{margin-top:2px!important}
 #view-overblik .palate-chart-counter{margin-top:5px!important;margin-bottom:4px!important}
 #view-overblik .palate-chart-reading-guide{margin-top:5px!important}
 </style>
+<style id="palate-other-tracks-grid">
+/* Same compact whole-word filter treatment for white and sparkling wines */
+#view-overblik .toolbar.palate-multi-tracks{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:5px!important;
+ width:100%;
+}
+#view-overblik .toolbar.palate-multi-tracks button.filter{
+ min-width:0;width:100%;white-space:normal;
+ hyphens:none!important;-webkit-hyphens:none!important;
+ overflow-wrap:normal!important;word-break:normal!important;
+ text-align:center;line-height:1.2;font-size:11px!important;
+ padding:7px 5px!important;min-height:38px!important;
+}
+@media(max-width:650px){
+ #view-overblik .toolbar.palate-multi-tracks{gap:4px!important}
+ #view-overblik .toolbar.palate-multi-tracks button.filter{
+ font-size:10px!important;padding:7px 3px!important;min-height:42px!important;
+ }
+}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -1121,6 +1143,7 @@ function renderFilters() {
   const wrap = document.getElementById("trackFilters");
   wrap.innerHTML = "";
   wrap.classList.toggle("palate-four-tracks",tracksForType(currentType).length===3);
+  wrap.classList.toggle("palate-multi-tracks",tracksForType(currentType).length!==3);
   const all = document.createElement("button");
   all.className = "filter" + (activeTrack==="Alle" ? " active":"");
   all.textContent = "Alle spor";

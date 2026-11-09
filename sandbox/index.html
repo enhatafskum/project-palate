@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-flat-nav-inline-kpis-9">
+<meta name="palate-build" content="sandbox-compact-kpi-nav-shadow-10">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -559,6 +559,30 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  #view-overblik .palate-kpi-inline{gap:7px}
  #view-overblik .palate-kpi-inline .big{font-size:23px}
  #view-overblik .palate-kpi-inline .small{font-size:10px}
+}
+</style>
+<style id="palate-kpi-nav-compact-v2">
+/* Compact KPI v2: remove legacy minimum heights and large grid spacing */
+#view-overblik .cards{gap:6px 9px;margin:0 0 13px;padding:7px 0;align-items:stretch}
+#view-overblik .card,#view-overblik .card:not(:first-child),#view-overblik .card:nth-child(3){min-height:0!important;height:auto;padding:8px 10px!important;border:1px solid #e5ddd4!important;border-radius:9px;background:#fffefa;box-shadow:none}
+#view-overblik .card .kicker{margin:0;font-size:11px}
+#view-overblik .palate-kpi-inline{display:flex;align-items:center;gap:8px;margin-top:2px}
+#view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font:400 28px/1 Georgia,'Times New Roman',serif;margin:0;letter-spacing:-.045em}
+#view-overblik .card .small{margin:0;font-size:11px;line-height:1.2;max-width:none}
+.palate-nav{gap:7px;padding-top:8px;padding-bottom:9px}
+.palate-nav button{min-height:33px!important;padding:5px 11px!important;font-size:12px!important;line-height:1.2;border-radius:999px!important;box-shadow:0 2px 5px rgba(43,30,35,.16)!important}
+@media(max-width:650px){
+ .palate-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px 12px 9px;overflow:visible}
+ .palate-nav button{min-width:0;min-height:34px!important;padding:6px 3px!important;font-size:11px!important;white-space:nowrap}
+ .palate-nav .palate-nav-action{grid-column:1/-1;min-height:32px!important}
+ #view-overblik .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:12px}
+ #view-overblik .card,#view-overblik .card:not(:first-child),#view-overblik .card:nth-child(3){padding:8px 9px!important;min-height:0!important}
+ #view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font-size:27px}
+ #view-overblik .card .small{font-size:10px}
+}
+@media(max-width:390px){
+ .palate-nav button{font-size:10px!important}
+ #view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font-size:25px}
 }
 </style>
 </head>

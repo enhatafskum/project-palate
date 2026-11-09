@@ -1821,7 +1821,7 @@ function openPalateWine(name,year){
  // If stock vintage is unknown, link only when one unique vintage exists for the same wine.
  const normalizedName=key.split("|")[0];
  const sameName=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],"")===normalizedName+"|");
- const years=new Set(sameName.map(r=>String(r["Årgang"]||"").replace(/\\.0+$/,"")));
+ const years=new Set(sameName.map(r=>String(r["Årgang"]||"").replace(/\.0+$/,"")));
  const matches=(exact.length?exact:(!String(year||"").trim()&&years.size===1?sameName:[]))
    .sort((a,b)=>(b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]));
  const latest=matches[0]||null;

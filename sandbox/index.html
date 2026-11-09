@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-profile-divider-fixed-4">
+<meta name="palate-build" content="sandbox-profile-unified-navigation-5">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -936,7 +936,7 @@ function renderChart() {
   svg.querySelectorAll(".point").forEach((p)=>{
     p.addEventListener("mousemove", e=>{
       const w=data[+p.dataset.index];
-      tooltip.innerHTML=`<strong>${esc(fmtName(w))}</strong>${esc(w.track)}<br>Drikkeglæde: ${w.joy.toFixed(1)} · Stilakse: ${w.style.toFixed(1)}`;
+      tooltip.innerHTML=`<strong>${esc(fmtName(w))}</strong>Tryk for at åbne vinens samlede profil`;
       tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
     });
     p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
@@ -1115,7 +1115,6 @@ function loadPalateData(){
 function insightNum(row,key){const v=(row[key]||"").trim();if(!v)return null;const n=Number(v.replace(",","."));return Number.isFinite(n)&&n>=1&&n<=10?n:null;}
 /* PALATE TEST: lagerbaserede, forklarlige vinforslag; ingen automatisk lagerændring. */
 let palateOpenStock=[];
-function palateWineKey(v){return (v||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();}
 function palateWineYear(v){return String(v||"").replace(/\.0$/,"").trim();}
 function palateWineStyle(track){
  const t=(track||"").toLocaleLowerCase("da");
@@ -1471,9 +1470,7 @@ function palateWineKey(name,year){
 }
 function findPalateWine(name,year){
  const key=palateWineKey(name,year);
- return wines.find(w=>palateWineKey(w.name,w.vintage)===key)
-   ||wines.find(w=>palateWineKey(w.name,w.vintage).includes(key)||key.includes(palateWineKey(w.name,w.vintage)))
-   ||null;
+ return wines.find(w=>palateWineKey(w.name,w.vintage)===key)||null;
 }
 function palateProfileRadar(r){
  const fields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];

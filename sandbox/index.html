@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-compact-overview-8">
+<meta name="palate-build" content="sandbox-flat-nav-inline-kpis-9">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -542,6 +542,25 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  #view-overblik .palate-chart-legend-area{margin:7px 0 2px}
 }
 </style>
+<style id="palate-flat-nav-kpis-test">
+/* PALATE: fladere navigation og vandrette KPI'er */
+.palate-nav{gap:8px;padding-top:8px}
+.palate-nav button{min-height:39px;padding:7px 9px;border-width:1px;border-radius:9px;box-shadow:none;font-size:13px;line-height:1.2}
+#view-overblik .card{padding:9px 12px}
+#view-overblik .card .kicker{font-size:10px;letter-spacing:.055em}
+#view-overblik .palate-kpi-inline{display:flex;align-items:center;gap:9px;min-width:0;margin-top:3px}
+#view-overblik .palate-kpi-inline .big{margin:0;flex:0 0 auto;font-size:26px;line-height:1}
+#view-overblik .palate-kpi-inline .small{margin:0;min-width:0;font-size:11px;line-height:1.25}
+@media(max-width:750px){
+ .palate-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px 0}
+ .palate-nav button{min-height:40px;padding:6px 5px;font-size:12px}
+ .palate-nav .palate-nav-action{grid-column:2/4;min-height:40px;font-size:12px}
+ #view-overblik .card{padding:9px 10px}
+ #view-overblik .palate-kpi-inline{gap:7px}
+ #view-overblik .palate-kpi-inline .big{font-size:23px}
+ #view-overblik .palate-kpi-inline .small{font-size:10px}
+}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -567,10 +586,10 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">
 
 <section class="cards">
-    <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
-    <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
-    <div class="card"><div class="kicker">Sweet spots</div><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div>
-    <div class="card"><div class="kicker">På lager & smagt</div><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div>
+    <div class="card"><div class="kicker">Lager</div><div class="palate-kpi-inline"><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div></div>
+    <div class="card"><div class="kicker">Smagninger</div><div class="palate-kpi-inline"><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div></div>
+    <div class="card"><div class="kicker">Sweet spots</div><div class="palate-kpi-inline"><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div></div>
+    <div class="card"><div class="kicker">På lager & smagt</div><div class="palate-kpi-inline"><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div></div>
   </section>
 
   <section class="grid">

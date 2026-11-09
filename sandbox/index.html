@@ -785,6 +785,7 @@ header .sub{margin-top:2px!important}
  #view-lager .tableWrap td:nth-child(5)::after{content:" fl.";font-weight:400;color:#786e68;font-size:11px}
 }
 </style>
+<style id="palate-sweet-cleanup">.palate-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}#sweetspotSourceStatus:empty{display:none!important}</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -1012,7 +1013,7 @@ header .sub{margin-top:2px!important}
 <button type="button" data-sweet-kind="rebuy" aria-pressed="false">Genkøb <span>9</span></button>
 </div>
 <div class="palate-sweet-controls">
-<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option><option value="over300">Over 300 kr.</option></select></label>
+<label><span class="palate-visually-hidden">Prisniveau</span><select id="sweetspotPrice" aria-label="Filtrer efter prisniveau"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option><option value="over300">Over 300 kr.</option></select></label>
 <label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
@@ -1735,7 +1736,7 @@ async function loadPalateSweetspot(){
   }
   palateSweetspotData={red:data.red,white:data.white};
   palateRebuyData=data.rebuy;palatePossibleRebuy=data.possibleRebuy;
-  status.textContent="Datakilde: "+data.source+" · udtræk "+data.sourceSnapshotDate+" · opdateres efter godkendelse";
+  status.textContent="";
   renderPalateSweetspot();
  }catch(err){
   status.textContent="Kælderkandidater kunne ikke indlæses. Prøv at genindlæse siden.";

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="./palate-icon-192.png?v=approved-1">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=approved-1">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="2026-11-07-rebuy-price-filter-1">
+<meta name="palate-build" content="2026-11-09-approved-release-1">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -174,6 +174,37 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 .tasting-row-name small{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:4px}
 .tasting-row strong{white-space:nowrap;color:var(--wine);font-size:14px}
 @media(max-width:650px){.tasting-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.tasting-controls label:first-child{grid-column:1/-1}}
+
+/* PALATE TEST: fælles vinprofil, seneste smagning og diskret radar */
+.wine-dialog{max-width:min(660px,calc(100vw - 20px));padding:24px}
+.palate-profile-header{display:block;background:transparent;color:var(--ink);padding:0;margin:18px 0 16px}
+.palate-profile-header h2{margin:0 0 6px;font-size:clamp(19px,3vw,24px);line-height:1.25}
+.palate-profile-header p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.palate-profile-scores{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.palate-profile-scores>div{display:grid;gap:5px;text-align:center}
+.palate-profile-scores span{font-size:11px;color:var(--muted)}
+.palate-profile-scores strong{font-size:23px;font-weight:700;color:var(--wine)}
+.palate-profile-section{padding:17px 0;border-bottom:1px solid var(--line)}
+.palate-profile-section h3{font-size:14px;margin:0 0 11px;font-weight:700}
+.palate-profile-section h3 small{float:right;font-size:10px;color:var(--muted);font-weight:400}
+.palate-profile-section p{font-size:13px;line-height:1.65;margin:5px 0}
+.palate-profile-subtle,.palate-profile-empty{color:var(--muted)}
+.palate-dialog-radar{display:block;width:100%;max-width:440px;height:auto;margin:0 auto;overflow:visible}
+.palate-profile-kv{margin:0;display:grid;gap:9px;font-size:12.5px}
+.palate-profile-kv>div{display:grid;grid-template-columns:minmax(115px,42%) 1fr;gap:12px}
+.palate-profile-kv dt{color:var(--muted)}
+.palate-profile-kv dd{margin:0;font-weight:550}
+.palate-profile-history{padding:18px 0}
+.palate-profile-history>summary,.palate-profile-old>summary{cursor:pointer;font-weight:650;font-size:13px;padding:10px 0}
+.palate-profile-old{border-top:1px solid var(--line)}
+.palate-profile-old>.palate-profile-section{padding:12px 0}
+@media(max-width:480px){.wine-dialog{padding:15px;max-height:90vh}.palate-profile-scores strong{font-size:20px}.palate-dialog-radar{max-width:100%}.palate-profile-kv>div{grid-template-columns:110px 1fr}}
+
+.palate-dialog-scales{display:grid;gap:5px}.palate-dialog-scale{display:flex;align-items:center;gap:10px}.palate-dialog-scale>span{width:54px;flex:0 0 54px;font-size:12px;font-weight:600;color:#68575e}.palate-dialog-scale svg{flex:1;min-width:0;width:100%;height:auto;max-height:48px}
+.palate-profile-scales-inline{padding:0 0 14px;border:0;margin-top:-7px}
+.palate-profile-section.palate-profile-visual{border-bottom:0;padding-bottom:0}
+.palate-profile-scales-inline{margin-top:0;padding-top:0}
+.palate-rebuy-profile-button{margin-top:12px;border:1px solid #b995a1;background:#fff;color:#7a1f3d;border-radius:8px;padding:9px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.palate-rebuy-profile-button:hover{background:#faf1f4}
 </style>
 <style>
 /* PROJECT PALATE — Fase 1: Modern Wine Journal × Nordic Wine Studio */
@@ -475,9 +506,319 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 .palate-sweet-edit-actions,.palate-sweet-edit-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
 .palate-sweet-edit-actions button,.palate-sweet-edit-row button{border:1px solid #c9aeb7;background:#fff;border-radius:8px;padding:8px 10px;color:#7a1f3d;cursor:pointer;font-size:12px}
 .palate-sweet-edit-row button:disabled{opacity:.35;cursor:default}
-</style></head>
+</style>
+<style id="palate-compact-overview-test">
+/* Overblik: kompakt testlayout, uden ændringer på andre menusider */
+#view-overblik .cards{gap:10px;margin-bottom:12px}
+#view-overblik .card{padding:11px 14px;border-radius:12px}
+#view-overblik .card .big{font-size:27px;margin-top:1px;line-height:1.15}
+#view-overblik .card .small{font-size:11px;margin-top:2px;line-height:1.25}
+#view-overblik .panel{padding:15px}
+#view-overblik .panel h2{margin-bottom:3px}
+#view-overblik .panel p.lead.palate-desktop-help{margin-bottom:7px}
+#view-overblik .palate-chart-controls{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);column-gap:20px;row-gap:7px;align-items:start;margin:11px 0 9px;padding:10px 0}
+#view-overblik .palate-chart-group-label{margin:0;font-size:10px}
+#view-overblik .tabs{grid-column:1;grid-row:2;margin:0;gap:5px}
+#view-overblik .toolbar{grid-column:2;grid-row:2;gap:5px}
+#view-overblik .tabs .tab{padding:7px 11px;min-height:34px;font-size:12px}
+#view-overblik button.filter{padding:7px 10px;min-height:34px;font-size:12px}
+#view-overblik .palate-chart-legend-area{margin:8px 0 3px;gap:5px 12px}
+#view-overblik .legend{gap:10px;font-size:11px}
+#view-overblik #chartCount{margin:4px 0 5px}
+#view-overblik .palate-chart-reading-guide{padding:3px 0 0;font-size:11px}
+#view-overblik #chartWrap{height:410px;margin-top:3px}
+@media(max-width:740px){
+ #view-overblik .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:10px}
+ #view-overblik .card{padding:9px 11px}
+ #view-overblik .card .big{font-size:24px}
+ #view-overblik .card .small{font-size:10px}
+ #view-overblik .panel{padding:12px}
+ #view-overblik .palate-chart-controls{display:block;margin:9px 0 7px;padding:8px 0}
+ #view-overblik .palate-chart-group-label{margin:7px 0 5px}
+ #view-overblik .tabs{margin-bottom:8px;gap:4px}
+ #view-overblik .tabs .tab,#view-overblik button.filter{min-height:36px;padding:7px 10px;font-size:12px}
+ #view-overblik .toolbar{gap:5px}
+ #view-overblik #chartWrap{height:auto;min-height:0;aspect-ratio:900/560}
+ #view-overblik .palate-chart-legend-area{margin:7px 0 2px}
+}
+</style>
+<style id="palate-flat-nav-kpis-test">
+/* PALATE: fladere navigation og vandrette KPI'er */
+.palate-nav{gap:8px;padding-top:8px}
+.palate-nav button{min-height:39px;padding:7px 9px;border-width:1px;border-radius:9px;box-shadow:none;font-size:13px;line-height:1.2}
+#view-overblik .card{padding:9px 12px}
+#view-overblik .card .kicker{font-size:10px;letter-spacing:.055em}
+#view-overblik .palate-kpi-inline{display:flex;align-items:center;gap:9px;min-width:0;margin-top:3px}
+#view-overblik .palate-kpi-inline .big{margin:0;flex:0 0 auto;font-size:26px;line-height:1}
+#view-overblik .palate-kpi-inline .small{margin:0;min-width:0;font-size:11px;line-height:1.25}
+@media(max-width:750px){
+ .palate-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px 12px 0}
+ .palate-nav button{min-height:40px;padding:6px 5px;font-size:12px}
+ .palate-nav .palate-nav-action{grid-column:2/4;min-height:40px;font-size:12px}
+ #view-overblik .card{padding:9px 10px}
+ #view-overblik .palate-kpi-inline{gap:7px}
+ #view-overblik .palate-kpi-inline .big{font-size:23px}
+ #view-overblik .palate-kpi-inline .small{font-size:10px}
+}
+</style>
+<style id="palate-kpi-nav-compact-v2">
+/* Compact KPI v2: remove legacy minimum heights and large grid spacing */
+#view-overblik .cards{gap:6px 9px;margin:0 0 13px;padding:7px 0;align-items:stretch}
+#view-overblik .card,#view-overblik .card:not(:first-child),#view-overblik .card:nth-child(3){min-height:0!important;height:auto;padding:8px 10px!important;border:1px solid #e5ddd4!important;border-radius:9px;background:#fffefa;box-shadow:none}
+#view-overblik .card .kicker{margin:0;font-size:11px}
+#view-overblik .palate-kpi-inline{display:flex;align-items:center;gap:8px;margin-top:2px}
+#view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font:400 28px/1 Georgia,'Times New Roman',serif;margin:0;letter-spacing:-.045em}
+#view-overblik .card .small{margin:0;font-size:11px;line-height:1.2;max-width:none}
+.palate-nav{gap:7px;padding-top:8px;padding-bottom:9px}
+.palate-nav button{min-height:33px!important;padding:5px 11px!important;font-size:12px!important;line-height:1.2;border-radius:999px!important;box-shadow:0 2px 5px rgba(43,30,35,.16)!important}
+@media(max-width:650px){
+ .palate-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:8px 12px 9px;overflow:visible}
+ .palate-nav button{min-width:0;min-height:34px!important;padding:6px 3px!important;font-size:11px!important;white-space:nowrap}
+ .palate-nav .palate-nav-action{grid-column:1/-1;min-height:32px!important}
+ #view-overblik .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:12px}
+ #view-overblik .card,#view-overblik .card:not(:first-child),#view-overblik .card:nth-child(3){padding:8px 9px!important;min-height:0!important}
+ #view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font-size:27px}
+ #view-overblik .card .small{font-size:10px}
+}
+@media(max-width:390px){
+ .palate-nav button{font-size:10px!important}
+ #view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font-size:25px}
+}
+</style>
+<style id="palate-overview-spacing-v3">
+/* Overblik v3: remove unnecessary whitespace and separator lines */
+header{padding-top:12px!important;padding-bottom:12px!important;border-bottom:0!important}
+header .sub{margin-top:2px!important}
+.palate-nav{padding-top:4px!important;padding-bottom:5px!important;border-bottom:0!important;margin-bottom:0!important}
+#view-overblik .cards{border-top:0!important;border-bottom:0!important;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:9px!important}
+#view-overblik .palate-chart-controls .palate-vintype-label{display:none!important}
+#view-overblik .palate-chart-controls{border-top:0!important}
+@media(max-width:740px){
+ header{padding:12px 16px 10px!important}
+ header h1{line-height:1!important}
+ header .sub{margin-top:3px!important}
+ .palate-nav{padding:3px 12px 5px!important}
+ main{padding-top:7px!important}
+ #view-overblik .cards{margin-bottom:9px!important}
+ #view-overblik .palate-chart-controls{padding-top:3px!important;margin-top:5px!important}
+}
+</style>
+<style id="palate-design-a-unified">
+/* PALATE design A — nordisk elegance, fælles knapsystem */
+:root{--palate-button-wine:#762f49;--palate-button-edge:#dcd4cc;--palate-button-paper:#fff;--palate-button-ink:#493f40}
+.palate-nav button,
+#view-overblik .tabs .tab,
+#view-overblik button.filter,
+#view-lager .tabs .tab,
+.palate-sweet-tabs button{
+ border:1px solid var(--palate-button-edge)!important;
+ border-radius:9px!important;
+ background:var(--palate-button-paper)!important;
+ color:var(--palate-button-ink)!important;
+ box-shadow:0 2px 5px rgba(43,30,35,.12)!important;
+ font-weight:600!important;
+ transition:background .16s,border-color .16s,box-shadow .16s,color .16s;
+}
+.palate-nav button[aria-selected="true"],
+#view-overblik .tabs .tab.active,
+#view-overblik button.filter.active,
+#view-lager .tabs .tab.active,
+.palate-sweet-tabs button[aria-pressed="true"]{
+ background:var(--palate-button-wine)!important;
+ color:#fff!important;
+ border-color:var(--palate-button-wine)!important;
+ font-weight:700!important;
+}
+.palate-nav button:hover:not([aria-selected="true"]),
+#view-overblik .tabs .tab:hover:not(.active),
+#view-overblik button.filter:hover:not(.active),
+#view-lager .tabs .tab:hover:not(.active),
+.palate-sweet-tabs button:hover:not([aria-pressed="true"]){
+ background:#faf5f6!important;
+ border-color:#bd9fa9!important;
+}
+.palate-nav button:focus-visible,
+#view-overblik .tabs .tab:focus-visible,
+#view-overblik button.filter:focus-visible,
+#view-lager .tabs .tab:focus-visible,
+.palate-sweet-tabs button:focus-visible{outline:2px solid #a15a74!important;outline-offset:2px}
+#view-overblik .tabs .tab,#view-overblik button.filter{min-height:35px;padding:7px 11px}
+#view-lager .tabs .tab,.palate-sweet-tabs button{min-height:37px}
+#view-overblik .card,#view-overblik .panel,
+#view-smagninger .panel,#view-lager .panel,
+#view-sweetspot .panel,#view-registrer .panel{
+ background:#fffefa;
+ border-color:#e2dad1;
+ border-radius:10px;
+}
+@media(max-width:650px){
+ .palate-nav button{min-height:34px!important;padding:6px 3px!important}
+ #view-overblik .tabs .tab,#view-overblik button.filter{min-height:36px;padding:7px 10px}
+}
+</style>
+<style id="palate-smagskort-quieter-controls">
+/* Design A refinement: quiet, secondary controls inside Smagskort */
+#view-overblik .tabs .tab,
+#view-overblik button.filter{
+ font-size:11.5px!important;
+ font-weight:500!important;
+ letter-spacing:0!important;
+ min-height:32px!important;
+ padding:6px 10px!important;
+ box-shadow:none!important;
+ border-color:#e4ddd6!important;
+}
+#view-overblik .tabs .tab.active,
+#view-overblik button.filter.active{
+ font-weight:650!important;
+ background:#762f49!important;
+ color:#fff!important;
+ border-color:#762f49!important;
+}
+#view-overblik .tabs{gap:5px!important}
+#view-overblik .toolbar{gap:5px!important}
+@media(max-width:650px){
+ #view-overblik .tabs .tab,
+ #view-overblik button.filter{
+  font-size:12px!important;
+  min-height:35px!important;
+  padding:7px 10px!important;
+ }
+}
+</style>
+<style id="palate-smagskort-quiet-v2">
+/* Smagskort: clear visual hierarchy; filters are quiet segmented text controls */
+#view-overblik .tabs .tab,
+#view-overblik button.filter{
+ background:transparent!important;
+ color:#665e59!important;
+ border:1px solid transparent!important;
+ border-radius:7px!important;
+ box-shadow:none!important;
+ font-size:12px!important;
+ font-weight:450!important;
+ min-height:35px!important;
+ padding:7px 10px!important;
+}
+#view-overblik .tabs .tab.active,
+#view-overblik button.filter.active{
+ background:#eadde1!important;
+ color:#632b42!important;
+ border:1px solid transparent!important;
+ box-shadow:none!important;
+ font-weight:650!important;
+}
+#view-overblik .tabs .tab:hover:not(.active),
+#view-overblik button.filter:hover:not(.active){
+ background:#f1ece7!important;
+ border-color:transparent!important;
+}
+#view-overblik .tabs,#view-overblik .toolbar{gap:3px!important}
+#view-overblik .palate-chart-controls{border-bottom:0!important;padding-bottom:5px!important}
+@media(max-width:650px){
+ #view-overblik .tabs .tab,#view-overblik button.filter{
+  font-size:12px!important;
+  min-height:38px!important;
+  padding:8px 9px!important;
+ }
+}
+</style>
+<style id="palate-smagskort-one-row">
+/* Smagskort: interpretation beneath chart, one row for four red-wine track controls */
+#view-overblik .palate-chart-reading-guide{margin-top:7px;padding:7px 0 0;font-size:11px;line-height:1.45;text-align:center;color:#756c65}
+#view-overblik .toolbar.palate-four-tracks{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;width:100%}
+#view-overblik .toolbar.palate-four-tracks button.filter{min-width:0;width:100%;white-space:normal;overflow-wrap:normal;hyphens:auto;text-align:center;line-height:1.15;font-size:11px!important;padding:7px 4px!important;min-height:38px!important}
+@media(max-width:650px){
+ #view-overblik .toolbar.palate-four-tracks{gap:3px!important}
+ #view-overblik .toolbar.palate-four-tracks button.filter{font-size:10px!important;padding:6px 2px!important;min-height:42px!important;line-height:1.15}
+ #view-overblik .palate-chart-reading-guide{font-size:10px;text-align:left}
+}
+</style>
+<style id="palate-chart-legend-below">
+/* Smagskort: whole-word wraps and explanatory information beneath graph */
+#view-overblik .toolbar.palate-four-tracks button.filter{
+ hyphens:none!important;
+ -webkit-hyphens:none!important;
+ overflow-wrap:normal!important;
+ word-break:normal!important;
+}
+#view-overblik .palate-chart-legend-area{margin-top:12px!important;margin-bottom:4px!important}
+#view-overblik .palate-chart-counter{margin-top:5px!important;margin-bottom:4px!important}
+#view-overblik .palate-chart-reading-guide{margin-top:5px!important}
+</style>
+<style id="palate-other-tracks-grid">
+/* Same compact whole-word filter treatment for white and sparkling wines */
+#view-overblik .toolbar.palate-multi-tracks{
+ display:grid!important;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:5px!important;
+ width:100%;
+}
+#view-overblik .toolbar.palate-multi-tracks button.filter{
+ min-width:0;width:100%;white-space:normal;
+ hyphens:none!important;-webkit-hyphens:none!important;
+ overflow-wrap:normal!important;word-break:normal!important;
+ text-align:center;line-height:1.2;font-size:11px!important;
+ padding:7px 5px!important;min-height:38px!important;
+}
+@media(max-width:650px){
+ #view-overblik .toolbar.palate-multi-tracks{gap:4px!important}
+ #view-overblik .toolbar.palate-multi-tracks button.filter{
+ font-size:10px!important;padding:7px 3px!important;min-height:42px!important;
+ }
+}
+</style>
+<style id="palate-stock-mobile-cards">
+/* Vinlager mobile: vertical cards, no sideways scrolling */
+@media(max-width:650px){
+ #view-lager .tableWrap{max-height:none!important;overflow:visible!important;width:100%!important}
+ #view-lager .tableWrap table,#view-lager .tableWrap tbody{display:block!important;width:100%!important;min-width:0!important}
+ #view-lager .tableWrap thead{display:none!important}
+ #view-lager .tableWrap tr{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;padding:12px!important;margin:0 0 8px;background:#fffefa;border:1px solid #e2dad1;border-radius:10px;min-width:0!important}
+ #view-lager .tableWrap td{display:block!important;min-width:0!important;width:auto!important;border:0!important;padding:0!important;font-size:12px!important;overflow-wrap:break-word;white-space:normal!important}
+ #view-lager .tableWrap td:first-child{grid-column:1;grid-row:1;font-size:14px!important;font-weight:650}
+ #view-lager .tableWrap td:first-child .wine-name-button{text-align:left!important;white-space:normal!important;overflow-wrap:break-word!important;line-height:1.3}
+ #view-lager .tableWrap td:nth-child(2){grid-column:2;grid-row:1;color:#6d625e;text-align:right}
+ #view-lager .tableWrap td:nth-child(3){grid-column:1;grid-row:2;color:#6d625e}
+ #view-lager .tableWrap td:nth-child(4){grid-column:1;grid-row:3;color:#786e68}
+ #view-lager .tableWrap td:nth-child(5){grid-column:2;grid-row:2 / span 2;align-self:center;text-align:right;font-weight:700;color:#762f49}
+ #view-lager .tableWrap td:nth-child(5)::after{content:" fl.";font-weight:400;color:#786e68;font-size:11px}
+}
+</style>
+<style id="palate-sweet-cleanup">.palate-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}#sweetspotSourceStatus:empty{display:none!important}</style>
+<style id="palate-ios-input-focus-fix">
+/* iOS Safari avoids automatic focus zoom when form control text is >=16px. */
+@media(max-width:650px){
+ .register-form input,.register-form select,.register-form textarea,
+ #view-registrer input,#view-registrer select,#view-registrer textarea,
+ #view-smagninger input,#view-smagninger select,
+ #view-lager input,#view-lager select,
+ #view-sweetspot input,#view-sweetspot select{
+  font-size:16px!important;
+ }
+}
+</style>
+<style id="palate-compact-registration-sliders">
+/* Compact slider cards without shrinking the touch targets. */
+#view-registrering .palate-rating,#view-registrering .palate-scale,
+.register-form .palate-rating,.register-form .palate-scale{
+ padding:8px 12px!important;border-radius:9px!important;
+}
+.register-form .palate-rating input[type="range"],
+.register-form .palate-scale input[type="range"]{
+ margin:3px 0 0!important;min-height:26px!important;
+}
+.register-form .palate-rating .scale-heading,
+.register-form .palate-scale .scale-heading{line-height:1.2!important}
+.register-form .rating-ends{line-height:1!important}
+.register-form .scale-labels{font-size:10px!important;line-height:1.15!important}
+.register-form .palate-scale .scale-help{display:none!important}
+@media(max-width:650px){
+ .register-form .palate-rating,.register-form .palate-scale{padding:7px 10px!important}
+}
+</style>
+</head>
 <body>
-
 
 <header>
   <div>
@@ -497,11 +838,13 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div id="palateDataAlert" role="alert" hidden style="max-width:1400px;margin:8px auto;padding:12px 16px;border:1px solid #b45309;background:#fff7ed;color:#78350f;border-radius:9px;font-size:13px"></div>
 
 <main>
-<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik"><section class="cards">
-    <div class="card"><div class="kicker">Lager</div><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div>
-    <div class="card"><div class="kicker">Smagninger</div><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div>
-    <div class="card"><div class="kicker">Sweet spots</div><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div>
-    <div class="card"><div class="kicker">På lager & smagt</div><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div>
+<div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">
+
+<section class="cards">
+    <div class="card"><div class="kicker">Lager</div><div class="palate-kpi-inline"><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div></div>
+    <div class="card"><div class="kicker">Smagninger</div><div class="palate-kpi-inline"><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div></div>
+    <div class="card"><div class="kicker">Sweet spots</div><div class="palate-kpi-inline"><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div></div>
+    <div class="card"><div class="kicker">På lager & smagt</div><div class="palate-kpi-inline"><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div></div>
   </section>
 
   <section class="grid">
@@ -510,23 +853,23 @@ header{padding-left:clamp(20px,2.4vw,38px)}
       <p class="lead palate-desktop-help">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
 
       <div class="palate-chart-controls">
-      <div class="palate-chart-group-label">Vælg vintype</div>
+      <div class="palate-chart-group-label palate-vintype-label">Vælg vintype</div>
       <div class="tabs">
         <button class="tab active" data-type="Rød">Rødvin</button>
         <button class="tab" data-type="Hvid">Hvidvin</button>
         <button class="tab" data-type="Mousserende">Mousserende</button>
       </div>
 
-      <div class="palate-chart-group-label">Udforsk smagsspor</div>
       <div class="toolbar" id="trackFilters"></div>
       </div>
+
+      <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
       <div class="palate-chart-legend-area">
         <div class="legend" id="legend"></div>
         <div class="palate-chart-ring-key"><span class="palate-ring-icon" aria-hidden="true"></span> Ring = Sweet spot</div>
       </div>
       <p class="lead palate-chart-counter" id="chartCount" aria-live="polite"></p>
       <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
-      <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
     </div>
 
 
@@ -614,7 +957,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 @media(max-width:390px){.palate-open-controls{grid-template-columns:1fr}}
 </style>
 <section class="panel" id="palateOpenWine" style="margin-top:22px">
- <div class="kicker">PROJECT PALATE · DIT VINLAGER</div>
+ <div class="kicker">DIT VINLAGER</div>
  <h2>Hvad skal jeg åbne?</h2>
  <p class="lead palate-desktop-help">Find en vin fra dit registrerede lager, der passer til det, du har lyst til. Forslagene tager udgangspunkt i dine egne smagninger og vinens registrerede stil.</p>
  <div class="palate-open-controls">
@@ -700,7 +1043,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <button type="button" data-sweet-kind="rebuy" aria-pressed="false">Genkøb <span>9</span></button>
 </div>
 <div class="palate-sweet-controls">
-<label>Prisniveau<select id="sweetspotPrice"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option><option value="over300">Over 300 kr.</option></select></label>
+<label><span class="palate-visually-hidden">Prisniveau</span><select id="sweetspotPrice" aria-label="Filtrer efter prisniveau"><option value="alle">Alle prisniveauer</option><option value="primær">Hverdagsfund · op til 150 kr.</option><option value="udvidet">Lidt ekstra · 150–200 kr.</option><option value="særlig">Særlige flasker · 200–300 kr.</option><option value="over300">Over 300 kr.</option></select></label>
 <label>Søg<input id="sweetspotSearch" type="search" placeholder="Vin, producent eller stil"></label>
 </div>
 <p class="palate-open-footnote" id="sweetspotCount" aria-live="polite"></p>
@@ -725,8 +1068,8 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div class="palate-rating"><div class="scale-heading"><strong>Genkøbslyst</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Genkøb" min="1" max="10" step="0.5" value="5.5" aria-label="Genkøbslyst, 1 til 10 i halve point"><input type="hidden" name="Genkøb" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
 <div class="palate-rating"><div class="scale-heading"><strong>Vil du anbefale den til en god ven</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Anbefaling" min="1" max="10" step="0.5" value="5.5" aria-label="Vil du anbefale den til en god ven, 1 til 10 i halve point"><input type="hidden" name="Anbefaling" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>
 <div class="full"><h3>Hvordan oplevedes vinen?</h3></div>
-<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Fylde fra 1 til 10" data-scale-slider="Fylde"27373><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>Alt for lidt</span><span>Lidt for lidt</span><span>Passende</span><span>Lidt for meget</span><span>Alt for meget</span></div><p class="scale-help">1–10 i halve point. Flyt skyderen for at registrere din vurdering.</p></div>
-<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Sødme fra 1 til 10" data-scale-slider="Sødme"27938><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>Alt for tør</span><span>Lidt for tør</span><span>Passende</span><span>Lidt for sød</span><span>Alt for sød</span></div><p class="scale-help">1–10 i halve point. Flyt skyderen for at registrere din vurdering.</p></div>
+<div class="full palate-scale" data-scale="Fylde"><div class="scale-heading"><strong>Fylde</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Fylde fra 1 til 10" data-scale-slider="Fylde"27373><input type="hidden" name="Fylde" disabled><div class="scale-labels"><span>Alt for lidt</span><span>Lidt for lidt</span><span>Passende</span><span>Lidt for meget</span><span>Alt for meget</span></div></div>
+<div class="full palate-scale" data-scale="Sødme"><div class="scale-heading"><strong>Sødme</strong><span class="scale-current" aria-live="polite">Ikke vurderet</span></div><input type="range" min="1" max="10" step="0.5" value="5" aria-label="Sødme fra 1 til 10" data-scale-slider="Sødme"27938><input type="hidden" name="Sødme" disabled><div class="scale-labels"><span>Alt for tør</span><span>Lidt for tør</span><span>Passende</span><span>Lidt for sød</span><span>Alt for sød</span></div></div>
 <label class="full">Drikkesituation<textarea name="Situation" rows="2" placeholder="Hvor og i hvilken sammenhæng drak du vinen?"></textarea></label>
 <label class="full">Hvad var det bedste ved vinen?<textarea name="Note" rows="3" placeholder="Hvad gjorde størst positivt indtryk?"></textarea></label>
 <div class="full register-actions"><button type="button" id="copyRegistration">Kopiér til ChatGPT</button><button type="button" id="clearRegistrationDraft" style="background:transparent;color:inherit;border:1px solid currentColor">Ryd kladde</button></div>
@@ -741,7 +1084,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 <div id="wineProfileContent"></div>
 </dialog>
 
-<footer>Project PALATE · Afledt dashboard. Master.md + Lager.csv + Smagninger.csv er autoritative datakilder. Smagskortet viser kun vine med registreret stilakse.</footer>
+<!-- Teknisk note om datakilder er fjernet fra den synlige brugerflade; data og logik er uændrede. -->
 <div class="tooltip" id="tooltip"></div>
 
 <script>
@@ -750,7 +1093,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
 if("serviceWorker" in navigator){
   window.addEventListener("load",()=>{
     navigator.serviceWorker.register("./sw.js",{scope:"./",updateViaCache:"none"})
-      .then(reg=>reg.update()).catch(error=>console.warn("PALATE opdateringstjeneste:",error));
+      .then(reg=>reg.update()).catch(error=>console.warn("Testmiljøets opdateringstjeneste:",error));
   });
 }
 const palateBuild=document.querySelector('meta[name="palate-build"]')?.content;
@@ -847,6 +1190,8 @@ function tracksForType(type) {
 function renderFilters() {
   const wrap = document.getElementById("trackFilters");
   wrap.innerHTML = "";
+  wrap.classList.toggle("palate-four-tracks",tracksForType(currentType).length===3);
+  wrap.classList.toggle("palate-multi-tracks",tracksForType(currentType).length!==3);
   const all = document.createElement("button");
   all.className = "filter" + (activeTrack==="Alle" ? " active":"");
   all.textContent = "Alle spor";
@@ -903,7 +1248,7 @@ function renderChart() {
   svg.querySelectorAll(".point").forEach((p)=>{
     p.addEventListener("mousemove", e=>{
       const w=data[+p.dataset.index];
-      tooltip.innerHTML=`<strong>${esc(fmtName(w))}</strong>${esc(w.track)}<br>Drikkeglæde: ${w.joy.toFixed(1)} · Stilakse: ${w.style.toFixed(1)}`;
+      tooltip.innerHTML=`<strong>${esc(fmtName(w))}</strong>Tryk for at åbne vinens samlede profil`;
       tooltip.style.left=e.clientX+"px"; tooltip.style.top=e.clientY+"px"; tooltip.style.opacity=1;
     });
     p.addEventListener("mouseleave", ()=>tooltip.style.opacity=0);
@@ -915,7 +1260,7 @@ function renderStock(filter="Alle"){
   const body=document.getElementById("stockBody");
   const rows=inventory.filter(i=>filter==="Alle"||i.type===filter)
     .sort((a,b)=>b.qty-a.qty)
-    .map(i=>`<tr><td><button type="button" class="wine-name-button" data-palate-wine="${esc(i.name)}" data-palate-year="${esc(i.vintage||"")}">${esc(i.name)}</button></td><td>${esc(i.vintage||"—")}</td><td>${esc(i.track)}</td><td>${esc(i.status)}</td><td class="qty">${i.qty}</td></tr>`)
+    .map(i=>`<tr><td><button type="button" class="wine-name-button" data-palate-wine="${esc(i.name)}" data-palate-year="${esc(i.vintage||"")}">${esc(i.name)}</button></td><td>${esc(String(i.vintage||"—").replace(/\.0+$/,""))}</td><td>${esc(i.track)}</td><td>${esc(i.status)}</td><td class="qty">${i.qty}</td></tr>`)
     .join("");
   body.innerHTML=rows;
 }
@@ -1082,7 +1427,6 @@ function loadPalateData(){
 function insightNum(row,key){const v=(row[key]||"").trim();if(!v)return null;const n=Number(v.replace(",","."));return Number.isFinite(n)&&n>=1&&n<=10?n:null;}
 /* PALATE TEST: lagerbaserede, forklarlige vinforslag; ingen automatisk lagerændring. */
 let palateOpenStock=[];
-function palateWineKey(v){return (v||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();}
 function palateWineYear(v){return String(v||"").replace(/\.0$/,"").trim();}
 function palateWineStyle(track){
  const t=(track||"").toLocaleLowerCase("da");
@@ -1133,7 +1477,7 @@ function renderPalateOpenWine(){
 document.getElementById("palateOpenSuggest").addEventListener("click",renderPalateOpenWine);
 /* PALATE TEST: samlet visuel vinprofil, med separate oplevelsesskalaer. */
 const palateRadarColors=["#80364f","#b18743","#397a87","#7d6aa2","#50826b"];
-const palateRadarFields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];
+const palateRadarFields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøb"],["Anbefaling","Anbefaling"]];
 let radarSelectedIds=[],radarFocusedId=null;
 function radarLabel(r){return r.Vin+" · "+(r["Årgang"]||"u.å.").replace(/\\.0$/,"")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")";}
 function radarSvg(tag,attributes={},label){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attributes))el.setAttribute(k,v);if(label!==undefined)el.textContent=label;return el;}
@@ -1279,7 +1623,7 @@ document.querySelectorAll("[data-scale-slider]").forEach(slider=>{
  });
 });
 const registrationStatus=document.getElementById("registrationStatus");
-const PALATE_DRAFT_KEY="project-palate-registration-draft-v1";
+const PALATE_DRAFT_KEY="project-palate-sandbox-registration-draft-v1";
 const palateForm=document.getElementById("palateRegistration");
 function savePalateDraft(){
   const fields=[...palateForm.querySelectorAll("[name]")].filter(el=>el.type!=="hidden").map(el=>({name:el.name,value:el.value}));
@@ -1367,6 +1711,14 @@ function palateReferencePrice(w){
  const raw=match[1].replace(/\.(?=\d{3}\b)/g,"").replace(",",".");
  return Number(raw);
 }
+function palateRebuyTastingMatch(label){
+ const name=String(label||"").replace(/\s*\(årgang ikke registreret\)\s*$/i,"").trim();
+ const yearMatch=name.match(/\s+(\d{4})$/);
+ const year=yearMatch?yearMatch[1]:"";
+ const wineName=yearMatch?name.slice(0,yearMatch.index).trim():name;
+ const matches=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"])===palateWineKey(wineName,year));
+ return matches.length?{name:matches[0]["Vin"],year:matches[0]["Årgang"]}:null;
+}
 function renderPalateSweetspot(){
  const kind=palateSweetKind,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
  const isRebuy=kind==="rebuy",all=isRebuy?palateRebuyData:palateSweetspotData[kind];
@@ -1384,6 +1736,16 @@ function renderPalateSweetspot(){
   const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10 · Pris: "+(w.priceReference||"ikke registreret"):"Prisreference: "+w.price;
   heading.append(title,secondary);const chevron=document.createElement("span");chevron.className="palate-sweet-chevron";chevron.textContent="⌄";summary.append(rank,heading,chevron);
   const detail=document.createElement("div");detail.className="palate-sweet-detail";detail.textContent=isRebuy?"Tidligere smagt · "+w.type+". Vurderingen er hentet fra den godkendte genkøbsliste. "+(w.priceNote||"Pris kontrolleres ved køb."):w.why;detail.style.whiteSpace="pre-line";
+  if(isRebuy){
+   const match=palateRebuyTastingMatch(w.name);
+   if(match){
+    const open=document.createElement("button");
+    open.type="button";open.className="palate-rebuy-profile-button";
+    open.textContent="Se smagsprofil";
+    open.addEventListener("click",()=>openPalateWine(match.name,match.year));
+    detail.append(document.createElement("div"),open);
+   }
+  }
    card.append(summary,detail);root.append(card);
  }
  if(!list.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen vine matcher filtrene.";root.append(p);}
@@ -1404,7 +1766,7 @@ async function loadPalateSweetspot(){
   }
   palateSweetspotData={red:data.red,white:data.white};
   palateRebuyData=data.rebuy;palatePossibleRebuy=data.possibleRebuy;
-  status.textContent="Datakilde: "+data.source+" · udtræk "+data.sourceSnapshotDate+" · opdateres efter godkendelse";
+  status.textContent="";
   renderPalateSweetspot();
  }catch(err){
   status.textContent="Kælderkandidater kunne ikke indlæses. Prøv at genindlæse siden.";
@@ -1434,47 +1796,83 @@ selectPalateView(location.hash.slice(1));
 
 
 function palateWineKey(name,year){
- return (String(name||"")+" "+String(year||"")).toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+ const n=String(name||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+ const y=String(year||"").trim().replace(/\.0+$/,"");
+ const canonical=n==="cantine pliniana re noire primitivo di manduria"?"pliniana re noire primitivo di manduria":n;
+ return canonical+"|"+y;
 }
 function findPalateWine(name,year){
  const key=palateWineKey(name,year);
- return wines.find(w=>palateWineKey(w.name,w.vintage)===key)
-   ||wines.find(w=>palateWineKey(w.name,w.vintage).includes(key)||key.includes(palateWineKey(w.name,w.vintage)))
-   ||null;
+ return wines.find(w=>palateWineKey(w.name,w.vintage)===key)||null;
+}
+function palateProfileRadar(r){
+ const fields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];
+ const num=v=>{if(v===undefined||v===null||String(v).trim()==="")return null;const n=Number(String(v).replace(",","."));return Number.isFinite(n)?n:null};
+ const values=fields.map(([key])=>num(r?.[key]));
+ if(values.every(v=>v===null))return '<p class="palate-profile-empty">Ingen registrerede radarscorer for denne smagning.</p>';
+ const cx=175,cy=143,R=96,pt=(i,v)=>{const a=-Math.PI/2+i*Math.PI/3;return [cx+Math.cos(a)*R*v/10,cy+Math.sin(a)*R*v/10]};
+ const poly=v=>fields.map((_,i)=>pt(i,v).join(",")).join(" ");
+ let out='<svg class="palate-dialog-radar" viewBox="0 0 350 290" role="img" aria-label="Smagsprofil med seks vurderingsakser på skalaen 1 til 10">';
+ for(const v of [2,4,6,8,10]){
+  out+='<polygon points="'+poly(v)+'" fill="none" stroke="currentColor" stroke-opacity="'+(v===10?".20":".10")+'" stroke-width=".8"/>';
+  out+='<text x="178" y="'+(cy-R*v/10+2)+'" font-size="7" fill="currentColor" fill-opacity=".28">'+v+'</text>';
+ }
+ fields.forEach(([,label],i)=>{
+  const p=pt(i,10),a=-Math.PI/2+i*Math.PI/3;
+  out+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="currentColor" stroke-opacity=".12" stroke-width=".8"/>';
+  const tx=cx+Math.cos(a)*145,ty=cy+Math.sin(a)*135+4;
+  out+='<text x="'+tx+'" y="'+ty+'" text-anchor="middle" font-size="10.5" fill="currentColor">'+esc(label)+'</text>';
+ });
+ if(values.every(v=>v!==null)){
+  out+='<polygon points="'+values.map((v,i)=>pt(i,v).join(",")).join(" ")+'" fill="#7a1f3d" fill-opacity=".09" stroke="#7a1f3d" stroke-width="1.7" stroke-linejoin="round"/>';
+ }else{
+  values.forEach((v,i)=>{const j=(i+1)%6;if(v!==null&&values[j]!==null){const a=pt(i,v),b=pt(j,values[j]);out+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="#7a1f3d" stroke-width="1.7"/>'}});
+ }
+ values.forEach((v,i)=>{if(v===null)return;const p=pt(i,v),a=-Math.PI/2+i*Math.PI/3,d=R*v/10+14;
+  out+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="2.5" fill="#7a1f3d"/>';
+  out+='<text x="'+(cx+Math.cos(a)*d)+'" y="'+(cy+Math.sin(a)*d+3)+'" text-anchor="middle" font-size="10.5" font-weight="600" fill="#7a1f3d">'+String(v).replace(".",",")+'</text>';
+ });
+ return out+'</svg>';
+}
+function palateProfileScales(r){
+ const num=v=>{if(v===undefined||v===null||String(v).trim()==="")return null;const n=Number(String(v).replace(",","."));return Number.isFinite(n)?n:null};
+ return '<div class="palate-dialog-scales">'+[["Sødme","Sødme"],["Fylde","Fylde"]].map(([key,label])=>{
+  const v=num(r?.[key]),x=n=>18+(n-1)/9*264;
+  let svg='<svg viewBox="0 0 300 42" role="img" aria-label="'+label+': '+(v===null?"ikke registreret":String(v).replace(".",",")+" ud af 10")+'">';
+  svg+='<line x1="18" y1="16" x2="282" y2="16" stroke="#ddd5cf" stroke-width="2" stroke-linecap="round"/>';
+  for(const n of [1,3,5,7,10])svg+='<line x1="'+x(n)+'" y1="12" x2="'+x(n)+'" y2="20" stroke="#c8beb8" stroke-width="1"/><text x="'+x(n)+'" y="34" font-size="9" fill="#968b88" text-anchor="middle">'+n+'</text>';
+  if(v!==null&&v>=1&&v<=10)svg+='<circle cx="'+x(v)+'" cy="16" r="4.5" fill="#7a1f3d"/><text x="'+Math.max(18,Math.min(282,x(v)))+'" y="8" font-size="10" font-weight="600" fill="#7a1f3d" text-anchor="middle">'+String(v).replace(".",",")+'</text>';
+  return '<div class="palate-dialog-scale"><span>'+label+'</span>'+svg+'</div>';
+ }).join("")+'</div>';
 }
 function openPalateWine(name,year){
- const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===palateWineKey(name,year));
+ const key=palateWineKey(name,year);
+ const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===key);
+ const exact=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===key);
+ // If stock vintage is unknown, link only when one unique vintage exists for the same wine.
+ const normalizedName=key.split("|")[0];
+ const sameName=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],"")===normalizedName+"|");
+ const years=new Set(sameName.map(r=>String(r["Årgang"]||"").replace(/\.0+$/,"")));
+ const matches=(exact.length?exact:(!String(year||"").trim()&&years.size===1?sameName:[]))
+   .sort((a,b)=>(b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]));
+ const latest=matches[0]||null;
  const wine=findPalateWine(name,year);
- const displayName=stock?.name||wine?.name||name;
- const displayYear=stock?.vintage||wine?.vintage||year||"";
- const info=[
- ["Vintype",stock?.type||wine?.type],
- ["Spor",stock?.track||wine?.track],
- ["Drikkeglæde",Number.isFinite(wine?.joy)?wine.joy+"/10":""],
- ["Temperatur",wine?.temp],
- ["Glas",wine?.glass],
- ["Status",stock?.status||wine?.status],
- ["På lager",stock?stock.qty+" fl.":""]
- ].filter(x=>x[1]!==undefined&&x[1]!==null&&x[1]!=="");
- const events=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===palateWineKey(name,year))
-   .sort((a,b)=>(a["Registreringsdato"]||"").localeCompare(b["Registreringsdato"]||"")||Number(a["Smagning_ID"])-Number(b["Smagning_ID"]))
-   .map((r,i)=>({record:r,label:i===0?"Første smagning":"Gensmagning "+i}))
-   .reverse();
- const dateText=value=>/^\d{4}-\d{2}-\d{2}$/.test(value||"")?value.split("-").reverse().join("."):"Dato ikke registreret";
- const eventHistory=events.length
-   ?'<div class="palate-history"><h3>Registreringshistorik</h3>'+events.map(({record:r,label})=>{
-      if(events.length===1)label="Registreret";
-      const when=dateText(r["Registreringsdato"]);
-      const temp=r["Temperatur"]?'<span class="palate-history-temperature"> · '+esc(r["Temperatur"])+'</span>':"";
-      const rating=r["Drikkeglæde"]?'<strong>'+esc(r["Drikkeglæde"])+'/10</strong>':"";
-      return '<div class="palate-history-item"><div><div><b>'+esc(label)+'</b></div><span>'+esc(when)+temp+'</span></div>'+rating+'</div>';
-    }).join("")+'</div>'
-   :"";
- const bottle='<svg viewBox="0 0 50 105" role="img" aria-label="Neutral flaskeillustration"><path d="M20 3h10v18l4 7v10c0 5 10 12 10 21v36c0 5-4 8-9 8H15c-5 0-9-3-9-8V59c0-9 10-16 10-21V28l4-7z" fill="#7a1f3d"/><rect x="11" y="62" width="28" height="25" rx="2" fill="#f7f4ef"/><path d="M20 5h10" stroke="#d2b88a" stroke-width="5"/></svg>';
+ const displayName=stock?.name||latest?.["Vin"]||wine?.name||name;
+ const displayYear=String(latest?.["Årgang"]||stock?.vintage||wine?.vintage||year||"").replace(/\.0+$/,"");
+ const dateText=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||"")?v.split("-").reverse().join("."):"Dato ikke registreret";
+ const val=(r,k)=>r?.[k]!==undefined&&r?.[k]!==null&&String(r[k]).trim()!==""?String(r[k]):"";
+ const info=(items)=>'<dl class="palate-profile-kv">'+items.filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="").map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd></div>').join("")+'</dl>';
+ const score=(r,k)=>{const v=val(r,k);return v?v.replace(".",","):"—"};
+ const tasting=(r)=>'<section class="palate-profile-section palate-profile-visual"><h3>Smagsprofil <small>1–10</small></h3>'+palateProfileRadar(r)+'</section>'+
+  '<div class="palate-profile-scales-inline">'+palateProfileScales(r)+'</div>'+ 
+  '<section class="palate-profile-section"><h3>Smagsnoter</h3>'+(val(r,"Note")?'<p>'+esc(val(r,"Note"))+'</p>':wine?.note?'<p>'+esc(wine.note)+'</p>':'<p class="palate-profile-empty">Ingen smagsnote registreret.</p>')+
+  (val(r,"Situation")?'<p class="palate-profile-subtle">Situation: '+esc(val(r,"Situation"))+'</p>':"")+'</section>'+
+  '<section class="palate-profile-section"><h3>Servering og registrering</h3>'+info([["Registreret",dateText(val(r,"Registreringsdato"))],["Temperatur",val(r,"Temperatur")||wine?.temp],["Glas",val(r,"Glas")||wine?.glass],["Smagning",val(r,"Smagning_ID")?"#"+val(r,"Smagning_ID"):""]])+'</section>';
+ const history=matches.length>1?'<details class="palate-profile-history"><summary>Tidligere smagninger ('+(matches.length-1)+')</summary>'+matches.slice(1).map(r=>'<details class="palate-profile-old"><summary>'+esc(dateText(val(r,"Registreringsdato")))+' · Drikkeglæde '+esc(score(r,"Drikkeglæde"))+'/10</summary>'+tasting(r)+'</details>').join("")+'</details>':"";
  document.getElementById("wineProfileContent").innerHTML=
- '<div class="wine-dialog-top"><div class="wine-dialog-bottle">'+bottle+'</div><div><h2>'+esc(displayName)+'</h2><div>'+esc(displayYear)+'</div><p style="font-size:12px;color:var(--muted)">Flaskebillede afventer verificeret kilde</p></div></div>'+
- '<div class="kv">'+info.map(([k,v])=>'<div>'+esc(k)+'</div><div>'+esc(String(v))+'</div>').join("")+'</div>'+
- (wine?.note?'<div class="note">'+esc(wine.note)+'</div>':"")+eventHistory;
+ '<header class="palate-profile-header"><h2>'+esc(displayName)+'</h2><p>'+esc(displayYear||"Årgang ikke registreret")+' · '+esc(stock?.type||val(latest,"Type")||wine?.type||"Vin")+' · '+esc(stock?.track||val(latest,"Spor")||wine?.track||"Spor ikke registreret")+'</p></header>'+
+ (latest?tasting(latest):'<p class="palate-profile-empty">Ingen smagning registreret endnu.</p>')+
+ '<section class="palate-profile-section"><h3>Vin og lager</h3>'+info([["Status",stock?.status||wine?.status],["På lager",stock?stock.qty+" fl.":""],["Stilakse",Number.isFinite(wine?.style)?wine.style:""]])+'</section>'+history;
  const dialog=document.getElementById("wineProfileDialog");
  if(!dialog.open)dialog.showModal();
 }
@@ -1486,5 +1884,6 @@ document.addEventListener("click",event=>{
 
 
 </script>
+
 </body>
 </html>

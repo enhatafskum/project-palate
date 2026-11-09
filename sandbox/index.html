@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-other-tracks-grid-17">
+<meta name="palate-build" content="sandbox-ios-focus-fix-21">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -786,6 +786,18 @@ header .sub{margin-top:2px!important}
 }
 </style>
 <style id="palate-sweet-cleanup">.palate-visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}#sweetspotSourceStatus:empty{display:none!important}</style>
+<style id="palate-ios-input-focus-fix">
+/* iOS Safari avoids automatic focus zoom when form control text is >=16px. */
+@media(max-width:650px){
+ .register-form input,.register-form select,.register-form textarea,
+ #view-registrer input,#view-registrer select,#view-registrer textarea,
+ #view-smagninger input,#view-smagninger select,
+ #view-lager input,#view-lager select,
+ #view-sweetspot input,#view-sweetspot select{
+  font-size:16px!important;
+ }
+}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>

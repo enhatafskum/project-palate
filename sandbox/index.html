@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-compact-kpi-nav-shadow-10">
+<meta name="palate-build" content="sandbox-overview-spacing-v3-11">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -585,6 +585,24 @@ header{padding-left:clamp(20px,2.4vw,38px)}
  #view-overblik .card .big,#view-overblik .palate-kpi-inline .big{font-size:25px}
 }
 </style>
+<style id="palate-overview-spacing-v3">
+/* Overblik v3: remove unnecessary whitespace and separator lines */
+header{padding-top:12px!important;padding-bottom:12px!important;border-bottom:0!important}
+header .sub{margin-top:2px!important}
+.palate-nav{padding-top:4px!important;padding-bottom:5px!important;border-bottom:0!important;margin-bottom:0!important}
+#view-overblik .cards{border-top:0!important;border-bottom:0!important;padding-top:0!important;padding-bottom:0!important;margin-top:0!important;margin-bottom:9px!important}
+#view-overblik .palate-chart-controls .palate-vintype-label{display:none!important}
+#view-overblik .palate-chart-controls{border-top:0!important}
+@media(max-width:740px){
+ header{padding:12px 16px 10px!important}
+ header h1{line-height:1!important}
+ header .sub{margin-top:3px!important}
+ .palate-nav{padding:3px 12px 5px!important}
+ main{padding-top:7px!important}
+ #view-overblik .cards{margin-bottom:9px!important}
+ #view-overblik .palate-chart-controls{padding-top:3px!important;margin-top:5px!important}
+}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -622,7 +640,7 @@ header{padding-left:clamp(20px,2.4vw,38px)}
       <p class="lead palate-desktop-help">Se dine vine fordelt efter stil og drikkeglæde. Vælg en prik for at åbne vinens vurdering og registreringshistorik. Farverne viser smagsspor, mens en ring markerer et sweet spot.</p>
 
       <div class="palate-chart-controls">
-      <div class="palate-chart-group-label">Vælg vintype</div>
+      <div class="palate-chart-group-label palate-vintype-label">Vælg vintype</div>
       <div class="tabs">
         <button class="tab active" data-type="Rød">Rødvin</button>
         <button class="tab" data-type="Hvid">Hvidvin</button>

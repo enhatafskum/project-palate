@@ -1446,7 +1446,7 @@ function renderPalateOpenWine(){
 document.getElementById("palateOpenSuggest").addEventListener("click",renderPalateOpenWine);
 /* PALATE TEST: samlet visuel vinprofil, med separate oplevelsesskalaer. */
 const palateRadarColors=["#80364f","#b18743","#397a87","#7d6aa2","#50826b"];
-const palateRadarFields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøbslyst"],["Anbefaling","Anbefaling"]];
+const palateRadarFields=[["Drikkeglæde","Drikkeglæde"],["Helhed","Helhed"],["Balance","Balance"],["Stilmatch","Stilmatch"],["Genkøb","Genkøb"],["Anbefaling","Anbefaling"]];
 let radarSelectedIds=[],radarFocusedId=null;
 function radarLabel(r){return r.Vin+" · "+(r["Årgang"]||"u.å.").replace(/\\.0$/,"")+" · "+(r.Registreringsdato||"u.d.")+" (#"+r.Smagning_ID+")";}
 function radarSvg(tag,attributes={},label){const el=document.createElementNS("http://www.w3.org/2000/svg",tag);for(const [k,v] of Object.entries(attributes))el.setAttribute(k,v);if(label!==undefined)el.textContent=label;return el;}
@@ -1767,7 +1767,8 @@ selectPalateView(location.hash.slice(1));
 function palateWineKey(name,year){
  const n=String(name||"").toLocaleLowerCase("da").replace(/[’‘]/g,"'").replace(/[^\p{L}\p{N}]+/gu," ").trim();
  const y=String(year||"").trim().replace(/\.0+$/,"");
- return n+"|"+y;
+ const canonical=n==="cantine pliniana re noire primitivo di manduria"?"pliniana re noire primitivo di manduria":n;
+ return canonical+"|"+y;
 }
 function findPalateWine(name,year){
  const key=palateWineKey(name,year);
@@ -1816,12 +1817,17 @@ function palateProfileScales(r){
 function openPalateWine(name,year){
  const key=palateWineKey(name,year);
  const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===key);
- const matches=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===key)
+ const exact=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"]||"")===key);
+ // If stock vintage is unknown, link only when one unique vintage exists for the same wine.
+ const normalizedName=key.split("|")[0];
+ const sameName=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],"")===normalizedName+"|");
+ const years=new Set(sameName.map(r=>String(r["Årgang"]||"").replace(/\\.0+$/,"")));
+ const matches=(exact.length?exact:(!String(year||"").trim()&&years.size===1?sameName:[]))
    .sort((a,b)=>(b["Registreringsdato"]||"").localeCompare(a["Registreringsdato"]||"")||Number(b["Smagning_ID"])-Number(a["Smagning_ID"]));
  const latest=matches[0]||null;
  const wine=findPalateWine(name,year);
  const displayName=stock?.name||latest?.["Vin"]||wine?.name||name;
- const displayYear=stock?.vintage||latest?.["Årgang"]||wine?.vintage||year||"";
+ const displayYear=String(latest?.["Årgang"]||stock?.vintage||wine?.vintage||year||"").replace(/\.0+$/,"");
  const dateText=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||"")?v.split("-").reverse().join("."):"Dato ikke registreret";
  const val=(r,k)=>r?.[k]!==undefined&&r?.[k]!==null&&String(r[k]).trim()!==""?String(r[k]):"";
  const info=(items)=>'<dl class="palate-profile-kv">'+items.filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="").map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd></div>').join("")+'</dl>';

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-chart-four-tracks-15">
+<meta name="palate-build" content="sandbox-chart-legend-below-16">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -734,6 +734,18 @@ header .sub{margin-top:2px!important}
  #view-overblik .palate-chart-reading-guide{font-size:10px;text-align:left}
 }
 </style>
+<style id="palate-chart-legend-below">
+/* Smagskort: whole-word wraps and explanatory information beneath graph */
+#view-overblik .toolbar.palate-four-tracks button.filter{
+ hyphens:none!important;
+ -webkit-hyphens:none!important;
+ overflow-wrap:normal!important;
+ word-break:normal!important;
+}
+#view-overblik .palate-chart-legend-area{margin-top:12px!important;margin-bottom:4px!important}
+#view-overblik .palate-chart-counter{margin-top:5px!important;margin-bottom:4px!important}
+#view-overblik .palate-chart-reading-guide{margin-top:5px!important}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -780,12 +792,13 @@ header .sub{margin-top:2px!important}
 
       <div class="toolbar" id="trackFilters"></div>
       </div>
+
+      <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
       <div class="palate-chart-legend-area">
         <div class="legend" id="legend"></div>
         <div class="palate-chart-ring-key"><span class="palate-ring-icon" aria-hidden="true"></span> Ring = Sweet spot</div>
       </div>
       <p class="lead palate-chart-counter" id="chartCount" aria-live="polite"></p>
-      <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
       <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
     </div>
 

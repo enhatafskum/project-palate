@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-profile-scales-integrated-3">
+<meta name="palate-build" content="sandbox-profile-divider-fixed-4">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -202,6 +202,8 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 
 .palate-dialog-scales{display:grid;gap:5px}.palate-dialog-scale{display:flex;align-items:center;gap:10px}.palate-dialog-scale>span{width:54px;flex:0 0 54px;font-size:12px;font-weight:600;color:#68575e}.palate-dialog-scale svg{flex:1;min-width:0;width:100%;height:auto;max-height:48px}
 .palate-profile-scales-inline{padding:0 0 14px;border:0;margin-top:-7px}
+.palate-profile-section.palate-profile-visual{border-bottom:0;padding-bottom:0}
+.palate-profile-scales-inline{margin-top:0;padding-top:0}
 </style>
 <style>
 /* PROJECT PALATE — Fase 1: Modern Wine Journal × Nordic Wine Studio */
@@ -1526,7 +1528,7 @@ function openPalateWine(name,year){
  const val=(r,k)=>r?.[k]!==undefined&&r?.[k]!==null&&String(r[k]).trim()!==""?String(r[k]):"";
  const info=(items)=>'<dl class="palate-profile-kv">'+items.filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="").map(([k,v])=>'<div><dt>'+esc(k)+'</dt><dd>'+esc(String(v))+'</dd></div>').join("")+'</dl>';
  const score=(r,k)=>{const v=val(r,k);return v?v.replace(".",","):"—"};
- const tasting=(r)=>'<section class="palate-profile-section"><h3>Smagsprofil <small>1–10</small></h3>'+palateProfileRadar(r)+'</section>'+
+ const tasting=(r)=>'<section class="palate-profile-section palate-profile-visual"><h3>Smagsprofil <small>1–10</small></h3>'+palateProfileRadar(r)+'</section>'+
   '<div class="palate-profile-scales-inline">'+palateProfileScales(r)+'</div>'+ 
   '<section class="palate-profile-section"><h3>Smagsnoter</h3>'+(val(r,"Bedste ved vinen")?'<p>'+esc(val(r,"Bedste ved vinen"))+'</p>':wine?.note?'<p>'+esc(wine.note)+'</p>':'<p class="palate-profile-empty">Ingen smagsnote registreret.</p>')+
   (val(r,"Situation")?'<p class="palate-profile-subtle">Situation: '+esc(val(r,"Situation"))+'</p>':"")+'</section>'+

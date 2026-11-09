@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-smagskort-quiet-v2-14">
+<meta name="palate-build" content="sandbox-chart-four-tracks-15">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -723,6 +723,17 @@ header .sub{margin-top:2px!important}
  }
 }
 </style>
+<style id="palate-smagskort-one-row">
+/* Smagskort: interpretation beneath chart, one row for four red-wine track controls */
+#view-overblik .palate-chart-reading-guide{margin-top:7px;padding:7px 0 0;font-size:11px;line-height:1.45;text-align:center;color:#756c65}
+#view-overblik .toolbar.palate-four-tracks{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px!important;width:100%}
+#view-overblik .toolbar.palate-four-tracks button.filter{min-width:0;width:100%;white-space:normal;overflow-wrap:normal;hyphens:auto;text-align:center;line-height:1.15;font-size:11px!important;padding:7px 4px!important;min-height:38px!important}
+@media(max-width:650px){
+ #view-overblik .toolbar.palate-four-tracks{gap:3px!important}
+ #view-overblik .toolbar.palate-four-tracks button.filter{font-size:10px!important;padding:6px 2px!important;min-height:42px!important;line-height:1.15}
+ #view-overblik .palate-chart-reading-guide{font-size:10px;text-align:left}
+}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -767,7 +778,6 @@ header .sub{margin-top:2px!important}
         <button class="tab" data-type="Mousserende">Mousserende</button>
       </div>
 
-      <div class="palate-chart-group-label">Udforsk smagsspor</div>
       <div class="toolbar" id="trackFilters"></div>
       </div>
       <div class="palate-chart-legend-area">
@@ -775,8 +785,8 @@ header .sub{margin-top:2px!important}
         <div class="palate-chart-ring-key"><span class="palate-ring-icon" aria-hidden="true"></span> Ring = Sweet spot</div>
       </div>
       <p class="lead palate-chart-counter" id="chartCount" aria-live="polite"></p>
-      <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
       <div id="chartWrap"><svg id="chart" viewBox="0 0 900 560" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="palate-chart-reading-guide">Vandret: fra finesse og lethed til kraft og dybde <span aria-hidden="true">·</span> Lodret: drikkeglæde</div>
     </div>
 
 
@@ -1097,6 +1107,7 @@ function tracksForType(type) {
 function renderFilters() {
   const wrap = document.getElementById("trackFilters");
   wrap.innerHTML = "";
+  wrap.classList.toggle("palate-four-tracks",tracksForType(currentType).length===3);
   const all = document.createElement("button");
   all.className = "filter" + (activeTrack==="Alle" ? " active":"");
   all.textContent = "Alle spor";

@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-year-normalization-radar-6">
+<meta name="palate-build" content="sandbox-rebuy-shared-profile-7">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -204,6 +204,7 @@ main,.palate-view,.grid,.panel,.cards,.card,#chartWrap,.register-form,.register-
 .palate-profile-scales-inline{padding:0 0 14px;border:0;margin-top:-7px}
 .palate-profile-section.palate-profile-visual{border-bottom:0;padding-bottom:0}
 .palate-profile-scales-inline{margin-top:0;padding-top:0}
+.palate-rebuy-profile-button{margin-top:12px;border:1px solid #b995a1;background:#fff;color:#7a1f3d;border-radius:8px;padding:9px 13px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.palate-rebuy-profile-button:hover{background:#faf1f4}
 </style>
 <style>
 /* PROJECT PALATE — Fase 1: Modern Wine Journal × Nordic Wine Studio */
@@ -1399,6 +1400,14 @@ function palateReferencePrice(w){
  const raw=match[1].replace(/\.(?=\d{3}\b)/g,"").replace(",",".");
  return Number(raw);
 }
+function palateRebuyTastingMatch(label){
+ const name=String(label||"").replace(/\s*\(årgang ikke registreret\)\s*$/i,"").trim();
+ const yearMatch=name.match(/\s+(\d{4})$/);
+ const year=yearMatch?yearMatch[1]:"";
+ const wineName=yearMatch?name.slice(0,yearMatch.index).trim():name;
+ const matches=palateTastingEvents.filter(r=>palateWineKey(r["Vin"],r["Årgang"])===palateWineKey(wineName,year));
+ return matches.length?{name:matches[0]["Vin"],year:matches[0]["Årgang"]}:null;
+}
 function renderPalateSweetspot(){
  const kind=palateSweetKind,price=document.getElementById("sweetspotPrice").value,search=document.getElementById("sweetspotSearch").value.toLocaleLowerCase("da").trim();
  const isRebuy=kind==="rebuy",all=isRebuy?palateRebuyData:palateSweetspotData[kind];
@@ -1416,6 +1425,16 @@ function renderPalateSweetspot(){
   const secondary=document.createElement("span");secondary.className="palate-sweet-price";secondary.textContent=isRebuy?"Genkøbslyst "+w.desire+"/10 · Helhed "+w.overall+"/10 · Pris: "+(w.priceReference||"ikke registreret"):"Prisreference: "+w.price;
   heading.append(title,secondary);const chevron=document.createElement("span");chevron.className="palate-sweet-chevron";chevron.textContent="⌄";summary.append(rank,heading,chevron);
   const detail=document.createElement("div");detail.className="palate-sweet-detail";detail.textContent=isRebuy?"Tidligere smagt · "+w.type+". Vurderingen er hentet fra den godkendte genkøbsliste. "+(w.priceNote||"Pris kontrolleres ved køb."):w.why;detail.style.whiteSpace="pre-line";
+  if(isRebuy){
+   const match=palateRebuyTastingMatch(w.name);
+   if(match){
+    const open=document.createElement("button");
+    open.type="button";open.className="palate-rebuy-profile-button";
+    open.textContent="Se smagsprofil";
+    open.addEventListener("click",()=>openPalateWine(match.name,match.year));
+    detail.append(document.createElement("div"),open);
+   }
+  }
    card.append(summary,detail);root.append(card);
  }
  if(!list.length){const p=document.createElement("p");p.className="lead";p.textContent="Ingen vine matcher filtrene.";root.append(p);}

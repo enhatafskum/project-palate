@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-noegletalsgenveje-31">
+<meta name="palate-build" content="sandbox-tekniske-vindata-32">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -819,8 +819,7 @@ header .sub{margin-top:2px!important}
 </style>
 <style id="palate-kpi-links">
 #view-overblik .palate-kpi-action{display:block;color:inherit;text-align:left;text-decoration:none;font-family:inherit;cursor:pointer;min-width:0}
-#view-overblik .palate-kpi-action .kicker{display:flex;justify-content:space-between;align-items:center;gap:4px}
-#view-overblik .palate-kpi-action .palate-kpi-arrow{color:#762f49;font-size:16px;line-height:1}
+#view-overblik .palate-kpi-action .kicker{display:flex;align-items:center}
 #view-overblik .palate-kpi-action:hover{background:#f8f0f1}
 #view-overblik .palate-kpi-action:focus-visible{outline:2px solid #762f49;outline-offset:2px}
 #view-overblik .palate-kpi-action:disabled{cursor:default}
@@ -853,9 +852,9 @@ header .sub{margin-top:2px!important}
 <div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">
 
 <section class="cards">
-    <a class="card palate-kpi-action" href="#lager"><span class="kicker">Lager <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiStock"></span><span class="small">flasker registreret</span></span></a>
-    <a class="card palate-kpi-action" href="#smagninger"><span class="kicker">Smagninger <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiTasted"></span><span class="small">registrerede smagningshændelser</span></span></a>
-    <button class="card palate-kpi-action" type="button" id="openPalateSweetSpots" aria-haspopup="dialog" disabled><span class="kicker">Sweet spots <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiSweet"></span><span class="small">vine markeret som sweet spot</span></span></button>
+    <a class="card palate-kpi-action" href="#lager"><span class="kicker">Lager</span><span class="palate-kpi-inline"><span class="big" id="kpiStock"></span><span class="small">flasker registreret</span></span></a>
+    <a class="card palate-kpi-action" href="#smagninger"><span class="kicker">Smagninger</span><span class="palate-kpi-inline"><span class="big" id="kpiTasted"></span><span class="small">registrerede smagningshændelser</span></span></a>
+    <button class="card palate-kpi-action" type="button" id="openPalateSweetSpots" aria-haspopup="dialog" disabled><span class="kicker">Sweet spots</span><span class="palate-kpi-inline"><span class="big" id="kpiSweet"></span><span class="small">vine markeret som sweet spot</span></span></button>
     <div class="card"><div class="kicker">På lager & smagt</div><div class="palate-kpi-inline"><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div></div>
   </section>
 
@@ -1888,12 +1887,50 @@ function palateProfileScales(r){
   return '<div class="palate-dialog-scale"><span>'+label+'</span>'+svg+'</div>';
  }).join("")+'</div>';
 }
-// Kildebelagt prøveudvalg for testversionen.
+// Tekniske data pr. cuvée og årgang. Uden årgang vises kun dokumenterede oplysninger på cuvée- eller appellationsniveau.
 const palateTechnicalWines = new Map([
   [palateWineKey("Tony Bish Heartwood Chardonnay","2024"), {"fields":{"Drue":"Chardonnay","Område":"Hawke’s Bay, New Zealand","Gæring":"Franske egetræsfade","Lagring":"11 måneder på franske egetræsfade"},"source":"Susie & Peter","url":"https://susieandpeter.com/wp-content/uploads/2026/02/Susie-Peter-New-Zealand-Wines-of-the-Year-2026-Report.pdf"}],
   [palateWineKey("Cave de Vinzelles Pouilly-Fuissé 1er Cru","2024"), {"fields":{"Drue":"Chardonnay (100 %)","Område":"Pouilly-Fuissé Premier Cru, Bourgogne, Frankrig","Gæring":"Temperaturstyret gæring på ståltank","Lagring":"12 måneder på den fine bærme med omrøring","Alkohol":"12,5 %"},"source":"Supervin","url":"https://www.supervin.dk/cave-de-vinzelles-pouilly-fuisse-1er-cru-2024"}],
   [palateWineKey("Markowitsch Pinot Noir ØKO","2025"), {"fields":{"Drue":"Pinot Noir","Område":"Carnuntum, Østrig","Gæring":"Gæring med skaller i ståltank ved 27–29 °C, efterfulgt af malolaktisk gæring i barriques","Lagring":"Brugte franske barriques","Alkohol":"13,0 %"},"source":"Weingut Markowitsch","url":"https://www.markowitsch.at/wein/pinot-noir-2025/"}],
-  [palateWineKey("Axel Pauly Spätburgunder Réserve","2023"), {"fields":{"Drue":"Pinot Noir","Område":"Mosel, Tyskland","Alkohol":"13 %"},"source":"Supervin","url":"https://www.supervin.dk/axel-pauly-spatburgunder-reserve-trocken-2023"}]
+  [palateWineKey("Axel Pauly Spätburgunder Réserve","2023"), {"fields":{"Drue":"Pinot Noir","Område":"Mosel, Tyskland","Alkohol":"13 %"},"source":"Supervin","url":"https://www.supervin.dk/axel-pauly-spatburgunder-reserve-trocken-2023"}],
+  [palateWineKey("Charles Roux Blanc de Blancs Demi-Sec",""), {"fields":{"Drue":"Chardonnay","Område":"Frankrig"},"source":"VestVin","url":"https://vestvin.dk/shop/9-vin/810-charles-roux-blanc-de-blancs-demi-sec/","note":"Cuvéeoplysninger. Kilderne angiver forskellige regioner."}],
+  [palateWineKey("Araldica Brachetto d'Acqui Dolce",""), {"fields":{"Drue":"Brachetto (mindst 97 % ifølge appellationen)","Område":"Brachetto d’Acqui DOCG, Piemonte, Italien"},"source":"Valoritalia","url":"https://www.valoritalia.it/vini/brachetto-dacqui-docg/","note":"Appellationsoplysninger. Producentens præcise aftapning er ikke identificeret."}],
+  [palateWineKey("Tagaro Fortello Syrah Appassimento",""), {"fields":{"Drue":"Syrah","Område":"Puglia, Italien"},"source":"Vivino","url":"https://www.vivino.com/da/masseria-tagaro-di-lorusso-fortello-syrah-appassimento/w/13007338","note":"Cuvéeoplysninger. Årgangen er ikke registreret."}],
+  [palateWineKey("Maori Moana Sauvignon Blanc","2025"), {"fields":{"Drue":"Sauvignon Blanc","Område":"Marlborough, New Zealand","Alkohol":"12,5 %"},"source":"Vivino","url":"https://www.vivino.com/da/maori-moana-sauvignon-blanc/w/7387232?year=2025"}],
+  [palateWineKey("Domaine Hubert Bouzereau-Gruère et Filles Bourgogne Aligoté","2022"), {"fields":{"Drue":"Aligoté (100 %)","Område":"Bourgogne, Frankrig","Alkohol":"12 %"},"source":"VildMedVin","url":"https://www.vildmedvin.dk/hubert-bouzereau-gruere-et-filles-bourgogne-aligote-2022"}],
+  [palateWineKey("Vidal-Fleury Ventoux Rouge","2024"), {"fields":{"Område":"Ventoux, Rhône, Frankrig","Alkohol":"14 %"},"source":"MENY","url":"https://shop.meny.dk/produkter/2024-ventoux-rouge-vidal-fleury-vidal-fleury"}],
+  [palateWineKey("Jean Gagnerot Bourgogne Chardonnay","2024"), {"fields":{"Drue":"Chardonnay (100 %)","Område":"Bourgogne, Frankrig","Gæring":"Kølig, temperaturstyret gæring","Lagring":"Flere måneder på gærresterne"},"source":"Supervin","url":"https://www.supervin.dk/jean-gagnerot-bourgogne-chardonnay-2024"}],
+  [palateWineKey("Mayer am Pfarrplatz Asia Cuvée","2024"), {"fields":{"Drue":"Riesling, Grüner Veltliner, Sauvignon Blanc, Traminer og Weißburgunder","Område":"Wien, Østrig"},"source":"Ösiwein","url":"https://www.oesiwein.de/steckbrief.php?nr=863&sid=13eb1e6de1571dea48a49b138db14209&wein=Asia+Cuv%C3%A9e.&winzer=Mayer+am+Pfarrplatz"}],
+  [palateWineKey("Gehlen-Cornelius Syrah",""), {"fields":{"Drue":"Syrah","Område":"Mosel, Tyskland"},"source":"Weingut Gehlen-Cornelius","url":"https://gehlen-cornelius.de/collections/rotwein/products/syrah","note":"Cuvéeoplysninger. Årgangen er ikke registreret."}],
+  [palateWineKey("Huber Terrassen Grüner Veltliner","2025"), {"fields":{"Drue":"Grüner Veltliner","Område":"Traisental DAC, Østrig","Gæring":"Ståltank","Lagring":"3 måneder på gærresterne","Alkohol":"12 %"},"source":"Weingut Markus Huber","url":"https://huber.wine/en/products/gruner-veltliner-terrassen/"}],
+  [palateWineKey("Ziereisen TAL Spätburgunder","2023"), {"fields":{"Drue":"Pinot Noir (Spätburgunder)","Område":"Baden, Tyskland","Lagring":"2 år på 225-liters egetræsfade"},"source":"Systembolaget","url":"https://www.systembolaget.se/produkt/vin/ziereisen-9414701/"}],
+  [palateWineKey("Tenuta del Principe Mensale Toscana IGP Sangiovese","2018"), {"fields":{"Drue":"Sangiovese","Område":"Toscana IGP, Italien"},"source":"Italian Trade Agency","url":"https://www.ice.it/it/sites/default/files/inline-files/ITA%20CATALOG%20Final_opt.pdf"}],
+  [palateWineKey("Prosper Maufoux Mâcon-Villages","2024"), {"fields":{"Drue":"Chardonnay","Område":"Mâcon-Villages, Bourgogne, Frankrig"},"source":"Bottlio","url":"https://bottlio.dk/vin/ukendt-prosper-maufoux-macon-villages-2024"}],
+  [palateWineKey("Bread & Butter Chardonnay","2023"), {"fields":{"Drue":"Chardonnay","Område":"Californien, USA"},"source":"Bread & Butter Wines","url":"https://shop.breadandbutterwines.com/product/2023-Bread---Butter-California-Chardonnay"}],
+  [palateWineKey("Maison Vaubourg Mâcon-Igé La Cra","2023"), {"fields":{"Drue":"Chardonnay","Område":"Mâcon-Igé, Bourgogne, Frankrig","Gæring":"228-liters egetræsfade, 25–30 % nye","Lagring":"12 måneder på fad og 6 måneder i ståltank med omrøring af den fine bærme"},"source":"Supervin","url":"https://www.supervin.dk/maison-vaubourg-macon-ige-la-cra-2023"}],
+  [palateWineKey("Rudi Rüttger Spätburgunder Vom Kalkboden","2024"), {"fields":{"Drue":"Pinot Noir (Spätburgunder)","Område":"Pfalz, Tyskland"},"source":"Vinbladet","url":"https://vinbladet.dk/rudi-ruttger-spatburgunder-vom-kalkboden-2024-pfalztyskland/"}],
+  [palateWineKey("Fleurie Granits Roses – Domaine de Bel-Air","2023"), {"fields":{"Drue":"Gamay (100 %)","Område":"Fleurie, Beaujolais, Frankrig"},"source":"Falkensten Vin","url":"https://www.falkenstenvin.dk/shop/93-vine/4858-fleurie-granits-roses-domaine-de-bel-air-2023/"}],
+  [palateWineKey("Riesling Trocken “Keine Hexerei” Pfalz Öko","2024"), {"fields":{"Drue":"Riesling","Område":"Pfalz, Tyskland","Alkohol":"12,5 %"},"source":"Falkensten Vin","url":"https://www.falkenstenvin.dk/shop/93-vine/5122-riesling-trocken-keine-hexerei-pfalz-oeko-2024/"}],
+  [palateWineKey("Chevalier Delaude","2022"), {"fields":{"Drue":"Syrah","Område":"Languedoc, Frankrig"},"source":"Vivino","url":"https://www.vivino.com/da/sdgb-chevalier-delaude-languedoc/w/10566438?price_id=40367800&year=2022"}],
+  [palateWineKey("Beyra Reserva","2019"), {"fields":{"Drue":"Jaen, Tinta Roriz og Touriga Nacional","Område":"Beira Interior, Portugal"},"source":"Garrafeira Nacional","url":"https://www.garrafeiranacional.com/2019-beyra-reserva-tinto.html"}],
+  [palateWineKey("Rudi Rüttger Neuleininger Sonnenberg Spätburgunder Réserve","2022"), {"fields":{"Drue":"Pinot Noir (100 %)","Område":"Neuleininger Sonnenberg, Pfalz, Tyskland","Gæring":"Cementtank med 20 dages skindkontakt","Lagring":"15 måneder på fad"},"source":"Supervin","url":"https://www.supervin.dk/rudi-ruttger-neuleininger-sonnenberg-spatburgunder-reserve-pfalz-2022"}],
+  [palateWineKey("Château Lamothe-Vincent Réserve Rouge","2020"), {"fields":{"Drue":"Merlot (80 %) og Cabernet Sauvignon (20 %)","Område":"Bordeaux, Frankrig","Lagring":"24 måneder i tank"},"source":"Guide Hachette","url":"https://www.hachette-vins.com/guide-vins/les-vins/ch-lamothe-vincent-reserve-2020-2024/202458249/"}],
+  [palateWineKey("Cantine Paradiso 1954 Primitivo","2023"), {"fields":{"Drue":"Primitivo (100 %)","Område":"Puglia, Italien","Gæring":"Temperaturstyret gæring i ståltank med 15–20 dages maceration","Lagring":"12 måneder på 225-liters fade, med ståltank før og efter","Alkohol":"15 %"},"source":"AndrupVin","url":"https://www.andrupvin.dk/cantine-paradiso-1954-primitivo-2023"}],
+  [palateWineKey("Domaines Leflaive Les Chênes Mâcon-Verzé","2024"), {"fields":{"Drue":"Chardonnay","Område":"Mâcon-Verzé, Bourgogne, Frankrig","Lagring":"10 måneder på gærrester i gæringsbeholderne og derefter ca. 6 måneder på fin bærme i ståltank"},"source":"Domaine Leflaive","url":"https://www.leflaive.fr/fr_FR/wine/macon-verze-les-chenes"}],
+  [palateWineKey("Clos Bellane Côtes du Rhône Villages Valréas","2023"), {"fields":{"Drue":"Grenache (50 %) og Syrah (50 %)","Område":"Côtes du Rhône Villages Valréas, Frankrig","Alkohol":"14 %"},"source":"Decanter","url":"https://www.decanter.com/wine-reviews/france/rhone/clos-bellane-cotes-du-rhone-villages-valreas-2023-89857/"}],
+  [palateWineKey("Philipp Kuhn Riesling Tradition",""), {"fields":{"Drue":"Riesling","Område":"Pfalz, Tyskland"},"source":"VDP","url":"https://www.vdp.de/fileadmin/user_upload/Downloads/user_upload/AU2400318_PL_Katalog_160dpi.pdf","note":"Cuvéeoplysninger. Årgangen er ikke registreret."}],
+  [palateWineKey("Pliniana Re Noire Primitivo di Manduria","2021"), {"fields":{"Drue":"Primitivo","Område":"Primitivo di Manduria, Puglia, Italien","Lagring":"Franske egetræsfade","Alkohol":"14,5 %"},"source":"AndrupVin","url":"https://www.andrupvin.dk/pliniana-re-noire-primitivo-di-manduria-2021","note":"Kilden angiver forskellige lagringstider. Varigheden er udeladt."}],
+  [palateWineKey("Conte Zardi Caveja Sangiovese Rubicone","2022"), {"fields":{"Drue":"Sangiovese-blend","Område":"Rubicone, Emilia-Romagna, Italien"},"source":"AndrupVin","url":"https://www.andrupvin.dk/vine/vinhuse/conte-zadi"}],
+  [palateWineKey("Soliterra Essence Cabernet Sauvignon","2020"), {"fields":{"Drue":"Cabernet Sauvignon (100 %)","Område":"Sydøstspanien","Lagring":"6 måneder på egetræsfade og derefter op til 15 måneder i ståltank","Alkohol":"14,5 %"},"source":"iPrice","url":"https://isimple.dk/product/8536433/Soliterra-Essence-Cabernet-Sauvignon-2020"}],
+  [palateWineKey("Veronia Negroamaro Zinfandel",""), {"fields":{"Drue":"Negroamaro og Zinfandel","Område":"Puglia, Italien"},"source":"VinAvisen","url":"https://vinavisen.dk/veronia-negroamaro-zinfandel/","note":"Cuvéeoplysninger. Årgangen er ikke registreret."}],
+  [palateWineKey("Cantine Pliniana Re Noire Primitivo di Manduria",""), {"fields":{"Drue":"Primitivo","Område":"Primitivo di Manduria, Puglia, Italien"},"source":"AndrupVin (cuvéereference)","url":"https://www.andrupvin.dk/pliniana-re-noire-primitivo-di-manduria-2021","note":"Lagerets årgang er ikke registreret. Kilden viser 2021 og bruges kun til at identificere cuvéen."}],
+  [palateWineKey("Crémant de Limoux Brut",""), {"fields":{"Område":"Crémant de Limoux AOP, Languedoc, Frankrig","Gæring":"Traditionel metode med andengæring på flaske"},"source":"INAO","url":"https://www.inao.gouv.fr/node/5070/printable/pdf","note":"Appellationsoplysninger. Producent og druesammensætning er ikke registreret."}],
+  [palateWineKey("Borgo Rosso Amarone della Valpolicella","2021"), {"fields":{"Drue":"Corvina, Corvinone og Rondinella","Område":"Amarone della Valpolicella DOCG, Veneto, Italien","Alkohol":"15 %"},"source":"AndrupVin","url":"https://www.andrupvin.dk/borgo-rosso-amarone-della-valpolicella-2021"}],
+  [palateWineKey("Chais du Batard Côtes du Rhône","2023"), {"fields":{"Drue":"Syrah, Grenache og Marselan","Område":"Côtes du Rhône, Frankrig"},"source":"Vivino","url":"https://www.vivino.com/da/chais-du-batard-cotes-du-rhone/w/13148569?year=2023"}],
+  [palateWineKey("Piccini Appassimento 1882 Puglia","2021"), {"fields":{"Område":"Puglia, Italien"},"source":"PALATEs registrerede vinnavn","url":null,"note":"Oprindelsen fremgår af det registrerede navn. Drueblanding og vinifikation er ikke uafhængigt bekræftet."}],
+  [palateWineKey("Château de la Grande Gardiole Les Vieilles Vignes Châteauneuf-du-Pape","2022"), {"fields":{"Drue":"Syrah, Grenache og Cinsault","Område":"Châteauneuf-du-Pape, Rhône, Frankrig"},"source":"Vivino","url":"https://www.vivino.com/fr/chateau-de-la-grand-gardiole-les-vieilles-vignes-chateauneuf-du-pape/w/5776263?price_id=41372953&year=2022","note":"Alkoholprocenten er udeladt, fordi kilderne angiver forskellige værdier."}],
+  [palateWineKey("Cuvée Dissenay Chardonnay","2025"), {"fields":{"Drue":"Chardonnay"},"source":"Kvickly Helsinge","url":"https://kvicklyhelsinge.dk/shop/catalog/vin/hvidvin-c60/cuvee-dissenay-chardonnay-2025-p1762"}],
+  [palateWineKey("Domaine Raspail-Ay Gigondas","2022"), {"fields":{"Drue":"Grenache Noir (70 %), Syrah (20 %) og Mourvèdre (10 %)","Område":"Gigondas, Rhône, Frankrig","Lagring":"Grenache og Mourvèdre på store træfade. Syrah på brugte fade og store træfade"},"source":"FineWines (årgangsnote fra Wine Advocate)","url":"https://finewines.dk/collections/pris-150-300/products/domaine-raspail-ay-gigondas-2022"}]
 ]);
 
 function openPalateWine(name,year){
@@ -1920,11 +1957,13 @@ function openPalateWine(name,year){
   (val(r,"Situation")?'<p class="palate-profile-subtle">Situation: '+esc(val(r,"Situation"))+'</p>':"")+'</section>'+
   '<section class="palate-profile-section"><h3>Servering og registrering</h3>'+info([["Registreret",dateText(val(r,"Registreringsdato"))],["Temperatur",val(r,"Temperatur")||wine?.temp],["Glas",val(r,"Glas")||wine?.glass],["Smagning",val(r,"Smagning_ID")?"#"+val(r,"Smagning_ID"):""]])+'</section>';
  const history=matches.length>1?'<details class="palate-profile-history"><summary>Tidligere smagninger ('+(matches.length-1)+')</summary>'+matches.slice(1).map(r=>'<details class="palate-profile-old"><summary>'+esc(dateText(val(r,"Registreringsdato")))+' · Drikkeglæde '+esc(score(r,"Drikkeglæde"))+'/10</summary>'+tasting(r)+'</details>').join("")+'</details>':"";
- const technical = palateTechnicalWines.get(palateWineKey(displayName,displayYear));
+ const technicalYear = palateWineYear(year);
+ const technical = palateTechnicalWines.get(palateWineKey(name,technicalYear));
  const technicalDetails = technical
-  ? '<section class="palate-profile-section"><h3>Tekniske data · årgang '+esc(displayYear)+'</h3>'+
+  ? '<section class="palate-profile-section"><h3>Tekniske data · '+(technicalYear?'årgang '+esc(technicalYear):'årgang ikke oplyst')+'</h3>'+
     info(Object.entries(technical.fields))+
-    '<p class="palate-profile-subtle"><a href="'+esc(technical.url)+'">Kilde: '+esc(technical.source)+'</a></p></section>'
+    (technical.note?'<p class="palate-profile-subtle">'+esc(technical.note)+'</p>':'')+
+    '<p class="palate-profile-subtle">Kilde: '+(technical.url?'<a href="'+esc(technical.url)+'">'+esc(technical.source)+'</a>':esc(technical.source))+'</p></section>'
   : "";
  document.getElementById("wineProfileContent").innerHTML=
  '<header class="palate-profile-header"><h2>'+esc(displayName)+'</h2><p>'+esc(displayYear||"Årgang ikke registreret")+' · '+esc(stock?.type||val(latest,"Type")||wine?.type||"Vin")+' · '+esc(stock?.track||val(latest,"Spor")||wine?.track||"Spor ikke registreret")+'</p></header>'+

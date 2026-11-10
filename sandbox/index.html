@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-registration-chart-24">
+<meta name="palate-build" content="sandbox-registration-labels-25">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -1057,9 +1057,9 @@ header .sub{margin-top:2px!important}
   <h2>Registrer smagning</h2>
   
   <form id="palateRegistration" class="register-form">
-<label class="full"><span class="palate-visually-hidden">Link</span><input name="Vinlink" type="url" placeholder="https://... (valgfrit)"></label>
-<label class="full"><span class="palate-visually-hidden">Navn</span><input name="Vin" autocomplete="off" placeholder="Vinens navn"></label>
-<label><span class="palate-visually-hidden">Årgang</span><input name="Årgang" inputmode="numeric" placeholder="ÅÅÅÅ"></label>
+<label class="full"><input name="Vinlink" aria-label="Link" type="url" placeholder="https://... (valgfrit)"></label>
+<label class="full"><input name="Vin" aria-label="Navn" autocomplete="off" placeholder="Vinens navn"></label>
+<label><input name="Årgang" aria-label="Årgang" inputmode="numeric" placeholder="ÅÅÅÅ"></label>
 
 <div class="full"><h3>Din vurdering</h3><p class="scale-help">Flyt skyderne for at angive din score fra 1 til 10 i halve point. En uberørt skyder tæller ikke med.</p></div>
 <div class="palate-rating"><div class="scale-heading"><strong>Drikkeglæde</strong><output class="rating-current" aria-live="polite">Ikke vurderet</output></div><input type="range" data-rating-slider="Drikkeglæde" min="1" max="10" step="0.5" value="5.5" aria-label="Drikkeglæde, 1 til 10 i halve point"><input type="hidden" name="Drikkeglæde" disabled><div class="rating-ends"><span>1</span><span>10</span></div></div>

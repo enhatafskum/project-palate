@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-registration-labels-25">
+<meta name="palate-build" content="sandbox-white-track-order-26">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -1180,7 +1180,7 @@ function renderKPIs() {
 function tracksForType(type) {
   const preferredOrder = type === "Rød"
     ? ["Finesse & saftighed", "Dybde & balance", "Balanceret kraft"]
-    : ["Friskhed & mineralitet", "Tekstur & mineralitet", "Fylde & fad", "Frugt & rundhed", "Mousserende"];
+    : ["Friskhed & mineralitet", "Tekstur & mineralitet", "Frugt & rundhed", "Fylde & fad", "Mousserende"];
 
   const found = [...new Set(wines.filter(w=>w.type===type).map(w=>w.track))];
   const ordered = preferredOrder.filter(t => found.includes(t));

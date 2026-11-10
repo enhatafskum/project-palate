@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-noegletal-tekniske-data-30">
+<meta name="palate-build" content="sandbox-noegletalsgenveje-31">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -817,6 +817,17 @@ header .sub{margin-top:2px!important}
  .register-form .palate-rating,.register-form .palate-scale{padding:7px 10px!important}
 }
 </style>
+<style id="palate-kpi-links">
+#view-overblik .palate-kpi-action{display:block;color:inherit;text-align:left;text-decoration:none;font-family:inherit;cursor:pointer;min-width:0}
+#view-overblik .palate-kpi-action .kicker{display:flex;justify-content:space-between;align-items:center;gap:4px}
+#view-overblik .palate-kpi-action .palate-kpi-arrow{color:#762f49;font-size:16px;line-height:1}
+#view-overblik .palate-kpi-action:hover{background:#f8f0f1}
+#view-overblik .palate-kpi-action:focus-visible{outline:2px solid #762f49;outline-offset:2px}
+#view-overblik .palate-kpi-action:disabled{cursor:default}
+.palate-sweet-list-dialog{list-style:none;padding:0;margin:14px 0 0}
+.palate-sweet-list-dialog li{border-top:1px solid var(--line);padding:7px 0}
+.palate-sweet-list-dialog .wine-name-button{white-space:normal;text-align:left;overflow-wrap:anywhere}
+</style>
 </head>
 <body>
 <div style="background:#f9e4a9;color:#4b2d00;padding:9px 16px;text-align:center;font-weight:700">PALATE TESTMILJØ – OPDATERINGSTEST 6 ✓ – den almindelige app er uændret</div>
@@ -842,9 +853,9 @@ header .sub{margin-top:2px!important}
 <div class="palate-view" id="view-overblik" role="tabpanel" aria-labelledby="nav-overblik">
 
 <section class="cards">
-    <div class="card"><div class="kicker">Lager</div><div class="palate-kpi-inline"><div class="big" id="kpiStock"></div><div class="small">flasker registreret</div></div></div>
-    <div class="card"><div class="kicker">Smagninger</div><div class="palate-kpi-inline"><div class="big" id="kpiTasted"></div><div class="small">registrerede smagningshændelser</div></div></div>
-    <div class="card"><div class="kicker">Sweet spots</div><div class="palate-kpi-inline"><div class="big" id="kpiSweet"></div><div class="small">vine markeret som sweet spot</div></div></div>
+    <a class="card palate-kpi-action" href="#lager"><span class="kicker">Lager <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiStock"></span><span class="small">flasker registreret</span></span></a>
+    <a class="card palate-kpi-action" href="#smagninger"><span class="kicker">Smagninger <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiTasted"></span><span class="small">registrerede smagningshændelser</span></span></a>
+    <button class="card palate-kpi-action" type="button" id="openPalateSweetSpots" aria-haspopup="dialog" disabled><span class="kicker">Sweet spots <span class="palate-kpi-arrow" aria-hidden="true">›</span></span><span class="palate-kpi-inline"><span class="big" id="kpiSweet"></span><span class="small">vine markeret som sweet spot</span></span></button>
     <div class="card"><div class="kicker">På lager & smagt</div><div class="palate-kpi-inline"><div class="big" id="kpiBoth"></div><div class="small">klar til gensmagning</div></div></div>
   </section>
 
@@ -1080,6 +1091,12 @@ header .sub{margin-top:2px!important}
 
 </div>
 </main>
+<dialog id="palateSweetSpotsDialog" class="wine-dialog" aria-labelledby="palateSweetSpotsTitle">
+  <form method="dialog"><button type="submit" class="wine-dialog-close">Luk ×</button></form>
+  <h2 id="palateSweetSpotsTitle">Dine Sweet spots</h2>
+  <p id="palateSweetSpotsEmpty" hidden>Ingen smagte vine er markeret som Sweet spot endnu.</p>
+  <ul id="palateSweetSpotsList" class="palate-sweet-list-dialog"></ul>
+</dialog>
 <dialog id="wineProfileDialog" class="wine-dialog" aria-label="Vinens profil">
 <button type="button" class="wine-dialog-close" id="closeWineProfile">Luk ×</button>
 <div id="wineProfileContent"></div>
@@ -1168,11 +1185,33 @@ function fmtName(w) {
 }
 
 let tastingCount = 27;
+const sweetSpotsDialog = document.getElementById("palateSweetSpotsDialog");
+const openSweetSpots = document.getElementById("openPalateSweetSpots");
+openSweetSpots.addEventListener("click", () => sweetSpotsDialog.showModal());
+
+function renderSweetSpots() {
+  const unique = new Map();
+  for (const wine of wines) {
+    if (wine.status.includes("Sweet spot")) unique.set(palateWineKey(wine.name,wine.vintage),wine);
+  }
+  const entries = Array.from(unique.values()).sort((a,b) =>
+    a.name.localeCompare(b.name,"da") || palateWineYear(b.vintage).localeCompare(palateWineYear(a.vintage))
+  );
+  document.getElementById("kpiSweet").textContent = entries.length;
+  document.getElementById("palateSweetSpotsEmpty").hidden = entries.length > 0;
+  document.getElementById("palateSweetSpotsList").innerHTML = entries.map(wine => {
+    const title = [wine.name,palateWineYear(wine.vintage)].filter(Boolean).join(" ");
+    return '<li><button type="button" class="wine-name-button" data-palate-wine="'+esc(wine.name)+
+      '" data-palate-year="'+esc(wine.vintage)+'">'+esc(title)+' <span aria-hidden="true">›</span></button></li>';
+  }).join("");
+  openSweetSpots.disabled = false;
+}
+
 function renderKPIs() {
   const stock = inventory.reduce((a,b)=>a+b.qty,0);
   document.getElementById("kpiStock").textContent = stock;
   document.getElementById("kpiTasted").textContent = tastingCount;
-  document.getElementById("kpiSweet").textContent = wines.filter(w=>w.status.includes("Sweet spot")).length;
+  renderSweetSpots();
   const stockedNames = new Set(inventory.filter(i=>i.qty>0 && i.status.includes("Smagt")).map(i=>i.name));
   document.getElementById("kpiBoth").textContent = stockedNames.size;
 }
@@ -1849,6 +1888,14 @@ function palateProfileScales(r){
   return '<div class="palate-dialog-scale"><span>'+label+'</span>'+svg+'</div>';
  }).join("")+'</div>';
 }
+// Kildebelagt prøveudvalg for testversionen.
+const palateTechnicalWines = new Map([
+  [palateWineKey("Tony Bish Heartwood Chardonnay","2024"), {"fields":{"Drue":"Chardonnay","Område":"Hawke’s Bay, New Zealand","Gæring":"Franske egetræsfade","Lagring":"11 måneder på franske egetræsfade"},"source":"Susie & Peter","url":"https://susieandpeter.com/wp-content/uploads/2026/02/Susie-Peter-New-Zealand-Wines-of-the-Year-2026-Report.pdf"}],
+  [palateWineKey("Cave de Vinzelles Pouilly-Fuissé 1er Cru","2024"), {"fields":{"Drue":"Chardonnay (100 %)","Område":"Pouilly-Fuissé Premier Cru, Bourgogne, Frankrig","Gæring":"Temperaturstyret gæring på ståltank","Lagring":"12 måneder på den fine bærme med omrøring","Alkohol":"12,5 %"},"source":"Supervin","url":"https://www.supervin.dk/cave-de-vinzelles-pouilly-fuisse-1er-cru-2024"}],
+  [palateWineKey("Markowitsch Pinot Noir ØKO","2025"), {"fields":{"Drue":"Pinot Noir","Område":"Carnuntum, Østrig","Gæring":"Gæring med skaller i ståltank ved 27–29 °C, efterfulgt af malolaktisk gæring i barriques","Lagring":"Brugte franske barriques","Alkohol":"13,0 %"},"source":"Weingut Markowitsch","url":"https://www.markowitsch.at/wein/pinot-noir-2025/"}],
+  [palateWineKey("Axel Pauly Spätburgunder Réserve","2023"), {"fields":{"Drue":"Pinot Noir","Område":"Mosel, Tyskland","Alkohol":"13 %"},"source":"Supervin","url":"https://www.supervin.dk/axel-pauly-spatburgunder-reserve-trocken-2023"}]
+]);
+
 function openPalateWine(name,year){
  const key=palateWineKey(name,year);
  const stock=inventory.find(i=>palateWineKey(i.name,i.vintage)===key);
@@ -1873,15 +1920,16 @@ function openPalateWine(name,year){
   (val(r,"Situation")?'<p class="palate-profile-subtle">Situation: '+esc(val(r,"Situation"))+'</p>':"")+'</section>'+
   '<section class="palate-profile-section"><h3>Servering og registrering</h3>'+info([["Registreret",dateText(val(r,"Registreringsdato"))],["Temperatur",val(r,"Temperatur")||wine?.temp],["Glas",val(r,"Glas")||wine?.glass],["Smagning",val(r,"Smagning_ID")?"#"+val(r,"Smagning_ID"):""]])+'</section>';
  const history=matches.length>1?'<details class="palate-profile-history"><summary>Tidligere smagninger ('+(matches.length-1)+')</summary>'+matches.slice(1).map(r=>'<details class="palate-profile-old"><summary>'+esc(dateText(val(r,"Registreringsdato")))+' · Drikkeglæde '+esc(score(r,"Drikkeglæde"))+'/10</summary>'+tasting(r)+'</details>').join("")+'</details>':"";
- const technicalExample = palateWineKey(displayName,displayYear) === palateWineKey("Tony Bish Heartwood Chardonnay","2024")
-  ? '<section class="palate-profile-section"><h3>Tekniske data · årgang 2024</h3>'+
-    info([["Drue","Chardonnay"],["Område","Hawke’s Bay, New Zealand"],["Gæring","Franske egetræsfade"],["Lagring","11 måneder på franske egetræsfade"]])+
-    '<p class="palate-profile-subtle"><a href="https://susieandpeter.com/wp-content/uploads/2026/02/Susie-Peter-New-Zealand-Wines-of-the-Year-2026-Report.pdf">Kilde til årgangen: Susie &amp; Peter, New Zealand Wines of the Year 2026</a></p></section>'
+ const technical = palateTechnicalWines.get(palateWineKey(displayName,displayYear));
+ const technicalDetails = technical
+  ? '<section class="palate-profile-section"><h3>Tekniske data · årgang '+esc(displayYear)+'</h3>'+
+    info(Object.entries(technical.fields))+
+    '<p class="palate-profile-subtle"><a href="'+esc(technical.url)+'">Kilde: '+esc(technical.source)+'</a></p></section>'
   : "";
  document.getElementById("wineProfileContent").innerHTML=
  '<header class="palate-profile-header"><h2>'+esc(displayName)+'</h2><p>'+esc(displayYear||"Årgang ikke registreret")+' · '+esc(stock?.type||val(latest,"Type")||wine?.type||"Vin")+' · '+esc(stock?.track||val(latest,"Spor")||wine?.track||"Spor ikke registreret")+'</p></header>'+
  (latest?tasting(latest):'<p class="palate-profile-empty">Ingen smagning registreret endnu.</p>')+
- '<section class="palate-profile-section"><h3>Vin og lager</h3>'+info([["Status",stock?.status||wine?.status],["På lager",stock?stock.qty+" fl.":""],["Stilakse",Number.isFinite(wine?.style)?wine.style:""]])+'</section>'+technicalExample+history;
+ '<section class="palate-profile-section"><h3>Vin og lager</h3>'+info([["Status",stock?.status||wine?.status],["På lager",stock?stock.qty+" fl.":""],["Stilakse",Number.isFinite(wine?.style)?wine.style:""]])+'</section>'+technicalDetails+history;
  const dialog=document.getElementById("wineProfileDialog");
  if(!dialog.open)dialog.showModal();
 }

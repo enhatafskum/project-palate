@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="./palate-icon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="./palate-icon-180.png?v=palate-clean-3">
 <meta name="theme-color" content="#7a1f3d">
-<meta name="palate-build" content="sandbox-vinlaboratoriet-28">
+<meta name="palate-build" content="sandbox-smageanalyse-29">
 <meta name="description" content="Project PALATE – personligt dashboard over vinsmagninger, smagsprofiler og vinlager.">
 <style>
 :root {
@@ -859,12 +859,10 @@ header .sub{margin-top:2px!important}
 
 <section class="palate-lab-overview" aria-label="Vinlaboratoriet og vinlager">
   <article class="panel palate-lab-feature">
-    <div class="kicker">Vinlaboratoriet · Vinfremstilling</div>
-    <h2>Hvad smager du, når en Chardonnay er fadgæret?</h2>
-    <p><strong>Kort vinviden.</strong> Fadgæring betyder, at gæringen foregår på fad. Fadlagring beskriver, hvor vinen modner bagefter. Tony Bish Heartwood Chardonnay 2024 er et eksempel på begge dele.</p>
-    <p><strong>Prøv selv.</strong> Smag den sammen med en Chardonnay, som er dokumenteret gæret og lagret på ståltank. Servér begge ved samme temperatur. Notér fadaromaer, mundfornemmelse og friskhed hver for sig.</p>
-    <p class="palate-lab-note">Brug forskellene som spor. De to vine kan også adskille sig i fx voksested og modenhed.</p>
-    <button class="wine-name-button" type="button" data-palate-wine="Tony Bish Heartwood Chardonnay" data-palate-year="2024">Se tekniske data for Heartwood 2024 <span aria-hidden="true">›</span></button>
+    <div class="kicker">Vinlaboratoriet</div>
+    <h2>Hvilke smagsspor giver dig mest drikkeglæde?</h2>
+    <div id="palateLabInsights" class="palate-lab-suggestions" aria-live="polite">Henter smagninger …</div>
+    <p class="palate-lab-note">Gennemsnit af seneste smagning pr. vin og årgang. Et spor skal have mindst tre vine med score for at indgå. Tallene afspejler de vine, du har smagt.</p>
   </article>
   <article class="panel palate-lab-stock">
     <div class="kicker">Fra dit vinlager</div>
@@ -1196,7 +1194,7 @@ function fmtName(w) {
 
 const palateLabChoices = new Map();
 
-function renderPalateLabSuggestions(redraw = false) {
+function latestPalateLabTastings() {
   const latest = new Map();
   for (const tasting of palateTastingEvents) {
     const key = palateWineKey(tasting.Vin, tasting["Årgang"]);
@@ -1209,6 +1207,38 @@ function renderPalateLabSuggestions(redraw = false) {
     }
   }
 
+  return latest;
+}
+
+function renderPalateLabInsights() {
+  const byType = new Map([["Hvid", new Map()], ["Rød", new Map()]]);
+  for (const tasting of latestPalateLabTastings().values()) {
+    const tracks = byType.get(tasting.Type);
+    const track = tasting.Spor?.trim();
+    const score = insightNum(tasting, "Drikkeglæde");
+    if (!tracks || !track || score === null) continue;
+    const group = tracks.get(track) || {count: 0, total: 0};
+    group.count++;
+    group.total += score;
+    tracks.set(track, group);
+  }
+
+  const output = Array.from(byType, ([type, tracks]) => {
+    const label = type === "Hvid" ? "Hvidvin" : "Rødvin";
+    const ranked = Array.from(tracks, ([track, group]) => ({
+      track, count: group.count, score: Math.round(100 * group.total / group.count) / 100
+    })).filter(group => group.count >= 3).sort((a, b) => b.score - a.score);
+    if (!ranked.length) return '<div><small>'+label+' · Endnu for få vine pr. spor</small></div>';
+    return ranked.filter(group => group.score === ranked[0].score).map(group =>
+      '<div><small>'+label+' · '+group.count+' vine</small><strong>'+esc(group.track)+'</strong>'+
+      ' · '+group.score.toLocaleString("da-DK",{maximumFractionDigits:2})+'/10</div>'
+    ).join("");
+  });
+  document.getElementById("palateLabInsights").innerHTML = output.join("");
+}
+
+function renderPalateLabSuggestions(redraw = false) {
+  const latest = latestPalateLabTastings();
   let canRedraw = false;
   const suggestions = ["Hvid", "Rød"].map(type => {
     const candidates = inventory.filter(w => {
@@ -1470,6 +1500,7 @@ function loadPalateData(){
     renderTastingHistory(smagRows);
     renderFilters();
     renderChart();
+    renderPalateLabInsights();
     renderPalateLabSuggestions();
     const selectedStock=document.querySelector(".tab[data-stock].active");
     renderStock(selectedStock?selectedStock.dataset.stock:"Alle");
@@ -1930,9 +1961,9 @@ function openPalateWine(name,year){
   '<section class="palate-profile-section"><h3>Servering og registrering</h3>'+info([["Registreret",dateText(val(r,"Registreringsdato"))],["Temperatur",val(r,"Temperatur")||wine?.temp],["Glas",val(r,"Glas")||wine?.glass],["Smagning",val(r,"Smagning_ID")?"#"+val(r,"Smagning_ID"):""]])+'</section>';
  const history=matches.length>1?'<details class="palate-profile-history"><summary>Tidligere smagninger ('+(matches.length-1)+')</summary>'+matches.slice(1).map(r=>'<details class="palate-profile-old"><summary>'+esc(dateText(val(r,"Registreringsdato")))+' · Drikkeglæde '+esc(score(r,"Drikkeglæde"))+'/10</summary>'+tasting(r)+'</details>').join("")+'</details>':"";
  const technicalExample = palateWineKey(displayName,displayYear) === palateWineKey("Tony Bish Heartwood Chardonnay","2024")
-  ? '<details class="palate-profile-history"><summary>Tekniske data · årgang 2024</summary><section class="palate-profile-section">'+
+  ? '<section class="palate-profile-section"><h3>Tekniske data · årgang 2024</h3>'+
     info([["Drue","Chardonnay"],["Område","Hawke’s Bay, New Zealand"],["Gæring","Franske egetræsfade"],["Lagring","11 måneder på franske egetræsfade"]])+
-    '<p class="palate-profile-subtle"><a href="https://susieandpeter.com/wp-content/uploads/2026/02/Susie-Peter-New-Zealand-Wines-of-the-Year-2026-Report.pdf">Kilde til årgangen: Susie &amp; Peter, New Zealand Wines of the Year 2026</a></p></section></details>'
+    '<p class="palate-profile-subtle"><a href="https://susieandpeter.com/wp-content/uploads/2026/02/Susie-Peter-New-Zealand-Wines-of-the-Year-2026-Report.pdf">Kilde til årgangen: Susie &amp; Peter, New Zealand Wines of the Year 2026</a></p></section>'
   : "";
  document.getElementById("wineProfileContent").innerHTML=
  '<header class="palate-profile-header"><h2>'+esc(displayName)+'</h2><p>'+esc(displayYear||"Årgang ikke registreret")+' · '+esc(stock?.type||val(latest,"Type")||wine?.type||"Vin")+' · '+esc(stock?.track||val(latest,"Spor")||wine?.track||"Spor ikke registreret")+'</p></header>'+
